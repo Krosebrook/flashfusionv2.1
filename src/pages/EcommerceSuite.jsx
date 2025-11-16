@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
@@ -10,9 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AIProductGenerator from "../components/ecommerce/AIProductGenerator";
 import BulkProductImporter from "../components/ecommerce/BulkProductImporter";
 import PlatformPublisher from "../components/ecommerce/PlatformPublisher";
+import InventoryManager from "../components/ecommerce/InventoryManager";
 
 const platforms = {
   Shopify: { icon: ShoppingCart, color: "text-green-400" },
+  WooCommerce: { icon: Package, color: "text-purple-400" },
+  Magento: { icon: Package, color: "text-red-400" },
+  Amazon: { icon: Package, color: "text-orange-400" },
   Etsy: { icon: Package, color: "text-orange-400" },
   eBay: { icon: TrendingUp, color: "text-yellow-400" },
   Facebook: { icon: Share2, color: "text-blue-400" },
@@ -21,6 +26,10 @@ const platforms = {
 
 const ProductCard = ({ product, onPublish, onRefresh }) => {
   const [showPublisher, setShowPublisher] = useState(false);
+  const [showInventory, setShowInventory] = useState(false);
+
+  const isLowStock = product.inventory !== undefined && product.inventory <= (product.reorder_point || 10);
+  const isOutOfStock = product.inventory !== undefined && product.inventory === 0;
 
   return (
     <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-all">
@@ -37,13 +46,25 @@ const ProductCard = ({ product, onPublish, onRefresh }) => {
             <h3 className="font-semibold text-lg">{product.title}</h3>
             <p className="text-2xl font-bold text-green-400 mt-1">${product.price}</p>
           </div>
-          <Badge className={
-            product.status === 'published' ? 'bg-green-500/20 text-green-400' :
-            product.status === 'draft' ? 'bg-yellow-500/20 text-yellow-400' :
-            'bg-gray-500/20 text-gray-400'
-          }>
-            {product.status}
-          </Badge>
+          <div className="flex flex-col gap-2 items-end">
+            <Badge className={
+              product.status === 'published' ? 'bg-green-500/20 text-green-400' :
+              product.status === 'out_of_stock' ? 'bg-red-500/20 text-red-400' :
+              product.status === 'draft' ? 'bg-yellow-500/20 text-yellow-400' :
+              'bg-gray-500/20 text-gray-400'
+            }>
+              {product.status.replace(/_/g, ' ')}
+            </Badge>
+            {product.inventory !== undefined && (
+              <Badge className={
+                isOutOfStock ? 'bg-red-500/20 text-red-400' :
+                isLowStock ? 'bg-yellow-500/20 text-yellow-400' :
+                'bg-green-500/20 text-green-400'
+              }>
+                {product.inventory} in stock
+              </Badge>
+            )}
+          </div>
         </div>
 
         <p className="text-sm text-gray-400 line-clamp-2">
@@ -79,10 +100,25 @@ const ProductCard = ({ product, onPublish, onRefresh }) => {
             size="sm"
             variant="outline"
             className="flex-1"
-            onClick={() => setShowPublisher(!showPublisher)}
+            onClick={() => {
+              setShowPublisher(!showPublisher);
+              setShowInventory(false);
+            }}
           >
             <Share2 className="w-3 h-3 mr-2" />
             {showPublisher ? "Hide" : "Publish"}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="flex-1"
+            onClick={() => {
+              setShowInventory(!showInventory);
+              setShowPublisher(false);
+            }}
+          >
+            <Package className="w-3 h-3 mr-2" />
+            {showInventory ? "Hide" : "Inventory"}
           </Button>
         </div>
 
@@ -93,6 +129,17 @@ const ProductCard = ({ product, onPublish, onRefresh }) => {
               onPublished={async (updated) => {
                 await base44.entities.EcommerceProduct.update(product.id, updated);
                 setShowPublisher(false);
+                onRefresh?.();
+              }}
+            />
+          </div>
+        )}
+
+        {showInventory && (
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <InventoryManager
+              product={product}
+              onUpdate={async (updated) => {
                 onRefresh?.();
               }}
             />
@@ -136,6 +183,7 @@ export default function EcommerceSuite() {
     total: products.length,
     published: products.filter(p => p.status === 'published').length,
     draft: products.filter(p => p.status === 'draft').length,
+    lowStock: products.filter(p => p.inventory !== undefined && p.inventory <= (p.reorder_point || 10)).length,
     totalValue: products.reduce((sum, p) => sum + (p.price || 0), 0)
   };
 
@@ -147,12 +195,12 @@ export default function EcommerceSuite() {
           <span>E-commerce Suite</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          AI-powered product creation, bulk generation, SEO optimization, and multi-platform publishing
+          AI-powered product creation, multi-channel publishing, and advanced inventory management
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
           <div className="text-2xl font-bold text-blue-400">{stats.total}</div>
           <div className="text-sm text-gray-400">Total Products</div>
@@ -164,6 +212,10 @@ export default function EcommerceSuite() {
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
           <div className="text-2xl font-bold text-yellow-400">{stats.draft}</div>
           <div className="text-sm text-gray-400">Drafts</div>
+        </div>
+        <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+          <div className="text-2xl font-bold text-red-400">{stats.lowStock}</div>
+          <div className="text-sm text-gray-400">Low Stock</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
           <div className="text-2xl font-bold text-purple-400">${stats.totalValue.toFixed(2)}</div>

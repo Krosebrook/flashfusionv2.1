@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Share2, ShoppingBag, Store, Facebook, 
-  Loader2, CheckCircle2, ExternalLink 
+  Loader2, CheckCircle2, ExternalLink, Package 
 } from "lucide-react";
 
 const platforms = [
@@ -15,6 +15,27 @@ const platforms = [
     icon: ShoppingBag, 
     color: "text-green-400",
     description: "Full-featured online store"
+  },
+  { 
+    id: "WooCommerce", 
+    name: "WooCommerce", 
+    icon: Store, 
+    color: "text-purple-400",
+    description: "WordPress e-commerce plugin"
+  },
+  { 
+    id: "Magento", 
+    name: "Magento", 
+    icon: Store, 
+    color: "text-red-400",
+    description: "Enterprise e-commerce platform"
+  },
+  { 
+    id: "Amazon", 
+    name: "Amazon", 
+    icon: Package, 
+    color: "text-orange-400",
+    description: "World's largest marketplace"
   },
   { 
     id: "Etsy", 
@@ -109,10 +130,10 @@ export default function PlatformPublisher({ product, onPublished }) {
       <Card className="bg-gray-800 border-gray-700 p-6">
         <div className="flex items-center gap-2 mb-6">
           <Share2 className="w-5 h-5 text-blue-400" />
-          <h3 className="text-xl font-semibold">Publish to Platforms</h3>
+          <h3 className="text-xl font-semibold">Publish to Sales Channels</h3>
         </div>
 
-        <div className="space-y-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
           {platforms.map((platform) => {
             const Icon = platform.icon;
             const isSelected = selectedPlatforms.includes(platform.id);
@@ -170,12 +191,12 @@ export default function PlatformPublisher({ product, onPublished }) {
           {isPublishing ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Publishing to {selectedPlatforms.length} Platform{selectedPlatforms.length !== 1 ? 's' : ''}...
+              Publishing to {selectedPlatforms.length} Channel{selectedPlatforms.length !== 1 ? 's' : ''}...
             </>
           ) : (
             <>
               <Share2 className="w-4 h-4 mr-2" />
-              Publish to {selectedPlatforms.length} Platform{selectedPlatforms.length !== 1 ? 's' : ''}
+              Publish to {selectedPlatforms.length} Channel{selectedPlatforms.length !== 1 ? 's' : ''}
             </>
           )}
         </Button>
@@ -216,7 +237,7 @@ export default function PlatformPublisher({ product, onPublished }) {
       {product.platforms?.length > 0 && !publishResults && (
         <Card className="bg-gray-800 border-gray-700 p-4">
           <p className="text-sm text-gray-400 text-center">
-            This product is currently published on {product.platforms.length} platform{product.platforms.length !== 1 ? 's' : ''}
+            This product is currently published on {product.platforms.length} channel{product.platforms.length !== 1 ? 's' : ''}
           </p>
         </Card>
       )}
