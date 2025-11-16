@@ -1,5 +1,6 @@
+
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { User } from "@/entities/User";
 import { createPageUrl } from "@/utils";
@@ -11,11 +12,15 @@ import {
   Plug,
   CreditCard,
   Menu,
+  X,
   Bot,
   Rocket,
   FolderOpen,
   ShoppingCart,
-  FileText
+  FileText,
+  Settings,
+  Users,
+  BarChart3
 } from "lucide-react";
 
 const navigationItems = [
@@ -26,6 +31,7 @@ const navigationItems = [
   { name: "BrandKit Generator", href: createPageUrl("BrandKitGenerator"), icon: Palette },
   { name: "E-commerce Suite", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
   { name: "Content Creator", href: createPageUrl("ContentCreator"), icon: FileText },
+  { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
   { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
   { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
 ];

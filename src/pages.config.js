@@ -7,6 +7,7 @@ import Projects from './pages/Projects';
 import UniversalGenerator from './pages/UniversalGenerator';
 import EcommerceSuite from './pages/EcommerceSuite';
 import ContentCreator from './pages/ContentCreator';
+import Analytics from './pages/Analytics';
 import Layout from './Layout.jsx';
 
 
@@ -20,6 +21,7 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "EcommerceSuite": EcommerceSuite,
     "ContentCreator": ContentCreator,
+    "Analytics": Analytics,
 }
 
 export const pagesConfig = {
