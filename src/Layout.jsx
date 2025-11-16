@@ -20,12 +20,14 @@ import {
   FileText,
   Settings,
   Users,
-  BarChart3
+  BarChart3,
+  Workflow
 } from "lucide-react";
 
 const navigationItems = [
   { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
   { name: "Projects", href: createPageUrl("Projects"), icon: FolderOpen },
+  { name: "Agent Orchestration", href: createPageUrl("AgentOrchestration"), icon: Workflow },
   { name: "Universal Generator", href: createPageUrl("UniversalGenerator"), icon: Rocket },
   { name: "Feature Generator", href: createPageUrl("FeatureGenerator"), icon: Atom },
   { name: "BrandKit Generator", href: createPageUrl("BrandKitGenerator"), icon: Palette },

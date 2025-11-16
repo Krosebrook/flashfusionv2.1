@@ -8,6 +8,7 @@ import UniversalGenerator from './pages/UniversalGenerator';
 import EcommerceSuite from './pages/EcommerceSuite';
 import ContentCreator from './pages/ContentCreator';
 import Analytics from './pages/Analytics';
+import AgentOrchestration from './pages/AgentOrchestration';
 import Layout from './Layout.jsx';
 
 
@@ -22,6 +23,7 @@ export const PAGES = {
     "EcommerceSuite": EcommerceSuite,
     "ContentCreator": ContentCreator,
     "Analytics": Analytics,
+    "AgentOrchestration": AgentOrchestration,
 }
 
 export const pagesConfig = {
