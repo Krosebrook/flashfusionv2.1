@@ -1,9 +1,10 @@
+
 "use client";
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BarChart3, Users, FileText, Sparkles, ShoppingCart, Download } from "lucide-react";
+import { BarChart3, Users, FileText, Sparkles, ShoppingCart, Download, Workflow, Bot } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, subDays } from "date-fns";
 
@@ -12,6 +13,8 @@ import ContentPerformance from "../components/analytics/ContentPerformance";
 import AIUsageStats from "../components/analytics/AIUsageStats";
 import EcommerceOverview from "../components/analytics/EcommerceOverview";
 import CustomReport from "../components/analytics/CustomReport";
+import WorkflowPerformance from "../components/analytics/WorkflowPerformance";
+import AgentTaskPerformance from "../components/analytics/AgentTaskPerformance";
 
 export default function Analytics() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +22,8 @@ export default function Analytics() {
   const [usageLogs, setUsageLogs] = useState([]);
   const [contents, setContents] = useState([]);
   const [products, setProducts] = useState([]);
+  const [workflows, setWorkflows] = useState([]);
+  const [agentTasks, setAgentTasks] = useState([]);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -28,11 +33,13 @@ export default function Analytics() {
   const fetchAnalyticsData = async () => {
     setIsLoading(true);
     try {
-      const [currentUser, logs, contentData, productData] = await Promise.all([
+      const [currentUser, logs, contentData, productData, workflowData, taskData] = await Promise.all([
         base44.auth.me(),
         base44.entities.UsageLog.list("-created_date", 200),
         base44.entities.ContentPiece.list("-created_date", 100),
-        base44.entities.EcommerceProduct.list("-created_date", 100)
+        base44.entities.EcommerceProduct.list("-created_date", 100),
+        base44.entities.Workflow.list("-created_date", 50),
+        base44.entities.AgentTask.list("-created_date", 200)
       ]);
 
       setUser(currentUser);
@@ -48,6 +55,8 @@ export default function Analytics() {
       setUsageLogs(filteredLogs);
       setContents(contentData);
       setProducts(productData);
+      setWorkflows(workflowData);
+      setAgentTasks(taskData);
 
     } catch (error) {
       console.error("Failed to fetch analytics data:", error);
@@ -87,7 +96,7 @@ export default function Analytics() {
     content: {
       total: contents.length,
       totalViews: contents.reduce((sum, c) => sum + (c.performance_data?.views || 0), 0),
-      avgEngagement: contents.length > 0 
+      avgEngagement: contents.length > 0
         ? (contents.reduce((sum, c) => sum + (c.performance_data?.engagement || 0), 0) / contents.length).toFixed(1)
         : 0
     },
@@ -100,6 +109,16 @@ export default function Analytics() {
       totalProducts: products.length,
       publishedProducts: products.filter(p => p.status === 'published').length,
       totalValue: products.reduce((sum, p) => sum + (p.price || 0), 0).toFixed(2)
+    },
+    workflows: {
+      total: workflows.length,
+      activeWorkflows: workflows.filter(w => w.status === 'active').length,
+      totalExecutions: workflows.reduce((sum, w) => sum + (w.execution_count || 0), 0)
+    },
+    agentTasks: {
+      total: agentTasks.length,
+      completed: agentTasks.filter(t => t.status === 'completed').length,
+      failed: agentTasks.filter(t => t.status === 'failed').length
     }
   };
 
@@ -144,6 +163,14 @@ export default function Analytics() {
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="bg-gray-800">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="workflows">
+            <Workflow className="w-4 h-4 mr-2" />
+            Workflows
+          </TabsTrigger>
+          <TabsTrigger value="agents">
+            <Bot className="w-4 h-4 mr-2" />
+            Agent Tasks
+          </TabsTrigger>
           <TabsTrigger value="users">
             <Users className="w-4 h-4 mr-2" />
             User Activity
@@ -179,11 +206,20 @@ export default function Analytics() {
 
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <FileText className="w-8 h-8 text-purple-400" />
-                <span className="text-xs text-green-400">↑ {contents.length}</span>
+                <Workflow className="w-8 h-8 text-purple-400" />
+                <span className="text-xs text-blue-400">{reportData.workflows.totalExecutions} runs</span>
               </div>
-              <div className="text-2xl font-bold">{contents.length}</div>
-              <div className="text-sm text-gray-400">Content Pieces</div>
+              <div className="text-2xl font-bold">{workflows.length}</div>
+              <div className="text-sm text-gray-400">Workflows</div>
+            </div>
+
+            <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+              <div className="flex items-center justify-between mb-2">
+                <Bot className="w-8 h-8 text-green-400" />
+                <span className="text-xs text-green-400">{reportData.agentTasks.completed} done</span>
+              </div>
+              <div className="text-2xl font-bold">{agentTasks.length}</div>
+              <div className="text-sm text-gray-400">Agent Tasks</div>
             </div>
 
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
@@ -194,34 +230,25 @@ export default function Analytics() {
               <div className="text-2xl font-bold">{usageLogs.length}</div>
               <div className="text-sm text-gray-400">AI Operations</div>
             </div>
-
-            <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-              <div className="flex items-center justify-between mb-2">
-                <ShoppingCart className="w-8 h-8 text-green-400" />
-                <span className="text-xs text-green-400">↑ ${reportData.ecommerce.totalValue}</span>
-              </div>
-              <div className="text-2xl font-bold">{products.length}</div>
-              <div className="text-sm text-gray-400">Products</div>
-            </div>
           </div>
 
           <UserActivityChart data={userActivityData} timeRange={timeRange} />
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <h3 className="text-lg font-semibold mb-4">Quick Stats</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Most Used Feature</span>
-                  <span className="font-semibold">{reportData.aiUsage.topFeature}</span>
+                  <span className="text-gray-400">Active Workflows</span>
+                  <span className="font-semibold">{reportData.workflows.activeWorkflows}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Completed Tasks</span>
+                  <span className="font-semibold">{reportData.agentTasks.completed}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Published Products</span>
                   <span className="font-semibold">{reportData.ecommerce.publishedProducts}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Avg Engagement</span>
-                  <span className="font-semibold">{reportData.content.avgEngagement}%</span>
                 </div>
               </div>
             </div>
@@ -244,6 +271,14 @@ export default function Analytics() {
               </div>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="workflows" className="space-y-6">
+          <WorkflowPerformance workflows={workflows} tasks={agentTasks} />
+        </TabsContent>
+
+        <TabsContent value="agents" className="space-y-6">
+          <AgentTaskPerformance tasks={agentTasks} />
         </TabsContent>
 
         <TabsContent value="users" className="space-y-6">
