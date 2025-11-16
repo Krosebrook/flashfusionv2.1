@@ -1,540 +1,482 @@
-import { useState } from "react";
-import { InvokeLLM, GenerateImage } from "@/integrations/Core";
-import { User, BrandKit, UsageLog } from "@/entities/all";
+
+import React, { useState } from "react";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Palette, Loader2, Save, Download, 
-  RefreshCw, Sparkles
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Sparkles, Palette, Type, Download, Loader2, 
+  Check, Image as ImageIcon, FileText, Zap
 } from "lucide-react";
 
-const brandStyles = {
-  "Modern": { colors: ["#000000", "#FFFFFF", "#FF6B6B", "#4ECDC4"], mood: "Clean, minimalist, tech-forward" },
-  "Vintage": { colors: ["#8B4513", "#F4A460", "#DEB887", "#CD853F"], mood: "Classic, nostalgic, handcrafted" },
-  "Corporate": { colors: ["#1E3A8A", "#3B82F6", "#64748B", "#F8FAFC"], mood: "Professional, trustworthy, established" },
-  "Creative": { colors: ["#EC4899", "#8B5CF6", "#F59E0B", "#10B981"], mood: "Bold, artistic, innovative" },
-  "Luxury": { colors: ["#111827", "#D4AF37", "#F7F7F7", "#6B7280"], mood: "Premium, sophisticated, exclusive" }
-};
+import SocialMediaAssetGenerator from "../brandkit/SocialMediaAssetGenerator";
+
+const brandStyles = [
+  { id: "modern", name: "Modern & Minimal", colors: ["#000000", "#FFFFFF", "#3B82F6"], mood: "Clean, professional, tech-forward" },
+  { id: "vibrant", name: "Bold & Vibrant", colors: ["#FF6B6B", "#4ECDC4", "#FFE66D"], mood: "Energetic, fun, attention-grabbing" },
+  { id: "elegant", name: "Elegant & Luxurious", colors: ["#1A1A2E", "#C5A572", "#FFFFFF"], mood: "Sophisticated, premium, timeless" },
+  { id: "natural", name: "Natural & Organic", colors: ["#2D5016", "#B4C7A8", "#F4E4C1"], mood: "Earthy, sustainable, authentic" },
+  { id: "playful", name: "Playful & Creative", colors: ["#FF6F91", "#FFC75F", "#845EC2"], mood: "Fun, youthful, imaginative" }
+];
 
 export default function SmartBrandKit() {
   const [formData, setFormData] = useState({
     businessName: "",
     industry: "",
-    tone: "Professional",
-    style: "Modern", 
+    description: "",
     targetAudience: "",
-    values: "",
-    competitors: ""
+    brandStyle: "modern"
   });
-  
-  const [brandKit, setBrandKit] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedKit, setGeneratedKit] = useState(null);
+  const [selectedLogoIndex, setSelectedLogoIndex] = useState(0);
   const [logoVariations, setLogoVariations] = useState([]);
-  const [selectedLogo, setSelectedLogo] = useState(0);
 
-  const generateBrandKit = async () => {
-    setIsLoading(true);
-    setError(null);
-    setBrandKit(null);
-    
-    const creditsToUse = 200; // Premium feature
+  const handleGenerate = async () => {
+    if (!formData.businessName || !formData.industry) {
+      alert("Please fill in business name and industry");
+      return;
+    }
 
+    setIsGenerating(true);
     try {
-      const user = await User.me();
-      if (user.credits_remaining < creditsToUse) {
-        setError(`Insufficient credits. You need ${creditsToUse} credits.`);
-        setIsLoading(false);
+      const user = await base44.auth.me();
+      
+      if (user.credits_remaining < 200) {
+        alert("Insufficient credits. You need at least 200 credits to generate a brand kit.");
+        setIsGenerating(false);
         return;
       }
 
-      const selectedStyle = brandStyles[formData.style];
+      const selectedStyle = brandStyles.find(s => s.id === formData.brandStyle);
       
-      // Enhanced prompt for comprehensive brand kit
-      const brandPrompt = `
-        Create a comprehensive brand identity for:
-        
-        Business: ${formData.businessName}
-        Industry: ${formData.industry}
-        Style: ${formData.style} (${selectedStyle.mood})
-        Tone: ${formData.tone}
-        Target Audience: ${formData.targetAudience}
-        Values: ${formData.values}
-        Competitors: ${formData.competitors}
-        
-        Generate a detailed brand kit with:
-        1. 5-color primary palette + 3 accent colors
-        2. Typography pairing (heading + body fonts)
-        3. Multiple tagline options (3-5 variations)
-        4. Comprehensive voice & tone guide
-        5. Brand personality traits
-        6. Usage guidelines
-        
-        Format as JSON matching this schema exactly.
-      `;
+      const brandIdentityPrompt = `Create a comprehensive brand identity for:
+Business: ${formData.businessName}
+Industry: ${formData.industry}
+Description: ${formData.description}
+Target Audience: ${formData.targetAudience}
+Desired Style: ${selectedStyle.name} - ${selectedStyle.mood}
 
-      const logoPrompts = [
-        `Minimalist logo for ${formData.businessName}, ${formData.industry} industry, ${formData.style.toLowerCase()} style, vector, clean`,
-        `Iconic symbol for ${formData.businessName}, modern, professional, ${formData.style.toLowerCase()} aesthetic`,
-        `Wordmark logo design for ${formData.businessName}, elegant typography, ${formData.style.toLowerCase()} style`
-      ];
+Generate:
+1. A color palette (5 colors with hex codes and usage descriptions)
+2. Font recommendations (heading and body fonts with reasoning)
+3. A compelling tagline (max 10 words)
+4. Brand voice guidelines (tone, language style, do's and don'ts)
+5. Brand personality traits
+6. Visual style guidelines`;
 
-      // Generate multiple logo variations in parallel
-      const [textData, ...logoResults] = await Promise.all([
-        InvokeLLM({
-          prompt: brandPrompt,
-          response_json_schema: {
-            type: "object",
-            properties: {
-              colors: { 
+      const brandIdentity = await base44.integrations.Core.InvokeLLM({
+        prompt: brandIdentityPrompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            colors: {
+              type: "array",
+              items: {
                 type: "object",
                 properties: {
-                  primary: { type: "array", items: { type: "string" } },
-                  accent: { type: "array", items: { type: "string" } }
-                }
+                  hex: { type: "string" },
+                  name: { type: "string" },
+                  usage: { type: "string" }
+                },
+                required: ["hex", "name", "usage"]
+              }
+            },
+            fonts: {
+              type: "object",
+              properties: {
+                heading: { type: "string" },
+                body: { type: "string" },
+                reasoning: { type: "string" }
               },
-              fonts: {
-                type: "object", 
-                properties: {
-                  heading: { type: "string" },
-                  body: { type: "string" },
-                  accent: { type: "string" }
-                }
-              },
-              taglines: { type: "array", items: { type: "string" } },
-              voice_guide: { type: "string" },
-              personality: { type: "array", items: { type: "string" } },
-              guidelines: { type: "string" }
-            }
-          }
-        }),
-        ...logoPrompts.map(prompt => GenerateImage({ prompt }))
-      ]);
+              required: ["heading", "body", "reasoning"]
+            },
+            tagline: { type: "string" },
+            voice_guide: { type: "string" },
+            personality_traits: {
+              type: "array",
+              items: { type: "string" }
+            },
+            visual_guidelines: { type: "string" }
+          },
+          required: ["colors", "fonts", "tagline", "voice_guide", "personality_traits", "visual_guidelines"]
+        }
+      });
 
-      setLogoVariations(logoResults.map(result => result.url));
-      setSelectedLogo(0);
-      
-      setBrandKit({
+      const logoPrompt = `Professional logo design for ${formData.businessName}, a ${formData.industry} business.
+Style: ${selectedStyle.name}
+Mood: ${selectedStyle.mood}
+Colors: ${brandIdentity.colors.map(c => c.hex).join(", ")}
+Modern, clean, memorable, vector-style logo on white background`;
+
+      const { url: logoUrl } = await base44.integrations.Core.GenerateImage({
+        prompt: logoPrompt
+      });
+
+      const variations = [];
+      for (let i = 0; i < 2; i++) {
+        const variationPrompt = `${logoPrompt}, variation ${i + 1}, different layout, subtle changes`;
+        const { url } = await base44.integrations.Core.GenerateImage({
+          prompt: variationPrompt
+        });
+        variations.push(url);
+      }
+      setLogoVariations([logoUrl, ...variations]);
+
+      const kit = {
         name: formData.businessName,
-        logo_url: logoResults[0].url,
-        style: formData.style,
-        industry: formData.industry,
-        ...textData
-      });
-
-      // Deduct credits and log usage
-      await User.updateMyUserData({ 
-        credits_remaining: user.credits_remaining - creditsToUse 
-      });
-      
-      await UsageLog.create({
-        feature: "SmartBrandKit",
-        credits_used: creditsToUse,
-        details: `Generated comprehensive brand kit for ${formData.businessName}`
-      });
-
-    } catch (e) {
-      console.error(e);
-      setError("Failed to generate brand kit. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const saveBrandKit = async () => {
-    if (!brandKit) return;
-    setIsSaving(true);
-    
-    try {
-      const kitToSave = {
-        ...brandKit,
-        logo_url: logoVariations[selectedLogo],
-        logo_variations: logoVariations
+        logo_url: logoUrl,
+        colors: brandIdentity.colors.map(c => c.hex),
+        color_details: brandIdentity.colors,
+        fonts: brandIdentity.fonts,
+        tagline: brandIdentity.tagline,
+        voice_guide: brandIdentity.voice_guide,
+        personality_traits: brandIdentity.personality_traits,
+        visual_guidelines: brandIdentity.visual_guidelines
       };
-      
-      await BrandKit.create(kitToSave);
-      alert("Brand Kit saved successfully!");
-    } catch (e) {
-      console.error(e);
-      setError("Failed to save brand kit.");
-    } finally {
-      setIsSaving(false);
+
+      setGeneratedKit(kit);
+      setSelectedLogoIndex(0); // Reset selected logo index
+
+      await base44.auth.updateMe({
+        credits_remaining: user.credits_remaining - 200
+      });
+
+      await base44.entities.UsageLog.create({
+        feature: "SmartBrandKit",
+        credits_used: 200,
+        details: `Generated brand kit for ${formData.businessName}`
+      });
+
+    } catch (error) {
+      console.error("Brand kit generation failed:", error);
+      alert("Failed to generate brand kit. Please try again.");
+    }
+    setIsGenerating(false);
+  };
+
+  const handleSave = async () => {
+    if (!generatedKit) return;
+
+    try {
+      // Prepare the kit for saving, including the selected logo and all variations
+      const kitToSave = {
+        ...generatedKit,
+        logo_url: logoVariations[selectedLogoIndex], // Save the currently selected logo
+        logo_variations: logoVariations, // Save all generated variations
+        generated_at: new Date().toISOString()
+      };
+
+      await base44.entities.BrandKit.create(kitToSave);
+      alert("Brand kit saved successfully!");
+      setGeneratedKit(null); // Clear the generated kit from display
+      setFormData({ businessName: "", industry: "", description: "", targetAudience: "", brandStyle: "modern" }); // Clear form
+      setLogoVariations([]); // Clear logo variations
+      setSelectedLogoIndex(0); // Reset selected logo index
+    } catch (error) {
+      console.error("Failed to save brand kit:", error);
+      alert("Failed to save brand kit. Please try again.");
     }
   };
 
-  const downloadBrandKit = () => {
-    if (!brandKit) return;
-    
-    const brandData = {
-      ...brandKit,
-      logo_variations: logoVariations,
-      generated_date: new Date().toISOString()
-    };
-    
-    const blob = new Blob([JSON.stringify(brandData, null, 2)], { 
-      type: 'application/json' 
-    });
-    
-    const url = URL.createObjectURL(blob);
+  const handleDownload = async () => {
+    if (!generatedKit) return;
+    const content = `
+BRAND KIT: ${generatedKit.name}
+${'='.repeat(50)}
+
+TAGLINE
+${generatedKit.tagline}
+
+COLORS
+${generatedKit.color_details?.map(c => `${c.name}: ${c.hex} - ${c.usage}`).join('\n')}
+
+TYPOGRAPHY
+Heading Font: ${generatedKit.fonts?.heading}
+Body Font: ${generatedKit.fonts?.body}
+Reasoning: ${generatedKit.fonts?.reasoning}
+
+BRAND VOICE
+${generatedKit.voice_guide}
+
+PERSONALITY TRAITS
+${generatedKit.personality_traits?.map(t => `• ${t}`).join('\n')}
+
+VISUAL GUIDELINES
+${generatedKit.visual_guidelines}
+
+LOGO URL (Selected): ${logoVariations[selectedLogoIndex]}
+All Logo Variations:
+${logoVariations.map((url, i) => `Variation ${i + 1}: ${url}`).join('\n')}
+    `;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${formData.businessName.toLowerCase().replace(/\s+/g, '-')}-brandkit.json`;
-    document.body.appendChild(a);
+    a.download = `${generatedKit.name}_BrandKit.txt`;
+    document.body.appendChild(a); // Append to body to make it clickable
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const regenerateLogo = async (index) => {
-    try {
-      const newLogoPrompt = `Alternative logo design for ${formData.businessName}, ${formData.industry}, ${formData.style.toLowerCase()} style, creative variation`;
-      const result = await GenerateImage({ prompt: newLogoPrompt });
-      
-      const newVariations = [...logoVariations];
-      newVariations[index] = result.url;
-      setLogoVariations(newVariations);
-    } catch (e) {
-      console.error("Failed to regenerate logo:", e);
-    }
+    document.body.removeChild(a); // Clean up
+    window.URL.revokeObjectURL(url); // Release object URL
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      {/* Input Form */}
-      <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Business Name *</Label>
-            <Input
-              placeholder="e.g., TechFlow Solutions"
-              value={formData.businessName}
-              onChange={(e) => setFormData({...formData, businessName: e.target.value})}
-              className="bg-gray-900 border-gray-600"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Industry *</Label>
-            <Select 
-              value={formData.industry} 
-              onValueChange={(value) => setFormData({...formData, industry: value})}
-            >
-              <SelectTrigger className="bg-gray-900 border-gray-600">
-                <SelectValue placeholder="Select industry" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Technology">Technology</SelectItem>
-                <SelectItem value="Healthcare">Healthcare</SelectItem>
-                <SelectItem value="Finance">Finance</SelectItem>
-                <SelectItem value="E-commerce">E-commerce</SelectItem>
-                <SelectItem value="Education">Education</SelectItem>
-                <SelectItem value="Creative Agency">Creative Agency</SelectItem>
-                <SelectItem value="Restaurant">Restaurant</SelectItem>
-                <SelectItem value="Real Estate">Real Estate</SelectItem>
-                <SelectItem value="Fitness">Fitness</SelectItem>
-                <SelectItem value="Fashion">Fashion</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Brand Style</Label>
-            <Select 
-              value={formData.style} 
-              onValueChange={(value) => setFormData({...formData, style: value})}
-            >
-              <SelectTrigger className="bg-gray-900 border-gray-600">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(brandStyles).map(([style, config]) => (
-                  <SelectItem key={style} value={style}>
-                    <div>
-                      <div className="font-medium">{style}</div>
-                      <div className="text-xs text-gray-400">{config.mood}</div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Tone</Label>
-            <Select 
-              value={formData.tone} 
-              onValueChange={(value) => setFormData({...formData, tone: value})}
-            >
-              <SelectTrigger className="bg-gray-900 border-gray-600">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Professional">Professional</SelectItem>
-                <SelectItem value="Friendly">Friendly</SelectItem>
-                <SelectItem value="Bold">Bold</SelectItem>
-                <SelectItem value="Elegant">Elegant</SelectItem>
-                <SelectItem value="Playful">Playful</SelectItem>
-                <SelectItem value="Sophisticated">Sophisticated</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Target Audience</Label>
-            <Textarea
-              placeholder="e.g., Small business owners, tech-savvy professionals"
-              value={formData.targetAudience}
-              onChange={(e) => setFormData({...formData, targetAudience: e.target.value})}
-              className="bg-gray-900 border-gray-600 h-20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Brand Values</Label>
-            <Textarea
-              placeholder="e.g., Innovation, reliability, customer-first"
-              value={formData.values}
-              onChange={(e) => setFormData({...formData, values: e.target.value})}
-              className="bg-gray-900 border-gray-600 h-20"
-            />
-          </div>
-        </div>
-
-        <Button 
-          onClick={generateBrandKit} 
-          disabled={isLoading || !formData.businessName || !formData.industry}
-          className="w-full bg-purple-600 hover:bg-purple-700"
-          size="lg"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating Brand Kit...
-            </>
-          ) : (
-            <>
-              <Sparkles className="mr-2 h-4 w-4" />
-              Generate Complete Brand Kit (200 Credits)
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-900/20 border border-red-700 text-red-300 p-4 rounded-lg">
-          <p className="font-medium">Generation Failed</p>
-          <p className="text-sm mt-1">{error}</p>
-        </div>
-      )}
-
-      {/* Generated Brand Kit */}
-      {brandKit && (
-        <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold flex items-center gap-2">
-              <Palette className="w-6 h-6 text-purple-400" />
-              {brandKit.name} Brand Kit
-            </h2>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={downloadBrandKit}>
-                <Download className="w-4 h-4 mr-2" />
-                Download
-              </Button>
-              <Button onClick={saveBrandKit} disabled={isSaving}>
-                {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-                Save Kit
-              </Button>
-            </div>
-          </div>
-
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="bg-gray-700">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="logos">Logo Variations</TabsTrigger>
-              <TabsTrigger value="colors">Colors</TabsTrigger>
-              <TabsTrigger value="typography">Typography</TabsTrigger>
-              <TabsTrigger value="guidelines">Guidelines</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Primary Logo</h3>
-                  <div className="bg-white p-6 rounded-lg">
-                    <img 
-                      src={logoVariations[selectedLogo]} 
-                      alt="Brand Logo" 
-                      className="h-32 mx-auto object-contain"
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Taglines</h3>
-                  <div className="space-y-2">
-                    {brandKit.taglines?.map((tagline, index) => (
-                      <div key={index} className="p-3 bg-gray-700 rounded-md">
-                        <p className="text-lg italic">"{tagline}"</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+    <div className="max-w-6xl mx-auto space-y-8 py-8">
+      {!generatedKit ? (
+        <Card className="bg-gray-800 border-gray-700 p-6">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Business Name *</label>
+                <Input
+                  placeholder="e.g., Stellar Tech"
+                  value={formData.businessName}
+                  onChange={(e) => setFormData({...formData, businessName: e.target.value})}
+                  className="bg-gray-900 border-gray-600 text-white"
+                  required
+                />
               </div>
-            </TabsContent>
+              <div>
+                <label className="block text-sm font-medium mb-2">Industry *</label>
+                <Input
+                  placeholder="e.g., Software, Fashion, Food"
+                  value={formData.industry}
+                  onChange={(e) => setFormData({...formData, industry: e.target.value})}
+                  className="bg-gray-900 border-gray-600 text-white"
+                  required
+                />
+              </div>
+            </div>
 
-            <TabsContent value="logos" className="space-y-4">
-              <h3 className="text-lg font-semibold">Logo Variations</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {logoVariations.map((logo, index) => (
-                  <div 
-                    key={index}
-                    className={`relative bg-white p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedLogo === index ? 'border-purple-500' : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                    onClick={() => setSelectedLogo(index)}
-                  >
-                    <img src={logo} alt={`Logo ${index + 1}`} className="h-24 mx-auto object-contain" />
-                    <div className="flex justify-between items-center mt-2">
-                      <Badge variant={selectedLogo === index ? "default" : "outline"}>
-                        {selectedLogo === index ? "Selected" : "Variation"}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          regenerateLogo(index);
+            <div>
+              <label className="block text-sm font-medium mb-2">Business Description</label>
+              <Textarea
+                placeholder="Describe what your business does, your mission, and what makes you unique..."
+                value={formData.description}
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                className="bg-gray-900 border-gray-600 min-h-[100px] text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Target Audience</label>
+              <Input
+                placeholder="e.g., Tech-savvy millennials, Small business owners"
+                value={formData.targetAudience}
+                onChange={(e) => setFormData({...formData, targetAudience: e.target.value})}
+                className="bg-gray-900 border-gray-600 text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Brand Style</label>
+              <Select value={formData.brandStyle} onValueChange={(value) => setFormData({...formData, brandStyle: value})}>
+                <SelectTrigger className="bg-gray-900 border-gray-600 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                  {brandStyles.map(style => (
+                    <SelectItem key={style.id} value={style.id}>
+                      <div>
+                        <div className="font-medium">{style.name}</div>
+                        <div className="text-xs text-gray-400">{style.mood}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button
+              onClick={handleGenerate}
+              disabled={isGenerating || !formData.businessName || !formData.industry}
+              className="w-full bg-purple-600 hover:bg-purple-700 py-6 text-lg"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Generating Your Brand Kit...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5 mr-2" />
+                  Generate Complete Brand Kit (200 credits)
+                </>
+              )}
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          <Card className="bg-gray-800 border-gray-700 p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+              <div>
+                <h2 className="text-3xl font-bold text-white">{generatedKit.name}</h2>
+                <p className="text-gray-400 text-lg mt-1">{generatedKit.tagline}</p>
+              </div>
+              <div className="flex gap-3 mt-4 sm:mt-0">
+                <Button onClick={handleDownload} variant="outline" className="text-white border-gray-600 hover:bg-gray-700">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </Button>
+                <Button onClick={handleSave} className="bg-green-600 hover:bg-green-700 text-white">
+                  <Check className="w-4 h-4 mr-2" />
+                  Save Brand Kit
+                </Button>
+              </div>
+            </div>
+
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="bg-gray-900 grid w-full grid-cols-6 sm:grid-cols-6">
+                <TabsTrigger value="overview" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">Overview</TabsTrigger>
+                <TabsTrigger value="logos" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">Logos</TabsTrigger>
+                <TabsTrigger value="colors" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">Colors</TabsTrigger>
+                <TabsTrigger value="typography" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">Typography</TabsTrigger>
+                <TabsTrigger value="guidelines" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">Guidelines</TabsTrigger>
+                <TabsTrigger value="social" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                  <Zap className="w-4 h-4 mr-2" />
+                  Social Assets
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="overview" className="space-y-6 mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-xl mb-3 text-white">Brand Identity Summary</h3>
+                    <div className="bg-gray-900 p-4 rounded-lg space-y-3">
+                      <div>
+                        <p className="text-sm font-medium text-gray-400">Tagline:</p>
+                        <p className="text-lg font-bold text-white">"{generatedKit.tagline}"</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-400">Industry:</p>
+                        <p className="text-white">{formData.industry}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-400">Target Audience:</p>
+                        <p className="text-white">{formData.targetAudience || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-400">Personality Traits:</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {generatedKit.personality_traits?.map((trait, i) => (
+                            <Badge key={i} variant="secondary" className="bg-purple-700 text-white border-purple-500">{trait}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-xl mb-3 text-white">Primary Logo Preview</h3>
+                    <div className="bg-white rounded-lg p-6 flex justify-center items-center h-48 border border-gray-700">
+                      <img 
+                        src={logoVariations[selectedLogoIndex]} 
+                        alt="Brand Logo" 
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="logos" className="space-y-6 mt-6">
+                <div>
+                  <h3 className="font-semibold text-xl mb-4 text-white">Logo Variations</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {logoVariations.map((url, index) => (
+                      <div 
+                        key={index}
+                        className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all p-2
+                          ${selectedLogoIndex === index ? 'border-purple-500 ring-2 ring-purple-500' : 'border-gray-700 hover:border-gray-500'}`
+                        }
+                        onClick={() => {
+                          setSelectedLogoIndex(index);
+                          setGeneratedKit({...generatedKit, logo_url: url}); // Update main kit logo for consistency
                         }}
                       >
-                        <RefreshCw className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="colors" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Primary Palette</h3>
-                  <div className="grid grid-cols-5 gap-2">
-                    {brandKit.colors?.primary?.map((color, index) => (
-                      <div key={index} className="text-center">
-                        <div 
-                          className="w-16 h-16 rounded-lg shadow-lg mx-auto mb-2"
-                          style={{ backgroundColor: color }}
-                        />
-                        <p className="text-xs font-mono">{color}</p>
+                        <div className="bg-white p-4 rounded-md flex items-center justify-center h-32">
+                          <img src={url} alt={`Logo ${index + 1}`} className="max-h-full max-w-full object-contain" />
+                        </div>
+                        {selectedLogoIndex === index && (
+                          <div className="absolute top-2 right-2">
+                            <Badge className="bg-purple-600 text-white">Selected</Badge>
+                          </div>
+                        )}
+                        <p className="text-center text-sm mt-2 text-gray-300">Variation {index + 1}</p>
                       </div>
                     ))}
                   </div>
                 </div>
+              </TabsContent>
 
-                {brandKit.colors?.accent && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3">Accent Colors</h3>
-                    <div className="grid grid-cols-3 gap-2">
-                      {brandKit.colors.accent.map((color, index) => (
-                        <div key={index} className="text-center">
-                          <div 
-                            className="w-16 h-16 rounded-lg shadow-lg mx-auto mb-2"
-                            style={{ backgroundColor: color }}
-                          />
-                          <p className="text-xs font-mono">{color}</p>
-                        </div>
-                      ))}
+              <TabsContent value="colors" className="space-y-6 mt-6">
+                <h3 className="font-semibold text-xl mb-4 text-white">Brand Color Palette</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                  {generatedKit.color_details?.map((color, index) => (
+                    <div key={index} className="space-y-2 bg-gray-900 p-3 rounded-lg border border-gray-700">
+                      <div 
+                        className="w-full h-20 rounded-md border-2 border-gray-600"
+                        style={{ backgroundColor: color.hex }}
+                      />
+                      <div className="text-sm">
+                        <div className="font-medium text-white">{color.name}</div>
+                        <div className="text-gray-400 font-mono text-xs">{color.hex}</div>
+                        <div className="text-xs text-gray-500 mt-1">{color.usage}</div>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
+                  ))}
+                </div>
+              </TabsContent>
 
-            <TabsContent value="typography" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-400">Heading Font</h3>
-                  <div className="p-4 bg-gray-700 rounded-lg">
-                    <p 
-                      className="text-2xl font-bold" 
-                      style={{ fontFamily: brandKit.fonts?.heading }}
-                    >
-                      {brandKit.fonts?.heading}
+              <TabsContent value="typography" className="space-y-6 mt-6">
+                <h3 className="font-semibold text-xl mb-4 text-white">Typography</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-900 p-6 rounded-lg border border-gray-700">
+                    <h4 className="text-sm text-gray-400 mb-2 font-medium">Heading Font</h4>
+                    <p className="text-4xl font-bold mb-2 text-white" style={{ fontFamily: generatedKit.fonts?.heading }}>
+                      {generatedKit.fonts?.heading || 'Font Name'}
                     </p>
-                    <p className="text-sm text-gray-400 mt-2">The quick brown fox</p>
+                    <p className="text-lg text-gray-300">The quick brown fox jumps over the lazy dog.</p>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-400">Body Font</h3>
-                  <div className="p-4 bg-gray-700 rounded-lg">
-                    <p 
-                      className="text-lg" 
-                      style={{ fontFamily: brandKit.fonts?.body }}
-                    >
-                      {brandKit.fonts?.body}
+                  <div className="bg-gray-900 p-6 rounded-lg border border-gray-700">
+                    <h4 className="text-sm text-gray-400 mb-2 font-medium">Body Font</h4>
+                    <p className="text-2xl text-white mb-2" style={{ fontFamily: generatedKit.fonts?.body }}>
+                      {generatedKit.fonts?.body || 'Font Name'}
                     </p>
-                    <p className="text-sm text-gray-400 mt-2">The quick brown fox</p>
+                    <p className="text-lg text-gray-300">The quick brown fox jumps over the lazy dog.</p>
                   </div>
                 </div>
+                <div className="bg-gray-900 p-6 rounded-lg border border-gray-700">
+                  <h4 className="text-sm text-gray-400 mb-2 font-medium">Font Selection Reasoning</h4>
+                  <p className="text-gray-300 text-sm whitespace-pre-line">{generatedKit.fonts?.reasoning}</p>
+                </div>
+              </TabsContent>
 
-                {brandKit.fonts?.accent && (
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-gray-400">Accent Font</h3>
-                    <div className="p-4 bg-gray-700 rounded-lg">
-                      <p 
-                        className="text-lg" 
-                        style={{ fontFamily: brandKit.fonts.accent }}
-                      >
-                        {brandKit.fonts.accent}
-                      </p>
-                      <p className="text-sm text-gray-400 mt-2">The quick brown fox</p>
-                    </div>
+              <TabsContent value="guidelines" className="space-y-6 mt-6">
+                <h3 className="font-semibold text-xl mb-4 text-white">Brand Guidelines</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-900 p-6 rounded-lg border border-gray-700">
+                    <h4 className="font-semibold text-lg mb-3 text-white">Brand Voice & Tone</h4>
+                    <p className="text-sm text-gray-300 whitespace-pre-line">{generatedKit.voice_guide}</p>
                   </div>
-                )}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="guidelines" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Voice & Tone</h3>
-                  <div className="p-4 bg-gray-700 rounded-lg">
-                    <p className="text-gray-300">{brandKit.voice_guide}</p>
+                  <div className="bg-gray-900 p-6 rounded-lg border border-gray-700">
+                    <h4 className="font-semibold text-lg mb-3 text-white">Visual Style Guidelines</h4>
+                    <p className="text-sm text-gray-300 whitespace-pre-line">{generatedKit.visual_guidelines}</p>
                   </div>
                 </div>
+              </TabsContent>
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Brand Personality</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {brandKit.personality?.map((trait, index) => (
-                      <Badge key={index} variant="outline" className="text-purple-400">
-                        {trait}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {brandKit.guidelines && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Usage Guidelines</h3>
-                  <div className="p-4 bg-gray-700 rounded-lg">
-                    <p className="text-gray-300 whitespace-pre-line">{brandKit.guidelines}</p>
-                  </div>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="social" className="space-y-6 mt-6">
+                <SocialMediaAssetGenerator brandKit={generatedKit} logoUrl={logoVariations[selectedLogoIndex]} />
+              </TabsContent>
+            </Tabs>
+          </Card>
         </div>
       )}
     </div>
