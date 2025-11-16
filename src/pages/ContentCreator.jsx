@@ -1,117 +1,104 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileText, Video, Smile, Eye, Plus, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  FileText, Plus, Video, Smile, Eye, Trash2, 
+  Sparkles, Recycle, GitBranch
+} from "lucide-react";
 
 import VideoScriptGenerator from "../components/content/VideoScriptGenerator";
 import MemeGenerator from "../components/content/MemeGenerator";
 import ContentPreview from "../components/content/ContentPreview";
+import AIContentAssistant from "../components/content/AIContentAssistant";
+import ContentRepurposingTool from "../components/content/ContentRepurposingTool";
+import ABTestingGenerator from "../components/content/ABTestingGenerator";
 
 const platformIcons = {
   Instagram: "📸",
   TikTok: "🎵",
   YouTube: "▶️",
-  Facebook: "👍",
+  Facebook: "👥",
   Twitter: "🐦",
-  LinkedIn: "💼",
-  Blog: "📝",
-  Email: "✉️",
-  General: "🌐"
+  LinkedIn: "💼"
 };
 
-const ContentCard = ({ content, onPreview, onDelete }) => {
-  const typeColors = {
-    blog: "bg-blue-500/20 text-blue-400",
-    social_post: "bg-purple-500/20 text-purple-400",
-    video_script: "bg-red-500/20 text-red-400",
-    meme: "bg-yellow-500/20 text-yellow-400",
-    ad_copy: "bg-green-500/20 text-green-400",
-    email: "bg-pink-500/20 text-pink-400"
-  };
-
-  return (
-    <Card className="bg-gray-800 border-gray-700 p-4 hover:border-gray-600 transition-all">
-      <div className="space-y-3">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg mb-1">{content.title}</h3>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge className={typeColors[content.type] || "bg-gray-500/20 text-gray-400"}>
-                {content.type.replace(/_/g, ' ')}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {platformIcons[content.platform]} {content.platform}
-              </Badge>
-              {content.variations?.length > 0 && (
-                <Badge className="bg-blue-500/20 text-blue-400 text-xs">
-                  {content.variations.length} variations
-                </Badge>
-              )}
-            </div>
+const ContentCard = ({ content, onPreview, onDelete }) => (
+  <Card className="bg-gray-800 border-gray-700 p-4 hover:border-gray-600 transition-all">
+    <div className="space-y-3">
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold truncate">{content.title}</h3>
+          <div className="flex items-center gap-2 mt-2">
+            <Badge variant="outline" className="text-xs">
+              {content.type.replace(/_/g, ' ')}
+            </Badge>
+            <span className="text-xl">{platformIcons[content.platform] || "📱"}</span>
           </div>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => onDelete(content)}
-            className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
         </div>
-
-        <p className="text-sm text-gray-400 line-clamp-3">
-          {content.content}
-        </p>
-
-        {content.metadata?.hashtags && (
-          <div className="flex flex-wrap gap-1">
-            {content.metadata.hashtags.slice(0, 3).map((tag, i) => (
-              <Badge key={i} variant="outline" className="text-xs">
-                #{tag}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        <div className="flex gap-2 pt-2">
-          <Button
-            size="sm"
-            onClick={() => onPreview(content)}
-            className="flex-1 bg-blue-600 hover:bg-blue-700"
-          >
-            <Eye className="w-3 h-3 mr-2" />
-            Preview
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => onDelete(content)}
+          className="text-red-400 hover:text-red-300"
+        >
+          <Trash2 className="w-4 h-4" />
+        </Button>
       </div>
-    </Card>
-  );
-};
+      
+      <p className="text-sm text-gray-400 line-clamp-2">
+        {content.content.substring(0, 100)}...
+      </p>
+
+      {content.metadata?.hashtags && (
+        <div className="flex flex-wrap gap-1">
+          {content.metadata.hashtags.slice(0, 3).map((tag, i) => (
+            <Badge key={i} className="bg-blue-500/20 text-blue-400 text-xs">
+              #{tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      <Button
+        size="sm"
+        onClick={() => onPreview(content)}
+        className="w-full bg-blue-600 hover:bg-blue-700"
+      >
+        <Eye className="w-3 h-3 mr-2" />
+        View & Manage
+      </Button>
+    </div>
+  </Card>
+);
 
 export default function ContentCreator() {
   const [contents, setContents] = useState([]);
   const [brandKits, setBrandKits] = useState([]);
   const [selectedBrandKit, setSelectedBrandKit] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("all");
-  const [previewContent, setPreviewContent] = useState(null);
+  const [activeTab, setActiveTab] = useState("assistant");
+  const [previewingContent, setPreviewingContent] = useState(null);
+  const [selectedContentForTools, setSelectedContentForTools] = useState(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [contentsData, brandKitsData] = await Promise.all([
-        base44.entities.ContentPiece.list("-created_date"),
+      const [contentData, brandKitData] = await Promise.all([
+        base44.entities.ContentPiece.list("-created_date", 50),
         base44.entities.BrandKit.list()
       ]);
-      setContents(contentsData);
-      setBrandKits(brandKitsData);
-      if (brandKitsData.length > 0 && !selectedBrandKit) {
-        setSelectedBrandKit(brandKitsData[0].id);
+      setContents(contentData);
+      setBrandKits(brandKitData);
+      if (brandKitData.length > 0 && !selectedBrandKit) {
+        setSelectedBrandKit(brandKitData[0]);
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -119,32 +106,44 @@ export default function ContentCreator() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const handleDelete = async (content) => {
-    if (!confirm(`Delete "${content.title}"?`)) return;
-    
+    if (!confirm("Are you sure you want to delete this content?")) return;
     try {
       await base44.entities.ContentPiece.delete(content.id);
-      fetchData();
+      setContents(contents.filter(c => c.id !== content.id));
     } catch (error) {
-      console.error("Failed to delete content:", error);
-      alert("Failed to delete content. Please try again.");
+      console.error("Failed to delete:", error);
     }
   };
 
-  const filteredContents = activeTab === "all" 
-    ? contents 
-    : contents.filter(c => c.type === activeTab);
+  const handleSuggestionSelect = (suggestion) => {
+    // Redirect to appropriate generator based on suggestion type
+    if (suggestion.type === 'video_script') {
+      setActiveTab("video");
+    } else if (suggestion.type === 'meme') {
+      setActiveTab("meme");
+    }
+  };
 
   const stats = {
     total: contents.length,
-    video_scripts: contents.filter(c => c.type === "video_script").length,
-    memes: contents.filter(c => c.type === "meme").length,
-    social_posts: contents.filter(c => c.type === "social_post").length
+    videoScripts: contents.filter(c => c.type === 'video_script').length,
+    memes: contents.filter(c => c.type === 'meme' || c.type === 'graphic').length,
+    social: contents.filter(c => c.type === 'social_post').length
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <Skeleton className="h-16 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -154,118 +153,227 @@ export default function ContentCreator() {
           <span>Content Creator Studio</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          AI-powered video scripts, memes, social graphics, and A/B testing for maximum engagement
+          AI-powered content creation with smart suggestions, repurposing, and A/B testing
         </p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
           <div className="text-2xl font-bold text-purple-400">{stats.total}</div>
           <div className="text-sm text-gray-400">Total Content</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-red-400">{stats.video_scripts}</div>
+          <div className="text-2xl font-bold text-red-400">{stats.videoScripts}</div>
           <div className="text-sm text-gray-400">Video Scripts</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
           <div className="text-2xl font-bold text-yellow-400">{stats.memes}</div>
-          <div className="text-sm text-gray-400">Memes</div>
+          <div className="text-sm text-gray-400">Memes & Graphics</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-blue-400">{stats.social_posts}</div>
+          <div className="text-2xl font-bold text-blue-400">{stats.social}</div>
           <div className="text-sm text-gray-400">Social Posts</div>
         </div>
       </div>
 
-      {previewContent ? (
-        <div className="space-y-6">
-          <Button
-            onClick={() => setPreviewContent(null)}
-            variant="outline"
-          >
-            ← Back to Content
-          </Button>
-          <ContentPreview
-            content={previewContent}
-            onVariationsGenerated={() => fetchData()}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-gray-800 grid grid-cols-3 lg:grid-cols-6 w-full">
+          <TabsTrigger value="assistant">
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI Assistant
+          </TabsTrigger>
+          <TabsTrigger value="video">
+            <Video className="w-4 h-4 mr-2" />
+            Video Script
+          </TabsTrigger>
+          <TabsTrigger value="meme">
+            <Smile className="w-4 h-4 mr-2" />
+            Meme
+          </TabsTrigger>
+          <TabsTrigger value="repurpose">
+            <Recycle className="w-4 h-4 mr-2" />
+            Repurpose
+          </TabsTrigger>
+          <TabsTrigger value="abtesting">
+            <GitBranch className="w-4 h-4 mr-2" />
+            A/B Testing
+          </TabsTrigger>
+          <TabsTrigger value="library">
+            <FileText className="w-4 h-4 mr-2" />
+            Library
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="assistant" className="space-y-6">
+          <AIContentAssistant
+            brandKit={selectedBrandKit}
+            recentContent={contents}
+            onSuggestionSelect={handleSuggestionSelect}
           />
-        </div>
-      ) : (
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="bg-gray-800">
-            <TabsTrigger value="all">All Content ({contents.length})</TabsTrigger>
-            <TabsTrigger value="video_script">
-              <Video className="w-4 h-4 mr-2" />
-              Video Scripts
-            </TabsTrigger>
-            <TabsTrigger value="meme">
-              <Smile className="w-4 h-4 mr-2" />
-              Memes
-            </TabsTrigger>
-          </TabsList>
+        </TabsContent>
 
-          <TabsContent value="all" className="space-y-6">
-            <div className="flex gap-4">
-              <Button onClick={() => setActiveTab("video_script")} className="flex-1 bg-red-600 hover:bg-red-700">
-                <Video className="w-4 h-4 mr-2" />
-                Create Video Script
-              </Button>
-              <Button onClick={() => setActiveTab("meme")} className="flex-1 bg-yellow-600 hover:bg-yellow-700">
-                <Smile className="w-4 h-4 mr-2" />
-                Generate Meme
-              </Button>
-            </div>
+        <TabsContent value="video" className="space-y-6">
+          <VideoScriptGenerator
+            brandKitId={selectedBrandKit?.id}
+            onScriptGenerated={(script) => {
+              fetchData();
+              setActiveTab("library");
+            }}
+          />
+        </TabsContent>
 
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <Skeleton key={i} className="h-64 rounded-lg" />
-                ))}
-              </div>
-            ) : filteredContents.length === 0 ? (
-              <div className="text-center py-12 bg-gray-800 rounded-lg border border-gray-700">
-                <FileText className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-400 mb-2">No content yet</h3>
-                <p className="text-gray-500 mb-6">
-                  Start creating amazing content with AI
+        <TabsContent value="meme" className="space-y-6">
+          <MemeGenerator
+            brandKitId={selectedBrandKit?.id}
+            onMemeGenerated={(meme) => {
+              fetchData();
+              setActiveTab("library");
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="repurpose" className="space-y-6">
+          {selectedContentForTools ? (
+            <>
+              <Button
+                onClick={() => setSelectedContentForTools(null)}
+                variant="outline"
+                className="mb-4"
+              >
+                ← Back to Content Selection
+              </Button>
+              <ContentRepurposingTool
+                content={selectedContentForTools}
+                onRepurposed={(newContent) => {
+                  fetchData();
+                  setSelectedContentForTools(null);
+                }}
+              />
+            </>
+          ) : (
+            <Card className="bg-gray-800 border-gray-700 p-6">
+              <h3 className="text-lg font-semibold mb-4">Select Content to Repurpose</h3>
+              {contents.length === 0 ? (
+                <p className="text-center text-gray-400 py-8">
+                  No content available. Create some content first!
                 </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredContents.map((content) => (
-                  <ContentCard
-                    key={content.id}
-                    content={content}
-                    onPreview={setPreviewContent}
-                    onDelete={handleDelete}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {contents.map((content) => (
+                    <Card
+                      key={content.id}
+                      className="bg-gray-900 border-gray-700 p-4 cursor-pointer hover:border-gray-600 transition-all"
+                      onClick={() => setSelectedContentForTools(content)}
+                    >
+                      <h4 className="font-semibold mb-2 truncate">{content.title}</h4>
+                      <Badge variant="outline" className="text-xs mb-2">
+                        {content.type.replace(/_/g, ' ')}
+                      </Badge>
+                      <p className="text-sm text-gray-400 line-clamp-2">
+                        {content.content.substring(0, 80)}...
+                      </p>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+        </TabsContent>
 
-          <TabsContent value="video_script" className="space-y-6">
-            <VideoScriptGenerator
-              brandKitId={selectedBrandKit}
-              onScriptGenerated={(script) => {
-                fetchData();
-                setActiveTab("all");
-              }}
-            />
-          </TabsContent>
+        <TabsContent value="abtesting" className="space-y-6">
+          {selectedContentForTools ? (
+            <>
+              <Button
+                onClick={() => setSelectedContentForTools(null)}
+                variant="outline"
+                className="mb-4"
+              >
+                ← Back to Content Selection
+              </Button>
+              <ABTestingGenerator
+                baseContent={selectedContentForTools}
+                onVariationsGenerated={() => {
+                  fetchData();
+                }}
+              />
+            </>
+          ) : (
+            <Card className="bg-gray-800 border-gray-700 p-6">
+              <h3 className="text-lg font-semibold mb-4">Select Content for A/B Testing</h3>
+              {contents.length === 0 ? (
+                <p className="text-center text-gray-400 py-8">
+                  No content available. Create some content first!
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {contents.map((content) => (
+                    <Card
+                      key={content.id}
+                      className="bg-gray-900 border-gray-700 p-4 cursor-pointer hover:border-gray-600 transition-all"
+                      onClick={() => setSelectedContentForTools(content)}
+                    >
+                      <h4 className="font-semibold mb-2 truncate">{content.title}</h4>
+                      <Badge variant="outline" className="text-xs mb-2">
+                        {content.type.replace(/_/g, ' ')}
+                      </Badge>
+                      <p className="text-sm text-gray-400 line-clamp-2">
+                        {content.content.substring(0, 80)}...
+                      </p>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+        </TabsContent>
 
-          <TabsContent value="meme" className="space-y-6">
-            <MemeGenerator
-              brandKitId={selectedBrandKit}
-              onMemeGenerated={(meme) => {
-                fetchData();
-                setActiveTab("all");
-              }}
-            />
-          </TabsContent>
-        </Tabs>
-      )}
+        <TabsContent value="library" className="space-y-6">
+          {previewingContent ? (
+            <>
+              <Button
+                onClick={() => setPreviewingContent(null)}
+                variant="outline"
+                className="mb-4"
+              >
+                ← Back to Library
+              </Button>
+              <ContentPreview
+                content={previewingContent}
+                onVariationsGenerated={(variations) => {
+                  fetchData();
+                }}
+              />
+            </>
+          ) : (
+            <>
+              {contents.length === 0 ? (
+                <Card className="bg-gray-800 border-gray-700 p-12 text-center">
+                  <FileText className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No content yet</h3>
+                  <p className="text-gray-400 mb-6">
+                    Start creating content with our AI-powered tools
+                  </p>
+                  <Button onClick={() => setActiveTab("assistant")} className="bg-purple-600 hover:bg-purple-700">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Get AI Suggestions
+                  </Button>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {contents.map((content) => (
+                    <ContentCard
+                      key={content.id}
+                      content={content}
+                      onPreview={setPreviewingContent}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
