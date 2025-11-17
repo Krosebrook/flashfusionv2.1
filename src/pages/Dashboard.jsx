@@ -1,24 +1,33 @@
 "use client";
-import { useState, useEffect } from "react";
-import { User, UsageLog, Plugin, BrandKit } from "@/entities/all";
+import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
+  LayoutDashboard,
   Atom,
   Palette,
   Plug,
+  CreditCard,
   Zap,
+  ArrowRight,
   TrendingUp,
+  Calendar,
   Activity,
+  Users,
+  Target,
   BarChart3,
+  Workflow,
+  Clock,
+  Store,
+  FileText
 } from "lucide-react";
-import { format, subDays } from "date-fns";
+import { format, subDays, startOfWeek, endOfWeek } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-// Import our new components
 import UsageChart from "../components/dashboard/UsageChart";
 import CreditMeter from "../components/shared/CreditMeter";
 import FeatureCard from "../components/shared/FeatureCard";
@@ -89,6 +98,10 @@ export default function Dashboard() {
   const [recentActivity, setRecentActivity] = useState([]);
   const [pluginCount, setPluginCount] = useState(0);
   const [brandKitCount, setBrandKitCount] = useState(0);
+  const [collaborationCount, setCollaborationCount] = useState(0);
+  const [scheduleCount, setScheduleCount] = useState(0);
+  const [workflowCount, setWorkflowCount] = useState(0);
+  const [templateCount, setTemplateCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [timeRange, setTimeRange] = useState("7days");
@@ -97,17 +110,29 @@ export default function Dashboard() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [currentUser, usageLogs, plugins, brandKits] = await Promise.all([
-          User.me(),
-          UsageLog.list("-created_date", 100),
-          Plugin.list(),
-          BrandKit.list()
+        const [
+          currentUser, 
+          usageLogs, 
+          plugins, 
+          brandKits,
+          collaborations,
+          schedules,
+          workflows,
+          templates
+        ] = await Promise.all([
+          base44.auth.me(),
+          base44.entities.UsageLog.list("-created_date", 100),
+          base44.entities.Plugin.list(),
+          base44.entities.BrandKit.list(),
+          base44.entities.Collaboration.list(),
+          base44.entities.ContentSchedule.list(),
+          base44.entities.Workflow.list(),
+          base44.entities.AgentTemplate.list()
         ]);
         
         setUser(currentUser);
         setRecentActivity(usageLogs.slice(0, 10));
         
-        // Process usage data based on time range
         const days = timeRange === "7days" ? 7 : timeRange === "30days" ? 30 : 90;
         const startDate = subDays(new Date(), days);
         
@@ -128,6 +153,10 @@ export default function Dashboard() {
         setUsage(Object.values(formattedUsage).reverse());
         setPluginCount(plugins.length);
         setBrandKitCount(brandKits.length);
+        setCollaborationCount(collaborations.length);
+        setScheduleCount(schedules.filter(s => s.status === 'scheduled').length);
+        setWorkflowCount(workflows.length);
+        setTemplateCount(templates.length);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
       }
@@ -169,7 +198,6 @@ export default function Dashboard() {
   
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">
@@ -192,7 +220,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Credit Status Alert */}
       {stats.creditsRemaining < 100 && (
         <div className="bg-yellow-900/20 border border-yellow-700 text-yellow-300 p-4 rounded-lg">
           <div className="flex items-center justify-between">
@@ -217,7 +244,6 @@ export default function Dashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-8">
-          {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard 
               title="Credits Remaining" 
@@ -242,15 +268,45 @@ export default function Dashboard() {
               subtitle="AI generations"
             />
             <StatCard 
-              title="Available Tools" 
-              value={pluginCount + 2} 
-              icon={Plug} 
+              title="Active Workflows" 
+              value={workflowCount} 
+              icon={Workflow} 
               color="purple"
-              subtitle="Plugins + Generators"
+              subtitle="Orchestrations"
             />
           </div>
 
-          {/* Credit Meter */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <div className="flex items-center gap-3 mb-2">
+                <Users className="w-5 h-5 text-blue-400" />
+                <p className="font-semibold">Collaborations</p>
+              </div>
+              <p className="text-2xl font-bold">{collaborationCount}</p>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <div className="flex items-center gap-3 mb-2">
+                <Clock className="w-5 h-5 text-green-400" />
+                <p className="font-semibold">Scheduled Posts</p>
+              </div>
+              <p className="text-2xl font-bold">{scheduleCount}</p>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <div className="flex items-center gap-3 mb-2">
+                <Store className="w-5 h-5 text-purple-400" />
+                <p className="font-semibold">Templates</p>
+              </div>
+              <p className="text-2xl font-bold">{templateCount}</p>
+            </div>
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <div className="flex items-center gap-3 mb-2">
+                <Palette className="w-5 h-5 text-pink-400" />
+                <p className="font-semibold">Brand Kits</p>
+              </div>
+              <p className="text-2xl font-bold">{brandKitCount}</p>
+            </div>
+          </div>
+
           <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
             <h2 className="text-xl font-semibold mb-4">Credit Usage</h2>
             <CreditMeter 
@@ -259,34 +315,33 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Quick Actions */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <FeatureCard
-                title="Generate Feature"
-                description="Convert your ideas into production-ready code"
-                icon={Atom}
-                href={createPageUrl("FeatureGenerator")}
-                creditCost={50}
-                category="Development"
+                title="Agent Orchestration"
+                description="Build multi-agent workflows with visual designer"
+                icon={Workflow}
+                href={createPageUrl("AgentOrchestration")}
+                creditCost="Varies"
+                category="Automation"
                 isPopular={true}
               />
               <FeatureCard
-                title="Create Brand Kit"
-                description="Design a complete brand identity in minutes"
-                icon={Palette}
-                href={createPageUrl("BrandKitGenerator")}
-                creditCost={150}
-                category="Design"
+                title="Content Creator"
+                description="AI-powered content with scheduling and collaboration"
+                icon={FileText}
+                href={createPageUrl("ContentCreator")}
+                creditCost={50}
+                category="Content"
               />
               <FeatureCard
-                title="Run Plugin"
-                description="Use specialized AI tools for specific tasks"
-                icon={Plug}
-                href={createPageUrl("Plugins")}
-                creditCost={25}
-                category="Utilities"
+                title="Agent Marketplace"
+                description="Browse and install pre-built workflow templates"
+                icon={Store}
+                href={createPageUrl("AgentMarketplace")}
+                creditCost="Free"
+                category="Marketplace"
               />
             </div>
           </div>
@@ -307,7 +362,7 @@ export default function Dashboard() {
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <h3 className="text-lg font-semibold mb-4">Usage Breakdown</h3>
               <div className="space-y-4">
-                {['FeatureGenerator', 'BrandKitGenerator', 'PluginRunner'].map((feature) => {
+                {['FeatureGenerator', 'BrandKitGenerator', 'ContentCreator', 'AgentOrchestration'].map((feature) => {
                   const featureUsage = recentActivity.filter(a => a.feature === feature);
                   const totalCredits = featureUsage.reduce((sum, a) => sum + a.credits_used, 0);
                   const percentage = stats.totalCreditsUsed > 0 ? (totalCredits / stats.totalCreditsUsed) * 100 : 0;
@@ -337,33 +392,54 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold mb-4">All Features</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <FeatureCard
-                title="Advanced Feature Generator"
-                description="Generate complex full-stack features with multiple components"
-                icon={Atom}
-                href={createPageUrl("FeatureGenerator")}
-                creditCost="25-200"
-                category="Development"
+                title="Agent Orchestration"
+                description="Multi-agent workflow builder with real-time monitoring"
+                icon={Workflow}
+                href={createPageUrl("AgentOrchestration")}
+                creditCost="Variable"
+                category="Automation"
                 isPopular={true}
               />
               <FeatureCard
-                title="Smart Brand Kit"
-                description="AI-powered brand identity with multiple logo variations"
+                title="Collaboration Hub"
+                description="Real-time team collaboration on projects and content"
+                icon={Users}
+                href={createPageUrl("Collaboration")}
+                creditCost="Free"
+                category="Teamwork"
+              />
+              <FeatureCard
+                title="Content Scheduling"
+                description="Schedule and auto-publish content across platforms"
+                icon={Clock}
+                href={createPageUrl("ContentScheduling")}
+                creditCost="Free"
+                category="Management"
+              />
+              <FeatureCard
+                title="Agent Marketplace"
+                description="Install pre-built workflows from the community"
+                icon={Store}
+                href={createPageUrl("AgentMarketplace")}
+                creditCost="Varies"
+                category="Marketplace"
+              />
+              <FeatureCard
+                title="Feature Generator"
+                description="Convert ideas into production-ready code"
+                icon={Atom}
+                href={createPageUrl("FeatureGenerator")}
+                creditCost={50}
+                category="Development"
+              />
+              <FeatureCard
+                title="Brand Kit Generator"
+                description="AI-powered brand identity creation"
                 icon={Palette}
                 href={createPageUrl("BrandKitGenerator")}
-                creditCost={200}
+                creditCost={150}
                 category="Design"
               />
-              {Array.from({ length: pluginCount }, (_, i) => (
-                <FeatureCard
-                  key={i}
-                  title="AI Plugin"
-                  description="Specialized AI tool for specific tasks"
-                  icon={Plug}
-                  href={createPageUrl("Plugins")}
-                  creditCost={25}
-                  category="Utilities"
-                />
-              ))}
             </div>
           </div>
         </TabsContent>
