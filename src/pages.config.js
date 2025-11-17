@@ -9,7 +9,10 @@ import EcommerceSuite from './pages/EcommerceSuite';
 import ContentCreator from './pages/ContentCreator';
 import Analytics from './pages/Analytics';
 import AgentOrchestration from './pages/AgentOrchestration';
-import Layout from './Layout.jsx';
+import Collaboration from './pages/Collaboration';
+import ContentScheduling from './pages/ContentScheduling';
+import AgentMarketplace from './pages/AgentMarketplace';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -24,10 +27,13 @@ export const PAGES = {
     "ContentCreator": ContentCreator,
     "Analytics": Analytics,
     "AgentOrchestration": AgentOrchestration,
+    "Collaboration": Collaboration,
+    "ContentScheduling": ContentScheduling,
+    "AgentMarketplace": AgentMarketplace,
 }
 
 export const pagesConfig = {
     mainPage: "Dashboard",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };

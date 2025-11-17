@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -21,7 +20,9 @@ import {
   Settings,
   Users,
   BarChart3,
-  Workflow
+  Workflow,
+  Clock,
+  Store
 } from "lucide-react";
 
 const navigationItems = [
@@ -33,6 +34,9 @@ const navigationItems = [
   { name: "BrandKit Generator", href: createPageUrl("BrandKitGenerator"), icon: Palette },
   { name: "E-commerce Suite", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
   { name: "Content Creator", href: createPageUrl("ContentCreator"), icon: FileText },
+  { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users },
+  { name: "Content Scheduling", href: createPageUrl("ContentScheduling"), icon: Clock },
+  { name: "Agent Marketplace", href: createPageUrl("AgentMarketplace"), icon: Store },
   { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
   { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
   { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
