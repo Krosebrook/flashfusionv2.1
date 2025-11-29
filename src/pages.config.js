@@ -12,6 +12,7 @@ import AgentOrchestration from './pages/AgentOrchestration';
 import Collaboration from './pages/Collaboration';
 import ContentScheduling from './pages/ContentScheduling';
 import AgentMarketplace from './pages/AgentMarketplace';
+import WSJFPrioritization from './pages/WSJFPrioritization';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +31,7 @@ export const PAGES = {
     "Collaboration": Collaboration,
     "ContentScheduling": ContentScheduling,
     "AgentMarketplace": AgentMarketplace,
+    "WSJFPrioritization": WSJFPrioritization,
 }
 
 export const pagesConfig = {
