@@ -22,7 +22,8 @@ import {
   BarChart3,
   Workflow,
   Clock,
-  Store
+  Store,
+  ArrowUpDown
 } from "lucide-react";
 
 const navigationItems = [
@@ -37,6 +38,7 @@ const navigationItems = [
   { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users },
   { name: "Content Scheduling", href: createPageUrl("ContentScheduling"), icon: Clock },
   { name: "Agent Marketplace", href: createPageUrl("AgentMarketplace"), icon: Store },
+  { name: "WSJF Prioritization", href: createPageUrl("WSJFPrioritization"), icon: ArrowUpDown },
   { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
   { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
   { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
