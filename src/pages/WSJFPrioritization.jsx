@@ -12,13 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Plus, Search, ArrowUpDown, LayoutGrid, List,
-  TrendingUp, Clock, Shield, Box
+  TrendingUp, Clock, Shield, Box, BarChart3
 } from "lucide-react";
 
 import WSJFCard from "../components/wsjf/WSJFCard";
 import WSJFDialog from "../components/wsjf/WSJFDialog";
+import WSJFAnalytics from "../components/wsjf/WSJFAnalytics";
 
 export default function WSJFPrioritization() {
   const [items, setItems] = useState([]);
@@ -31,6 +33,7 @@ export default function WSJFPrioritization() {
   const [sortBy, setSortBy] = useState("wsjf_desc");
   const [viewMode, setViewMode] = useState("grid");
   const [currentUser, setCurrentUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("items");
 
   useEffect(() => {
     fetchData();
@@ -184,110 +187,129 @@ export default function WSJFPrioritization() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-gray-800 border-gray-700 p-4">
-          <div className="text-2xl font-bold text-blue-400">{stats.total}</div>
-          <div className="text-sm text-gray-400">Total Items</div>
-        </Card>
-        <Card className="bg-gray-800 border-gray-700 p-4">
-          <div className="text-2xl font-bold text-purple-400">{stats.avgScore}</div>
-          <div className="text-sm text-gray-400">Avg WSJF Score</div>
-        </Card>
-        <Card className="bg-gray-800 border-gray-700 p-4">
-          <div className="text-2xl font-bold text-yellow-400">{stats.inProgress}</div>
-          <div className="text-sm text-gray-400">In Progress</div>
-        </Card>
-        <Card className="bg-gray-800 border-gray-700 p-4">
-          <div className="text-2xl font-bold text-green-400">{stats.ready}</div>
-          <div className="text-sm text-gray-400">Ready</div>
-        </Card>
-      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-gray-800 mb-6">
+          <TabsTrigger value="items">
+            <ArrowUpDown className="w-4 h-4 mr-2" />
+            Items ({items.length})
+          </TabsTrigger>
+          <TabsTrigger value="analytics">
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Drift Analytics
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="flex flex-1 gap-3 w-full md:w-auto">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input
-              placeholder="Search items..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-gray-800 border-gray-700"
-            />
+        <TabsContent value="items" className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="bg-gray-800 border-gray-700 p-4">
+              <div className="text-2xl font-bold text-blue-400">{stats.total}</div>
+              <div className="text-sm text-gray-400">Total Items</div>
+            </Card>
+            <Card className="bg-gray-800 border-gray-700 p-4">
+              <div className="text-2xl font-bold text-purple-400">{stats.avgScore}</div>
+              <div className="text-sm text-gray-400">Avg WSJF Score</div>
+            </Card>
+            <Card className="bg-gray-800 border-gray-700 p-4">
+              <div className="text-2xl font-bold text-yellow-400">{stats.inProgress}</div>
+              <div className="text-sm text-gray-400">In Progress</div>
+            </Card>
+            <Card className="bg-gray-800 border-gray-700 p-4">
+              <div className="text-2xl font-bold text-green-400">{stats.ready}</div>
+              <div className="text-sm text-gray-400">Ready</div>
+            </Card>
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40 bg-gray-800 border-gray-700">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="backlog">Backlog</SelectItem>
-              <SelectItem value="ready">Ready</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="done">Done</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-40 bg-gray-800 border-gray-700">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="wsjf_desc">Highest WSJF</SelectItem>
-              <SelectItem value="wsjf_asc">Lowest WSJF</SelectItem>
-              <SelectItem value="title">Title A-Z</SelectItem>
-              <SelectItem value="newest">Newest First</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-          >
-            {viewMode === "grid" ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
-          </Button>
-          <Button 
-            onClick={() => { setEditingItem(null); setShowDialog(true); }}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Item
-          </Button>
-        </div>
-      </div>
 
-      {filteredItems.length === 0 ? (
-        <Card className="bg-gray-800 border-gray-700 p-12 text-center">
-          <ArrowUpDown className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2">No items yet</h3>
-          <p className="text-gray-400 mb-6">
-            Start prioritizing by adding your first WSJF item
-          </p>
-          <Button 
-            onClick={() => { setEditingItem(null); setShowDialog(true); }}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add First Item
-          </Button>
-        </Card>
-      ) : (
-        <div className={viewMode === "grid" 
-          ? "grid grid-cols-1 md:grid-cols-2 gap-6" 
-          : "space-y-4"
-        }>
-          {filteredItems.map((item) => (
-            <WSJFCard
-              key={item.id}
-              item={item}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              history={getItemHistory(item.id)}
-            />
-          ))}
-        </div>
-      )}
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex flex-1 gap-3 w-full md:w-auto">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder="Search items..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-gray-800 border-gray-700"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-40 bg-gray-800 border-gray-700">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="backlog">Backlog</SelectItem>
+                  <SelectItem value="ready">Ready</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                  <SelectItem value="done">Done</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-40 bg-gray-800 border-gray-700">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="wsjf_desc">Highest WSJF</SelectItem>
+                  <SelectItem value="wsjf_asc">Lowest WSJF</SelectItem>
+                  <SelectItem value="title">Title A-Z</SelectItem>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+              >
+                {viewMode === "grid" ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
+              </Button>
+              <Button 
+                onClick={() => { setEditingItem(null); setShowDialog(true); }}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Item
+              </Button>
+            </div>
+          </div>
+
+          {filteredItems.length === 0 ? (
+            <Card className="bg-gray-800 border-gray-700 p-12 text-center">
+              <ArrowUpDown className="w-16 h-16 mx-auto text-gray-600 mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No items yet</h3>
+              <p className="text-gray-400 mb-6">
+                Start prioritizing by adding your first WSJF item
+              </p>
+              <Button 
+                onClick={() => { setEditingItem(null); setShowDialog(true); }}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add First Item
+              </Button>
+            </Card>
+          ) : (
+            <div className={viewMode === "grid" 
+              ? "grid grid-cols-1 md:grid-cols-2 gap-6" 
+              : "space-y-4"
+            }>
+              {filteredItems.map((item) => (
+                <WSJFCard
+                  key={item.id}
+                  item={item}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  history={getItemHistory(item.id)}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <WSJFAnalytics items={items} history={history} />
+        </TabsContent>
+      </Tabs>
 
       {showDialog && (
         <WSJFDialog
