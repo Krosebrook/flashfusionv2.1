@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plug, Plus, ShoppingBag, Store, Package, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import PlatformConnectionCard from "../components/integrations/PlatformConnectionCard";
+import SyncHistory from "../components/integrations/SyncHistory";
 
 const AVAILABLE_PLATFORMS = [
   "Shopify",
@@ -162,17 +163,21 @@ export default function Integrations() {
           </p>
         </Card>
       ) : (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Connected Platforms</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {connections.map(connection => (
-              <PlatformConnectionCard
-                key={connection.id}
-                connection={connection}
-                onUpdate={fetchConnections}
-              />
-            ))}
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Connected Platforms</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {connections.map(connection => (
+                <PlatformConnectionCard
+                  key={connection.id}
+                  connection={connection}
+                  onUpdate={fetchConnections}
+                />
+              ))}
+            </div>
           </div>
+
+          <SyncHistory />
         </div>
       )}
     </div>

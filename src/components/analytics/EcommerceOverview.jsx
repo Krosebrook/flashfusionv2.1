@@ -7,6 +7,12 @@ import { DollarSign, Package, TrendingUp, ShoppingCart } from "lucide-react";
 export default function EcommerceOverview({ products }) {
   const totalProducts = products.length;
   const publishedProducts = products.filter(p => p.status === 'published').length;
+  const lowStockProducts = products.filter(p => 
+    p.inventory !== undefined && p.inventory <= (p.reorder_point || 10)
+  ).length;
+  const outOfStockProducts = products.filter(p => 
+    p.inventory !== undefined && p.inventory === 0
+  ).length;
   const totalValue = products.reduce((sum, p) => sum + (p.price || 0), 0);
   const avgPrice = totalProducts > 0 ? totalValue / totalProducts : 0;
 
@@ -35,7 +41,7 @@ export default function EcommerceOverview({ products }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         <Card className="bg-gray-800 border-gray-700 p-4">
           <div className="flex items-center justify-between">
             <div>
@@ -53,6 +59,26 @@ export default function EcommerceOverview({ products }) {
               <p className="text-2xl font-bold text-green-400">{publishedProducts}</p>
             </div>
             <ShoppingCart className="w-8 h-8 text-green-400 opacity-50" />
+          </div>
+        </Card>
+
+        <Card className={`border-gray-700 p-4 ${lowStockProducts > 0 ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-gray-800'}`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Low Stock</p>
+              <p className="text-2xl font-bold text-yellow-400">{lowStockProducts}</p>
+            </div>
+            <Package className="w-8 h-8 text-yellow-400 opacity-50" />
+          </div>
+        </Card>
+
+        <Card className={`border-gray-700 p-4 ${outOfStockProducts > 0 ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-800'}`}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">Out of Stock</p>
+              <p className="text-2xl font-bold text-red-400">{outOfStockProducts}</p>
+            </div>
+            <Package className="w-8 h-8 text-red-400 opacity-50" />
           </div>
         </Card>
 
