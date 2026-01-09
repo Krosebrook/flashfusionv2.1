@@ -16,6 +16,9 @@ import ContentPreview from "../components/content/ContentPreview";
 import AIContentAssistant from "../components/content/AIContentAssistant";
 import ContentRepurposingTool from "../components/content/ContentRepurposingTool";
 import ABTestingGenerator from "../components/content/ABTestingGenerator";
+import SocialMediaCopyGenerator from "../components/content/SocialMediaCopyGenerator";
+import EmailMarketingGenerator from "../components/content/EmailMarketingGenerator";
+import AdCopyGenerator from "../components/content/AdCopyGenerator";
 
 const platformIcons = {
   Instagram: "📸",
@@ -177,10 +180,22 @@ export default function ContentCreator() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-gray-800 grid grid-cols-3 lg:grid-cols-6 w-full">
+        <TabsList className="bg-gray-800 grid grid-cols-3 lg:grid-cols-9 w-full">
           <TabsTrigger value="assistant">
             <Sparkles className="w-4 h-4 mr-2" />
             AI Assistant
+          </TabsTrigger>
+          <TabsTrigger value="social">
+            <Target className="w-4 h-4 mr-2" />
+            Social Media
+          </TabsTrigger>
+          <TabsTrigger value="email">
+            <FileText className="w-4 h-4 mr-2" />
+            Email
+          </TabsTrigger>
+          <TabsTrigger value="ads">
+            <Target className="w-4 h-4 mr-2" />
+            Ads
           </TabsTrigger>
           <TabsTrigger value="video">
             <Video className="w-4 h-4 mr-2" />
@@ -209,6 +224,36 @@ export default function ContentCreator() {
             brandKit={selectedBrandKit}
             recentContent={contents}
             onSuggestionSelect={handleSuggestionSelect}
+          />
+        </TabsContent>
+
+        <TabsContent value="social" className="space-y-6">
+          <SocialMediaCopyGenerator
+            brandKitId={selectedBrandKit?.id}
+            onCopyGenerated={() => {
+              fetchData();
+              setActiveTab("library");
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-6">
+          <EmailMarketingGenerator
+            brandKitId={selectedBrandKit?.id}
+            onEmailGenerated={() => {
+              fetchData();
+              setActiveTab("library");
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="ads" className="space-y-6">
+          <AdCopyGenerator
+            brandKitId={selectedBrandKit?.id}
+            onAdGenerated={() => {
+              fetchData();
+              setActiveTab("library");
+            }}
           />
         </TabsContent>
 
