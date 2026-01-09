@@ -163,8 +163,20 @@ export default function Analytics() {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="bg-gray-800">
+        <TabsList className="bg-gray-800 overflow-x-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="social">
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Social Media
+          </TabsTrigger>
+          <TabsTrigger value="email">
+            <Mail className="w-4 h-4 mr-2" />
+            Email
+          </TabsTrigger>
+          <TabsTrigger value="ads">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Ads
+          </TabsTrigger>
           <TabsTrigger value="workflows">
             <Workflow className="w-4 h-4 mr-2" />
             Workflows
