@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
   FileText, Plus, Video, Smile, Eye, Trash2, 
-  Sparkles, Recycle, GitBranch
+  Sparkles, Recycle, GitBranch, Target
 } from "lucide-react";
 
 import VideoScriptGenerator from "../components/content/VideoScriptGenerator";
