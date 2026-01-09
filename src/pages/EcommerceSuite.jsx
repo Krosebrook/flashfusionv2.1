@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Package, TrendingUp, Share2, Plus } from "lucide-react";
+import { ShoppingCart, Package, TrendingUp, Share2, Plus, Sparkles, Image as ImageIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import AIProductGenerator from "../components/ecommerce/AIProductGenerator";
@@ -12,6 +12,7 @@ import BulkProductImporter from "../components/ecommerce/BulkProductImporter";
 import PlatformPublisher from "../components/ecommerce/PlatformPublisher";
 import InventoryManager from "../components/ecommerce/InventoryManager";
 import AIDescriptionGenerator from "../components/ecommerce/AIDescriptionGenerator";
+import AIImageGenerator from "../components/ecommerce/AIImageGenerator";
 
 const platforms = {
   Shopify: { icon: ShoppingCart, color: "text-green-400" },
@@ -28,6 +29,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
   const [showPublisher, setShowPublisher] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [showDescGenerator, setShowDescGenerator] = useState(false);
+  const [showImageGenerator, setShowImageGenerator] = useState(false);
 
   const isLowStock = product.inventory !== undefined && product.inventory <= (product.reorder_point || 10);
   const isOutOfStock = product.inventory !== undefined && product.inventory === 0;
@@ -104,14 +106,31 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
               variant="outline"
               className="flex-1"
               onClick={() => {
+                setShowImageGenerator(!showImageGenerator);
+                setShowDescGenerator(false);
+                setShowPublisher(false);
+                setShowInventory(false);
+              }}
+            >
+              <ImageIcon className="w-3 h-3 mr-2" />
+              {showImageGenerator ? "Hide" : "Images"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1"
+              onClick={() => {
                 setShowDescGenerator(!showDescGenerator);
+                setShowImageGenerator(false);
                 setShowPublisher(false);
                 setShowInventory(false);
               }}
             >
               <Sparkles className="w-3 h-3 mr-2" />
-              {showDescGenerator ? "Hide" : "AI Desc"}
+              {showDescGenerator ? "Hide" : "Desc"}
             </Button>
+          </div>
+          <div className="flex gap-2">
             <Button
               size="sm"
               variant="outline"
@@ -120,6 +139,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
                 setShowPublisher(!showPublisher);
                 setShowInventory(false);
                 setShowDescGenerator(false);
+                setShowImageGenerator(false);
               }}
             >
               <Share2 className="w-3 h-3 mr-2" />
@@ -133,6 +153,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
                 setShowInventory(!showInventory);
                 setShowPublisher(false);
                 setShowDescGenerator(false);
+                setShowImageGenerator(false);
               }}
             >
               <Package className="w-3 h-3 mr-2" />
@@ -140,6 +161,19 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
             </Button>
           </div>
         </div>
+
+        {showImageGenerator && (
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <AIImageGenerator
+              product={product}
+              brandKit={brandKit}
+              onImagesGenerated={() => {
+                setShowImageGenerator(false);
+                onRefresh?.();
+              }}
+            />
+          </div>
+        )}
 
         {showDescGenerator && (
           <div className="mt-4 pt-4 border-t border-gray-700">
