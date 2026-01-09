@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Share2, ShoppingBag, Store, Facebook, 
-  Loader2, CheckCircle2, ExternalLink, Package 
+  Loader2, CheckCircle2, ExternalLink, Package, RefreshCw, AlertCircle
 } from "lucide-react";
 
 const platforms = [
@@ -71,6 +72,9 @@ export default function PlatformPublisher({ product, onPublished }) {
   const [selectedPlatforms, setSelectedPlatforms] = useState([]);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishResults, setPublishResults] = useState(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState(null);
+  const [error, setError] = useState(null);
 
   const togglePlatform = (platformId) => {
     setSelectedPlatforms(prev =>
@@ -85,52 +89,101 @@ export default function PlatformPublisher({ product, onPublished }) {
 
     setIsPublishing(true);
     setPublishResults(null);
+    setError(null);
 
     try {
-      // Simulate publishing to each platform
-      const results = {};
-      for (const platformId of selectedPlatforms) {
-        // In a real implementation, this would call actual platform APIs
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        const mockProductId = `${platformId.toLowerCase()}_${Date.now()}`;
-        results[platformId] = {
-          success: true,
-          productId: mockProductId,
-          url: `https://${platformId.toLowerCase()}.com/product/${mockProductId}`
+      const response = await base44.asServiceRole.functions.invoke('publishProduct', {
+        productId: product.id,
+        platforms: selectedPlatforms
+      });
+
+      if (response.success) {
+        setPublishResults(response.results);
+        const updatedProduct = {
+          ...product,
+          platforms: [...new Set([...(product.platforms || []), ...selectedPlatforms])],
+          platform_ids: {
+            ...(product.platform_ids || {}),
+            ...Object.fromEntries(
+              Object.entries(response.results)
+                .filter(([, data]) => data.success)
+                .map(([platform, data]) => [platform, data.productId])
+            )
+          },
+          status: "published"
         };
+        onPublished?.(updatedProduct);
+        setSelectedPlatforms([]);
+      } else {
+        setError(response.error || 'Publishing failed');
       }
-
-      // Update product with platform IDs
-      const updatedProduct = {
-        ...product,
-        platforms: [...new Set([...(product.platforms || []), ...selectedPlatforms])],
-        platform_ids: {
-          ...(product.platform_ids || {}),
-          ...Object.fromEntries(
-            Object.entries(results).map(([platform, data]) => [platform, data.productId])
-          )
-        },
-        status: "published"
-      };
-
-      setPublishResults(results);
-      onPublished?.(updatedProduct);
-
-    } catch (error) {
-      console.error("Publishing failed:", error);
-      alert("Failed to publish to some platforms. Please try again.");
+    } catch (err) {
+      console.error("Publishing failed:", err);
+      setError(err.message || 'Failed to publish to platforms');
     }
 
     setIsPublishing(false);
   };
 
+  const handleSync = async () => {
+    if (!product.platforms || product.platforms.length === 0) return;
+
+    setIsSyncing(true);
+    setSyncStatus(null);
+    setError(null);
+
+    try {
+      const response = await base44.asServiceRole.functions.invoke('syncProductListings', {
+        productIds: [product.id],
+        action: 'sync'
+      });
+
+      if (response.success) {
+        setSyncStatus({
+          message: `Successfully synced to ${response.results.synced.length} platform(s)`,
+          timestamp: new Date().toLocaleTimeString()
+        });
+      } else {
+        setError(response.error || 'Sync failed');
+      }
+    } catch (err) {
+      console.error("Sync failed:", err);
+      setError(err.message || 'Failed to sync listings');
+    }
+
+    setIsSyncing(false);
+  };
+
   return (
     <div className="space-y-6">
+      {error && (
+        <Card className="bg-red-500/10 border-red-500/30 p-4 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-red-400 font-medium">Error</p>
+            <p className="text-red-300 text-sm">{error}</p>
+          </div>
+        </Card>
+      )}
+
       <Card className="bg-gray-800 border-gray-700 p-6">
-        <div className="flex items-center gap-2 mb-6">
-          <Share2 className="w-5 h-5 text-blue-400" />
-          <h3 className="text-xl font-semibold">Publish to Sales Channels</h3>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Share2 className="w-5 h-5 text-blue-400" />
+            <h3 className="text-xl font-semibold">Publish to Sales Channels</h3>
+          </div>
+          {product.platforms?.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSync}
+              disabled={isSyncing}
+              className="gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+              {isSyncing ? 'Syncing...' : 'Sync Listings'}
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
