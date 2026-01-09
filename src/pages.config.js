@@ -14,6 +14,7 @@ import Plugins from './pages/Plugins';
 import Projects from './pages/Projects';
 import UniversalGenerator from './pages/UniversalGenerator';
 import WSJFPrioritization from './pages/WSJFPrioritization';
+import TeamManagement from './pages/TeamManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "Projects": Projects,
     "UniversalGenerator": UniversalGenerator,
     "WSJFPrioritization": WSJFPrioritization,
+    "TeamManagement": TeamManagement,
 }
 
 export const pagesConfig = {
