@@ -1,10 +1,9 @@
-
 "use client";
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BarChart3, Users, FileText, Sparkles, ShoppingCart, Download, Workflow, Bot } from "lucide-react";
+import { BarChart3, Users, FileText, Sparkles, ShoppingCart, Download, Workflow, Bot, TrendingUp, Mail } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, subDays } from "date-fns";
 
@@ -15,6 +14,9 @@ import EcommerceOverview from "../components/analytics/EcommerceOverview";
 import CustomReport from "../components/analytics/CustomReport";
 import WorkflowPerformance from "../components/analytics/WorkflowPerformance";
 import AgentTaskPerformance from "../components/analytics/AgentTaskPerformance";
+import SocialMediaPerformance from "../components/analytics/SocialMediaPerformance";
+import EmailCampaignAnalytics from "../components/analytics/EmailCampaignAnalytics";
+import AdPerformanceMetrics from "../components/analytics/AdPerformanceMetrics";
 
 export default function Analytics() {
   const [isLoading, setIsLoading] = useState(true);
