@@ -287,6 +287,18 @@ export default function Analytics() {
           </div>
         </TabsContent>
 
+        <TabsContent value="social" className="space-y-6">
+          <SocialMediaPerformance />
+        </TabsContent>
+
+        <TabsContent value="email" className="space-y-6">
+          <EmailCampaignAnalytics />
+        </TabsContent>
+
+        <TabsContent value="ads" className="space-y-6">
+          <AdPerformanceMetrics />
+        </TabsContent>
+
         <TabsContent value="workflows" className="space-y-6">
           <WorkflowPerformance workflows={workflows} tasks={agentTasks} />
         </TabsContent>
