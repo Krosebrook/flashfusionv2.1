@@ -27,22 +27,23 @@ import {
 } from "lucide-react";
 
 const navigationItems = [
-  { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
-  { name: "Projects", href: createPageUrl("Projects"), icon: FolderOpen },
-  { name: "Agent Orchestration", href: createPageUrl("AgentOrchestration"), icon: Workflow },
-  { name: "Universal Generator", href: createPageUrl("UniversalGenerator"), icon: Rocket },
-  { name: "Feature Generator", href: createPageUrl("FeatureGenerator"), icon: Atom },
-  { name: "BrandKit Generator", href: createPageUrl("BrandKitGenerator"), icon: Palette },
-  { name: "E-commerce Suite", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
-  { name: "Content Creator", href: createPageUrl("ContentCreator"), icon: FileText },
-  { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users },
-  { name: "Content Scheduling", href: createPageUrl("ContentScheduling"), icon: Clock },
-  { name: "Agent Marketplace", href: createPageUrl("AgentMarketplace"), icon: Store },
-  { name: "WSJF Prioritization", href: createPageUrl("WSJFPrioritization"), icon: ArrowUpDown },
-  { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
-  { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
-  { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
-];
+        { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
+        { name: "Projects", href: createPageUrl("Projects"), icon: FolderOpen },
+        { name: "Agent Orchestration", href: createPageUrl("AgentOrchestration"), icon: Workflow },
+        { name: "Universal Generator", href: createPageUrl("UniversalGenerator"), icon: Rocket },
+        { name: "Feature Generator", href: createPageUrl("FeatureGenerator"), icon: Atom },
+        { name: "BrandKit Generator", href: createPageUrl("BrandKitGenerator"), icon: Palette },
+        { name: "E-commerce Suite", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
+        { name: "Content Creator", href: createPageUrl("ContentCreator"), icon: FileText },
+        { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users },
+        { name: "Content Scheduling", href: createPageUrl("ContentScheduling"), icon: Clock },
+        { name: "Agent Marketplace", href: createPageUrl("AgentMarketplace"), icon: Store },
+        { name: "WSJF Prioritization", href: createPageUrl("WSJFPrioritization"), icon: ArrowUpDown },
+        { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
+        { name: "Team Management", href: createPageUrl("TeamManagement"), icon: Users },
+        { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
+        { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
+      ];
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
