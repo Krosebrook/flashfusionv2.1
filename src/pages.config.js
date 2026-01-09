@@ -12,9 +12,10 @@ import FeatureGenerator from './pages/FeatureGenerator';
 import Home from './pages/Home';
 import Plugins from './pages/Plugins';
 import Projects from './pages/Projects';
+import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import TeamManagement from './pages/TeamManagement';
+import Integrations from './pages/Integrations';
 import __Layout from './Layout.jsx';
 
 
@@ -33,9 +34,10 @@ export const PAGES = {
     "Home": Home,
     "Plugins": Plugins,
     "Projects": Projects,
+    "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "WSJFPrioritization": WSJFPrioritization,
-    "TeamManagement": TeamManagement,
+    "Integrations": Integrations,
 }
 
 export const pagesConfig = {

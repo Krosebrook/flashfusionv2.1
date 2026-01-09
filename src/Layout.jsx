@@ -41,6 +41,7 @@ const navigationItems = [
         { name: "WSJF Prioritization", href: createPageUrl("WSJFPrioritization"), icon: ArrowUpDown },
         { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
         { name: "Team Management", href: createPageUrl("TeamManagement"), icon: Users },
+        { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug },
         { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
         { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
       ];
