@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -14,8 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Plus, Search, ArrowUpDown, LayoutGrid, List,
-  TrendingUp, Clock, Shield, Box, BarChart3
+  Plus, Search, ArrowUpDown, LayoutGrid, List, BarChart3
 } from "lucide-react";
 
 import WSJFCard from "../components/wsjf/WSJFCard";

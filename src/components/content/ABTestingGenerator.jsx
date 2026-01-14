@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { GitBranch, Loader2, Copy, CheckCircle2 } from "lucide-react";
+import { GitBranch, Loader2, CheckCircle2 } from "lucide-react";
 
 export default function ABTestingGenerator({ baseContent, onVariationsGenerated }) {
   const [numVariations, setNumVariations] = useState(3);

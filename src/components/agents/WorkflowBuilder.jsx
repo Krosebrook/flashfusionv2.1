@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Plus, Play, Save, Download, ArrowRight, 
+import { Play, Save, ArrowRight, 
   Bot, Code, FileText, Database, Image, ShoppingCart, GitBranch
 } from "lucide-react";
 

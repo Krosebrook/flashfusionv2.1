@@ -1,28 +1,22 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  LayoutDashboard,
   Atom,
   Palette,
-  Plug,
-  CreditCard,
   Zap,
-  ArrowRight,
   TrendingUp,
-  Calendar,
   Activity,
   Users,
-  Target,
   BarChart3,
   Workflow,
   Clock,
   Store,
   FileText
 } from "lucide-react";
-import { format, subDays, startOfWeek, endOfWeek } from "date-fns";
+import { format, subDays } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";

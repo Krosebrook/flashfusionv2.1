@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Sparkles, Palette, Type, Download, Loader2, 
-  Check, Image as ImageIcon, FileText, Zap
+  Sparkles, Download, Loader2, 
+  Check, Zap
 } from "lucide-react";
 
 import SocialMediaAssetGenerator from "../brandkit/SocialMediaAssetGenerator";

@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Sparkles, Image as ImageIcon, Loader2, Check, Download, Plus } from "lucide-react";
+import { Sparkles, Loader2, Check, Download, Plus } from "lucide-react";
 
 export default function AIImageGenerator({ product, brandKit, onImagesGenerated }) {
   const [isGenerating, setIsGenerating] = useState(false);

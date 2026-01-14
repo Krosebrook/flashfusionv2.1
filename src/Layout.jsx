@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User } from "@/entities/User";
+// Fixed: Import base44 client instead of non-existent @/entities/User
+import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,13 +12,11 @@ import {
   Plug,
   CreditCard,
   Menu,
-  X,
   Bot,
   Rocket,
   FolderOpen,
   ShoppingCart,
   FileText,
-  Settings,
   Users,
   BarChart3,
   Workflow,
@@ -54,7 +53,7 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const currentUser = await User.me();
+        const currentUser = await base44.auth.me();
         setUser(currentUser);
       } catch (error) {
         console.error("User not logged in");
@@ -122,7 +121,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
          ) : (
           <div className="text-center">
-            <Button onClick={() => User.login()} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            <Button onClick={() => base44.auth.login()} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
               Login
             </Button>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { User, UsageLog } from "@/entities/all";
+// Fixed: Import base44 client instead of non-existent @/entities/all
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Check, CreditCard } from "lucide-react";
 import {
@@ -52,8 +53,8 @@ export default function BillingPage() {
       setIsLoading(true);
       try {
           const [currentUser, usageLogs] = await Promise.all([
-              User.me(),
-              UsageLog.list("-created_date", 20)
+              base44.auth.me(),
+              base44.entities.UsageLog.list("-created_date", 20)
           ]);
           setUser(currentUser);
           setUsage(usageLogs);
@@ -69,7 +70,7 @@ export default function BillingPage() {
 
   const handleSelectPlan = async (planName) => {
       try {
-          await User.updateMyUserData({ plan: planName });
+          await base44.auth.updateMyUserData({ plan: planName });
           alert("Plan updated! Note: This is a demo and not connected to a real payment gateway.")
           await fetchData(); // Refresh data
       } catch (e) {

@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bot, Workflow, Activity, FolderOpen, Zap } from "lucide-react";
+import { Bot, Workflow, Activity, FolderOpen } from "lucide-react";
 
 import WorkflowBuilder from "../components/agents/WorkflowBuilder";
 import ActiveTaskMonitor from "../components/agents/ActiveTaskMonitor";

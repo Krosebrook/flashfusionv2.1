@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Project } from "@/entities/all";
+// Fixed: Import base44 client instead of non-existent @/entities/all
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -96,7 +97,7 @@ export default function ProjectsPage() {
     const fetchProjects = async () => {
       setIsLoading(true);
       try {
-        const data = await Project.list("-updated_date");
+        const data = await base44.entities.Project.list("-updated_date");
         setProjects(data);
         setFilteredProjects(data);
       } catch (error) {

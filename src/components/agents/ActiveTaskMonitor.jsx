@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
   Activity, CheckCircle2, XCircle, Clock, 
-  Loader2, AlertCircle, Play, Square 
+  Loader2, AlertCircle 
 } from "lucide-react";
 
 export default function ActiveTaskMonitor({ refreshTrigger }) {

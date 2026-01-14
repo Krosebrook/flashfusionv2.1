@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { TrendingUp, MessageCircle, Share2, Eye, ThumbsUp } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { TrendingUp, MessageCircle, Eye, ThumbsUp } from "lucide-react";
 
 const StatBadge = ({ label, value, icon: Icon, color }) => (
   <div className="flex items-center gap-3 p-3 bg-gray-900 rounded-lg border border-gray-700">

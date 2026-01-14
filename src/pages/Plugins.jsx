@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Plugin } from "@/entities/all";
+// Fixed: Import base44 client instead of non-existent @/entities/all
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -79,7 +80,7 @@ export default function PluginsPage() {
     const fetchPlugins = async () => {
       setIsLoading(true);
       try {
-        const data = await Plugin.list();
+        const data = await base44.entities.Plugin.list();
         setPlugins(data);
         setFilteredPlugins(data);
       } catch (error) {
