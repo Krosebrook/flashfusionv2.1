@@ -1,9 +1,8 @@
-import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Workflow, Clock, CheckCircle2, XCircle, Zap, AlertTriangle } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { Workflow, CheckCircle2, Zap, AlertTriangle } from "lucide-react";
 
 export default function WorkflowPerformance({ workflows, tasks }) {
   // Calculate workflow metrics

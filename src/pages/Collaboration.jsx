@@ -1,14 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Users, Plus, Share2, Eye, Edit, Clock, 
-  FileText, Package, Workflow as WorkflowIcon, Activity 
+  Users, Share2, 
+  FileText, Workflow as WorkflowIcon, Activity 
 } from "lucide-react";
 
 import CollaborationCard from "../components/collaboration/CollaborationCard";

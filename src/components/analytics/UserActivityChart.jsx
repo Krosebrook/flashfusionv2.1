@@ -1,6 +1,5 @@
-import React from "react";
 import { Card } from "@/components/ui/card";
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Users, TrendingUp, Clock } from "lucide-react";
 
 export default function UserActivityChart({ data, timeRange }) {

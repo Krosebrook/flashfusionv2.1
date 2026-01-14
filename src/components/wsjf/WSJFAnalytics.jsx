@@ -1,16 +1,15 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Legend, AreaChart, Area
 } from "recharts";
 import { 
   TrendingUp, TrendingDown, AlertTriangle, Activity,
-  ArrowUpDown, User, Calendar, Zap
+  ArrowUpDown, User
 } from "lucide-react";
-import { format, subDays, differenceInDays } from "date-fns";
+import { format, subDays } from "date-fns";
 
 const InsightCard = ({ title, value, subtitle, icon: Icon, color, alert }) => (
   <Card className={`bg-gray-800 border-gray-700 p-4 ${alert ? 'border-yellow-500' : ''}`}>

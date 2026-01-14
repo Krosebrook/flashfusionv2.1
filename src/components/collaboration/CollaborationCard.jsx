@@ -1,11 +1,8 @@
-import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { FileText, Package, Workflow, Eye, Users } from "lucide-react";
-import { createPageUrl } from "@/utils";
-import { Link } from "react-router-dom";
 
 const resourceIcons = {
   content: FileText,

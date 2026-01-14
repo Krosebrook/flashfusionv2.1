@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Package, AlertTriangle, TrendingUp, RefreshCw, 
+  Package, AlertTriangle, RefreshCw, 
   Plus, Minus, CheckCircle2 
 } from "lucide-react";
 

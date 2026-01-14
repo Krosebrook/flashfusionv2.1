@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, Loader2, Check, AlertCircle } from "lucide-react";
+import { Upload, FileText, Loader2, Check } from "lucide-react";
 
 export default function BulkProductImporter({ onProductsImported, brandKitId }) {
   const [file, setFile] = useState(null);
