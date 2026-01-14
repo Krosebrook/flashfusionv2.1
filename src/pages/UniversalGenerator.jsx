@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
-import { InvokeLLM } from "@/integrations/Core";
-import { Project, User, AgentTask, UsageLog } from "@/entities/all";
+// Fixed: Import from integrations.js instead of non-existent @/integrations/Core
+import { InvokeLLM } from "@/api/integrations";
+// Fixed: Import base44 client instead of non-existent @/entities/all
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -111,7 +113,7 @@ export default function UniversalGenerator() {
     const creditsToUse = calculateCredits();
 
     try {
-      const user = await User.me();
+      const user = await base44.auth.me();
       if (user.credits_remaining < creditsToUse) {
         setError(`Insufficient credits. You need ${creditsToUse} credits.`);
         setIsGenerating(false);
@@ -119,7 +121,7 @@ export default function UniversalGenerator() {
       }
 
       // Create project record
-      const project = await Project.create({
+      const project = await base44.entities.Project.create({
         name: projectData.name,
         description: projectData.description,
         type: projectData.type,
@@ -143,7 +145,7 @@ export default function UniversalGenerator() {
         setGenerationProgress(progress);
 
         // Create agent task
-        const task = await AgentTask.create({
+        const task = await base44.entities.AgentTask.create({
           project_id: project.id,
           agent_type: agent,
           task_description: `Generate ${agent.toLowerCase()} for ${projectData.name}`,
@@ -172,7 +174,7 @@ export default function UniversalGenerator() {
           
           const generatedCode = await InvokeLLM({ prompt: codePrompt });
           
-          await AgentTask.update(task.id, {
+          await base44.entities.AgentTask.update(task.id, {
             status: "completed",
             output_data: { code: generatedCode },
             credits_used: Math.round(creditsToUse * 0.6)
@@ -180,7 +182,7 @@ export default function UniversalGenerator() {
         } else {
           // Simulate other agents
           await new Promise(resolve => setTimeout(resolve, 1000));
-          await AgentTask.update(task.id, {
+          await base44.entities.AgentTask.update(task.id, {
             status: "completed",
             output_data: { result: `${agent} completed successfully` },
             credits_used: Math.round(creditsToUse * 0.05)
@@ -191,18 +193,18 @@ export default function UniversalGenerator() {
       }
 
       // Update project status
-      await Project.update(project.id, {
+      await base44.entities.Project.update(project.id, {
         status: "ready",
         generated_code: "// Generated project code...",
         agents_used: agentSequence
       });
 
       // Update user credits and log usage
-      await User.updateMyUserData({ 
+      await base44.auth.updateMyUserData({ 
         credits_remaining: user.credits_remaining - creditsToUse 
       });
       
-      await UsageLog.create({
+      await base44.entities.UsageLog.create({
         feature: "UniversalGenerator",
         credits_used: creditsToUse,
         details: `Generated ${projectData.type} project: ${projectData.name}`

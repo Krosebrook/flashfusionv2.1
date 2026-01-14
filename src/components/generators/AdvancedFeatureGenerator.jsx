@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { InvokeLLM } from "@/integrations/Core";
-import { User, UsageLog } from "@/entities/all";
+// Fixed: Import from integrations.js instead of non-existent @/integrations/Core
+import { InvokeLLM } from "@/api/integrations";
+// Fixed: Import base44 client instead of non-existent @/entities/all
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -60,7 +62,7 @@ export default function AdvancedFeatureGenerator() {
     const creditsToUse = creditCosts[complexity];
 
     try {
-      const user = await User.me();
+      const user = await base44.auth.me();
       if (user.credits_remaining < creditsToUse) {
         setError(`Insufficient credits. You need ${creditsToUse} credits but only have ${user.credits_remaining}.`);
         setIsLoading(false);
@@ -94,11 +96,11 @@ export default function AdvancedFeatureGenerator() {
         timestamp: new Date().toISOString()
       });
 
-      await User.updateMyUserData({ 
+      await base44.auth.updateMyUserData({ 
         credits_remaining: user.credits_remaining - creditsToUse 
       });
       
-      await UsageLog.create({
+      await base44.entities.UsageLog.create({
         feature: "AdvancedFeatureGenerator",
         credits_used: creditsToUse,
         details: `Generated ${complexity} ${featureType} with ${framework}`

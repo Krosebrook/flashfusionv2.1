@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { InvokeLLM } from "@/integrations/Core";
-import { User, UsageLog } from "@/entities/all";
+// Fixed: Import from integrations.js instead of non-existent @/integrations/Core
+import { InvokeLLM } from "@/api/integrations";
+// Fixed: Import base44 client instead of non-existent @/entities/all
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -30,7 +32,7 @@ export default function PluginRunner({ plugin, onClose }) {
     const creditsToUse = 25;
 
     try {
-      const user = await User.me();
+      const user = await base44.auth.me();
       if (user.credits_remaining < creditsToUse) {
         setError("Insufficient credits. Please upgrade your plan.");
         setIsProcessing(false);
@@ -80,11 +82,11 @@ export default function PluginRunner({ plugin, onClose }) {
       setHistory([newHistoryItem, ...history.slice(0, 9)]); // Keep last 10 runs
 
       // Update user credits and log usage
-      await User.updateMyUserData({ 
+      await base44.auth.updateMyUserData({ 
         credits_remaining: user.credits_remaining - creditsToUse 
       });
       
-      await UsageLog.create({
+      await base44.entities.UsageLog.create({
         feature: "PluginRunner",
         credits_used: creditsToUse,
         details: `Ran plugin: ${plugin.name} - ${input.substring(0, 50)}${input.length > 50 ? "..." : ""}`
