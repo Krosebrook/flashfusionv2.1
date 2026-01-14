@@ -1,4 +1,5 @@
 import './App.css'
+import { Suspense } from 'react'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -15,6 +16,14 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+
+// Safe: Loading component for lazy-loaded pages
+// Shows a spinner while the page code is being loaded
+const PageLoadingSpinner = () => (
+  <div className="fixed inset-0 flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+  </div>
+);
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
@@ -45,13 +54,16 @@ const AuthenticatedApp = () => {
 
   // Render the main app with route-level error boundaries
   // Safe: Each route is wrapped in ErrorBoundary to prevent one page crash from affecting others
+  // Safe: Suspense wraps lazy-loaded pages to show loading spinner while code loads
   return (
     <Routes>
       <Route path="/" element={
         <ErrorBoundary>
-          <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
-          </LayoutWrapper>
+          <Suspense fallback={<PageLoadingSpinner />}>
+            <LayoutWrapper currentPageName={mainPageKey}>
+              <MainPage />
+            </LayoutWrapper>
+          </Suspense>
         </ErrorBoundary>
       } />
       {Object.entries(Pages).map(([path, Page]) => (
@@ -60,9 +72,11 @@ const AuthenticatedApp = () => {
           path={`/${path}`}
           element={
             <ErrorBoundary>
-              <LayoutWrapper currentPageName={path}>
-                <Page />
-              </LayoutWrapper>
+              <Suspense fallback={<PageLoadingSpinner />}>
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              </Suspense>
             </ErrorBoundary>
           }
         />
