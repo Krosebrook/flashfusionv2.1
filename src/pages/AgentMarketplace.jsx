@@ -9,8 +9,8 @@ import MarketplaceStats from "../components/marketplace/MarketplaceStats";
 import MarketplaceSearch from "../components/marketplace/MarketplaceSearch";
 import TemplateSection from "../components/marketplace/TemplateSection";
 import TemplateDetail from "../components/marketplace/TemplateDetail";
-import { useMarketplaceTemplates } from "../hooks/useMarketplaceTemplates";
-import { useTemplateFilters } from "../hooks/useTemplateFilters";
+import { useMarketplaceTemplates } from "../components/marketplace/useMarketplaceTemplates";
+import { useTemplateFilters } from "../components/marketplace/useTemplateFilters";
 
 // Main component - now much cleaner with extracted logic and components
 export default function AgentMarketplace() {
