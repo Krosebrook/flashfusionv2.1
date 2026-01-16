@@ -19,6 +19,7 @@ FlashFusion is a comprehensive Universal AI Platform designed to streamline cont
 - **🤖 Agent Orchestration**: Coordinate multiple AI agents
 - **⚡ Universal Generator**: Multi-purpose content generation
 - **🛠️ Feature Generator**: Automated feature development
+- **📋 PRD Generator**: AI-powered Product Requirements Document creation
 - **🎨 BrandKit Generator**: Brand identity creation tools
 - **📝 Content Creator**: Rich text editing and media management
 
@@ -98,6 +99,7 @@ Comprehensive documentation is available:
 - **[Development Guide](DEVELOPMENT_GUIDE.md)** - Setup and development workflow
 - **[API Documentation](API_DOCUMENTATION.md)** - API integration guide
 - **[Component Guide](COMPONENT_GUIDE.md)** - Component library and usage
+- **[PRD Generator Guide](docs/PRD_GENERATOR_GUIDE.md)** - Product Requirements Document generation
 - **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Production deployment instructions
 - **[Security](SECURITY.md)** - Security best practices
 - **[Contributing](CONTRIBUTING.md)** - Contribution guidelines
