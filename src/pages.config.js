@@ -12,6 +12,7 @@ import FeatureGenerator from './pages/FeatureGenerator';
 import Home from './pages/Home';
 import Integrations from './pages/Integrations';
 import Plugins from './pages/Plugins';
+import PRDGenerator from './pages/PRDGenerator';
 import Projects from './pages/Projects';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
@@ -34,6 +35,7 @@ export const PAGES = {
     "Home": Home,
     "Integrations": Integrations,
     "Plugins": Plugins,
+    "PRDGenerator": PRDGenerator,
     "Projects": Projects,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
