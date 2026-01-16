@@ -12,8 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Plus, Search, ArrowUpDown, LayoutGrid, List, BarChart3
+import {
+  Plus,
+  Search,
+  ArrowUpDown,
+  LayoutGrid,
+  List,
+  BarChart3,
 } from "lucide-react";
 
 import WSJFCard from "../components/wsjf/WSJFCard";
@@ -43,7 +48,7 @@ export default function WSJFPrioritization() {
       const [itemsData, historyData, user] = await Promise.all([
         base44.entities.WSJFItem.list("-wsjf_score"),
         base44.entities.WSJFItemHistory.list("-created_date", 500),
-        base44.auth.me()
+        base44.auth.me(),
       ]);
       setItems(itemsData);
       setHistory(historyData);
@@ -55,7 +60,7 @@ export default function WSJFPrioritization() {
   };
 
   const getItemHistory = (itemId) => {
-    return history.filter(h => h.item_id === itemId);
+    return history.filter((h) => h.item_id === itemId);
   };
 
   const trackHistory = async (action, item, oldItem = null) => {
@@ -63,18 +68,26 @@ export default function WSJFPrioritization() {
       item_id: item.id,
       item_title: item.title,
       action,
-      actor_email: currentUser?.email || "unknown"
+      actor_email: currentUser?.email || "unknown",
     };
 
     if (action === "update" && oldItem) {
       const changedFields = [];
       const oldValues = {};
       const newValues = {};
-      
-      const fieldsToTrack = ["title", "description", "business_value", "time_criticality", 
-                            "risk_reduction", "job_size", "status", "owner_email"];
-      
-      fieldsToTrack.forEach(field => {
+
+      const fieldsToTrack = [
+        "title",
+        "description",
+        "business_value",
+        "time_criticality",
+        "risk_reduction",
+        "job_size",
+        "status",
+        "owner_email",
+      ];
+
+      fieldsToTrack.forEach((field) => {
         if (oldItem[field] !== item[field]) {
           changedFields.push(field);
           oldValues[field] = oldItem[field];
@@ -105,8 +118,15 @@ export default function WSJFPrioritization() {
   const handleSave = async (formData) => {
     try {
       if (editingItem) {
-        const updatedItem = await base44.entities.WSJFItem.update(editingItem.id, formData);
-        await trackHistory("update", { ...updatedItem, ...formData }, editingItem);
+        const updatedItem = await base44.entities.WSJFItem.update(
+          editingItem.id,
+          formData
+        );
+        await trackHistory(
+          "update",
+          { ...updatedItem, ...formData },
+          editingItem
+        );
       } else {
         const newItem = await base44.entities.WSJFItem.create(formData);
         await trackHistory("insert", newItem);
@@ -136,27 +156,40 @@ export default function WSJFPrioritization() {
   };
 
   const filteredItems = items
-    .filter(item => {
-      const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           item.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+    .filter((item) => {
+      const matchesSearch =
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus =
+        statusFilter === "all" || item.status === statusFilter;
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case "wsjf_desc": return (b.wsjf_score || 0) - (a.wsjf_score || 0);
-        case "wsjf_asc": return (a.wsjf_score || 0) - (b.wsjf_score || 0);
-        case "title": return a.title.localeCompare(b.title);
-        case "newest": return new Date(b.created_date) - new Date(a.created_date);
-        default: return 0;
+        case "wsjf_desc":
+          return (b.wsjf_score || 0) - (a.wsjf_score || 0);
+        case "wsjf_asc":
+          return (a.wsjf_score || 0) - (b.wsjf_score || 0);
+        case "title":
+          return a.title.localeCompare(b.title);
+        case "newest":
+          return new Date(b.created_date) - new Date(a.created_date);
+        default:
+          return 0;
       }
     });
 
   const stats = {
     total: items.length,
-    avgScore: items.length > 0 ? (items.reduce((sum, i) => sum + (i.wsjf_score || 0), 0) / items.length).toFixed(1) : 0,
-    inProgress: items.filter(i => i.status === "in_progress").length,
-    ready: items.filter(i => i.status === "ready").length
+    avgScore:
+      items.length > 0
+        ? (
+            items.reduce((sum, i) => sum + (i.wsjf_score || 0), 0) /
+            items.length
+          ).toFixed(1)
+        : 0,
+    inProgress: items.filter((i) => i.status === "in_progress").length,
+    ready: items.filter((i) => i.status === "ready").length,
   };
 
   if (isLoading) {
@@ -164,10 +197,14 @@ export default function WSJFPrioritization() {
       <div className="space-y-8">
         <Skeleton className="h-16 w-full" />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-24" />)}
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-48" />)}
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-48" />
+          ))}
         </div>
       </div>
     );
@@ -181,7 +218,8 @@ export default function WSJFPrioritization() {
           <span>WSJF Prioritization</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Weighted Shortest Job First - prioritize work by maximizing value delivery
+          Weighted Shortest Job First - prioritize work by maximizing value
+          delivery
         </p>
       </div>
 
@@ -200,19 +238,27 @@ export default function WSJFPrioritization() {
         <TabsContent value="items" className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="bg-gray-800 border-gray-700 p-4">
-              <div className="text-2xl font-bold text-blue-400">{stats.total}</div>
+              <div className="text-2xl font-bold text-blue-400">
+                {stats.total}
+              </div>
               <div className="text-sm text-gray-400">Total Items</div>
             </Card>
             <Card className="bg-gray-800 border-gray-700 p-4">
-              <div className="text-2xl font-bold text-purple-400">{stats.avgScore}</div>
+              <div className="text-2xl font-bold text-purple-400">
+                {stats.avgScore}
+              </div>
               <div className="text-sm text-gray-400">Avg WSJF Score</div>
             </Card>
             <Card className="bg-gray-800 border-gray-700 p-4">
-              <div className="text-2xl font-bold text-yellow-400">{stats.inProgress}</div>
+              <div className="text-2xl font-bold text-yellow-400">
+                {stats.inProgress}
+              </div>
               <div className="text-sm text-gray-400">In Progress</div>
             </Card>
             <Card className="bg-gray-800 border-gray-700 p-4">
-              <div className="text-2xl font-bold text-green-400">{stats.ready}</div>
+              <div className="text-2xl font-bold text-green-400">
+                {stats.ready}
+              </div>
               <div className="text-sm text-gray-400">Ready</div>
             </Card>
           </div>
@@ -257,12 +303,21 @@ export default function WSJFPrioritization() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+                onClick={() =>
+                  setViewMode(viewMode === "grid" ? "list" : "grid")
+                }
               >
-                {viewMode === "grid" ? <List className="w-4 h-4" /> : <LayoutGrid className="w-4 h-4" />}
+                {viewMode === "grid" ? (
+                  <List className="w-4 h-4" />
+                ) : (
+                  <LayoutGrid className="w-4 h-4" />
+                )}
               </Button>
-              <Button 
-                onClick={() => { setEditingItem(null); setShowDialog(true); }}
+              <Button
+                onClick={() => {
+                  setEditingItem(null);
+                  setShowDialog(true);
+                }}
                 className="bg-purple-600 hover:bg-purple-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -278,8 +333,11 @@ export default function WSJFPrioritization() {
               <p className="text-gray-400 mb-6">
                 Start prioritizing by adding your first WSJF item
               </p>
-              <Button 
-                onClick={() => { setEditingItem(null); setShowDialog(true); }}
+              <Button
+                onClick={() => {
+                  setEditingItem(null);
+                  setShowDialog(true);
+                }}
                 className="bg-purple-600 hover:bg-purple-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -287,10 +345,13 @@ export default function WSJFPrioritization() {
               </Button>
             </Card>
           ) : (
-            <div className={viewMode === "grid" 
-              ? "grid grid-cols-1 md:grid-cols-2 gap-6" 
-              : "space-y-4"
-            }>
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 md:grid-cols-2 gap-6"
+                  : "space-y-4"
+              }
+            >
               {filteredItems.map((item) => (
                 <WSJFCard
                   key={item.id}
@@ -313,7 +374,10 @@ export default function WSJFPrioritization() {
         <WSJFDialog
           item={editingItem}
           onSave={handleSave}
-          onClose={() => { setShowDialog(false); setEditingItem(null); }}
+          onClose={() => {
+            setShowDialog(false);
+            setEditingItem(null);
+          }}
         />
       )}
     </div>

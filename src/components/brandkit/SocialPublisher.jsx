@@ -3,39 +3,44 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Share2, Instagram, Facebook, Twitter, Loader2, CheckCircle2 
+import {
+  Share2,
+  Instagram,
+  Facebook,
+  Twitter,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 
 const socialPlatforms = [
-  { 
-    id: "instagram", 
-    name: "Instagram", 
-    icon: Instagram, 
+  {
+    id: "instagram",
+    name: "Instagram",
+    icon: Instagram,
     color: "text-pink-400",
-    maxChars: 2200
+    maxChars: 2200,
   },
-  { 
-    id: "facebook", 
-    name: "Facebook", 
-    icon: Facebook, 
+  {
+    id: "facebook",
+    name: "Facebook",
+    icon: Facebook,
     color: "text-blue-400",
-    maxChars: 63206
+    maxChars: 63206,
   },
-  { 
-    id: "twitter", 
-    name: "Twitter/X", 
-    icon: Twitter, 
+  {
+    id: "twitter",
+    name: "Twitter/X",
+    icon: Twitter,
     color: "text-sky-400",
-    maxChars: 280
+    maxChars: 280,
   },
-  { 
-    id: "linkedin", 
-    name: "LinkedIn", 
-    icon: Share2, 
+  {
+    id: "linkedin",
+    name: "LinkedIn",
+    icon: Share2,
     color: "text-blue-500",
-    maxChars: 3000
-  }
+    maxChars: 3000,
+  },
 ];
 
 export default function SocialPublisher({ asset, brandKit, onPublished }) {
@@ -45,9 +50,9 @@ export default function SocialPublisher({ asset, brandKit, onPublished }) {
   const [publishResults, setPublishResults] = useState(null);
 
   const togglePlatform = (platformId) => {
-    setSelectedPlatforms(prev =>
+    setSelectedPlatforms((prev) =>
       prev.includes(platformId)
-        ? prev.filter(id => id !== platformId)
+        ? prev.filter((id) => id !== platformId)
         : [...prev, platformId]
     );
   };
@@ -63,19 +68,18 @@ export default function SocialPublisher({ asset, brandKit, onPublished }) {
       const results = {};
       for (const platformId of selectedPlatforms) {
         // In a real implementation, this would use platform APIs
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
         const mockPostId = `${platformId}_${Date.now()}`;
         results[platformId] = {
           success: true,
           postId: mockPostId,
-          url: `https://${platformId}.com/post/${mockPostId}`
+          url: `https://${platformId}.com/post/${mockPostId}`,
         };
       }
 
       setPublishResults(results);
       onPublished?.(results);
-
     } catch (error) {
       console.error("Publishing failed:", error);
       alert("Failed to publish to some platforms. Please try again.");
@@ -95,8 +99,8 @@ export default function SocialPublisher({ asset, brandKit, onPublished }) {
         {/* Asset Preview */}
         {asset.image_url && (
           <div className="mb-6 bg-gray-900 rounded-lg overflow-hidden">
-            <img 
-              src={asset.image_url} 
+            <img
+              src={asset.image_url}
               alt={asset.type}
               className="w-full max-w-md mx-auto"
             />
@@ -154,18 +158,22 @@ export default function SocialPublisher({ asset, brandKit, onPublished }) {
 
         <Button
           onClick={handlePublish}
-          disabled={selectedPlatforms.length === 0 || isPublishing || !caption.trim()}
+          disabled={
+            selectedPlatforms.length === 0 || isPublishing || !caption.trim()
+          }
           className="w-full bg-purple-600 hover:bg-purple-700"
         >
           {isPublishing ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Publishing to {selectedPlatforms.length} Platform{selectedPlatforms.length !== 1 ? 's' : ''}...
+              Publishing to {selectedPlatforms.length} Platform
+              {selectedPlatforms.length !== 1 ? "s" : ""}...
             </>
           ) : (
             <>
               <Share2 className="w-4 h-4 mr-2" />
-              Publish to {selectedPlatforms.length} Platform{selectedPlatforms.length !== 1 ? 's' : ''}
+              Publish to {selectedPlatforms.length} Platform
+              {selectedPlatforms.length !== 1 ? "s" : ""}
             </>
           )}
         </Button>
@@ -175,15 +183,22 @@ export default function SocialPublisher({ asset, brandKit, onPublished }) {
         <Card className="bg-gray-800 border-green-900/50 border-2 p-6">
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle2 className="w-6 h-6 text-green-400" />
-            <h3 className="text-xl font-semibold text-green-400">Successfully Published!</h3>
+            <h3 className="text-xl font-semibold text-green-400">
+              Successfully Published!
+            </h3>
           </div>
           <div className="space-y-3">
             {Object.entries(publishResults).map(([platform, data]) => {
-              const platformInfo = socialPlatforms.find(p => p.id === platform);
+              const platformInfo = socialPlatforms.find(
+                (p) => p.id === platform
+              );
               const Icon = platformInfo.icon;
-              
+
               return (
-                <div key={platform} className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                <div
+                  key={platform}
+                  className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <Icon className={`w-5 h-5 ${platformInfo.color}`} />
                     <span className="font-medium capitalize">{platform}</span>
@@ -191,7 +206,7 @@ export default function SocialPublisher({ asset, brandKit, onPublished }) {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => window.open(data.url, '_blank')}
+                    onClick={() => window.open(data.url, "_blank")}
                   >
                     View Post
                   </Button>
@@ -204,7 +219,8 @@ export default function SocialPublisher({ asset, brandKit, onPublished }) {
 
       <Card className="bg-gray-800 border-gray-700 p-4">
         <p className="text-xs text-gray-400">
-          💡 <strong>Tip:</strong> Optimize your captions for each platform. Use relevant hashtags and mentions to increase engagement.
+          💡 <strong>Tip:</strong> Optimize your captions for each platform. Use
+          relevant hashtags and mentions to increase engagement.
         </p>
       </Card>
     </div>

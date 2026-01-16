@@ -2,8 +2,25 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BarChart3, Users, FileText, Sparkles, ShoppingCart, Download, Workflow, Bot, TrendingUp, Mail } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  BarChart3,
+  Users,
+  FileText,
+  Sparkles,
+  ShoppingCart,
+  Download,
+  Workflow,
+  Bot,
+  TrendingUp,
+  Mail,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, subDays } from "date-fns";
 
@@ -35,13 +52,20 @@ export default function Analytics() {
   const fetchAnalyticsData = async () => {
     setIsLoading(true);
     try {
-      const [currentUser, logs, contentData, productData, workflowData, taskData] = await Promise.all([
+      const [
+        currentUser,
+        logs,
+        contentData,
+        productData,
+        workflowData,
+        taskData,
+      ] = await Promise.all([
         base44.auth.me(),
         base44.entities.UsageLog.list("-created_date", 200),
         base44.entities.ContentPiece.list("-created_date", 100),
         base44.entities.EcommerceProduct.list("-created_date", 100),
         base44.entities.Workflow.list("-created_date", 50),
-        base44.entities.AgentTask.list("-created_date", 200)
+        base44.entities.AgentTask.list("-created_date", 200),
       ]);
 
       setUser(currentUser);
@@ -50,8 +74,8 @@ export default function Analytics() {
       const days = timeRange === "7days" ? 7 : timeRange === "30days" ? 30 : 90;
       const startDate = subDays(new Date(), days);
 
-      const filteredLogs = logs.filter(log =>
-        new Date(log.created_date) >= startDate
+      const filteredLogs = logs.filter(
+        (log) => new Date(log.created_date) >= startDate
       );
 
       setUsageLogs(filteredLogs);
@@ -59,7 +83,6 @@ export default function Analytics() {
       setProducts(productData);
       setWorkflows(workflowData);
       setAgentTasks(taskData);
-
     } catch (error) {
       console.error("Failed to fetch analytics data:", error);
     }
@@ -76,8 +99,11 @@ export default function Analytics() {
       activityByDate[date] = { date, sessions: 0, unique_users: 0 };
     }
 
-    usageLogs.forEach(log => {
-      const date = format(new Date(log.created_date), days <= 7 ? "MMM d" : "MMM d");
+    usageLogs.forEach((log) => {
+      const date = format(
+        new Date(log.created_date),
+        days <= 7 ? "MMM d" : "MMM d"
+      );
       if (activityByDate[date]) {
         activityByDate[date].sessions += 1;
         activityByDate[date].unique_users = 1; // Simplified for demo
@@ -93,35 +119,50 @@ export default function Analytics() {
     userActivity: {
       totalSessions: usageLogs.length,
       activeUsers: 1,
-      avgSessionDuration: "N/A"
+      avgSessionDuration: "N/A",
     },
     content: {
       total: contents.length,
-      totalViews: contents.reduce((sum, c) => sum + (c.performance_data?.views || 0), 0),
-      avgEngagement: contents.length > 0
-        ? (contents.reduce((sum, c) => sum + (c.performance_data?.engagement || 0), 0) / contents.length).toFixed(1)
-        : 0
+      totalViews: contents.reduce(
+        (sum, c) => sum + (c.performance_data?.views || 0),
+        0
+      ),
+      avgEngagement:
+        contents.length > 0
+          ? (
+              contents.reduce(
+                (sum, c) => sum + (c.performance_data?.engagement || 0),
+                0
+              ) / contents.length
+            ).toFixed(1)
+          : 0,
     },
     aiUsage: {
       totalUses: usageLogs.length,
       creditsUsed: usageLogs.reduce((sum, log) => sum + log.credits_used, 0),
-      topFeature: usageLogs.length > 0 ? usageLogs[0].feature : "N/A"
+      topFeature: usageLogs.length > 0 ? usageLogs[0].feature : "N/A",
     },
     ecommerce: {
       totalProducts: products.length,
-      publishedProducts: products.filter(p => p.status === 'published').length,
-      totalValue: products.reduce((sum, p) => sum + (p.price || 0), 0).toFixed(2)
+      publishedProducts: products.filter((p) => p.status === "published")
+        .length,
+      totalValue: products
+        .reduce((sum, p) => sum + (p.price || 0), 0)
+        .toFixed(2),
     },
     workflows: {
       total: workflows.length,
-      activeWorkflows: workflows.filter(w => w.status === 'active').length,
-      totalExecutions: workflows.reduce((sum, w) => sum + (w.execution_count || 0), 0)
+      activeWorkflows: workflows.filter((w) => w.status === "active").length,
+      totalExecutions: workflows.reduce(
+        (sum, w) => sum + (w.execution_count || 0),
+        0
+      ),
     },
     agentTasks: {
       total: agentTasks.length,
-      completed: agentTasks.filter(t => t.status === 'completed').length,
-      failed: agentTasks.filter(t => t.status === 'failed').length
-    }
+      completed: agentTasks.filter((t) => t.status === "completed").length,
+      failed: agentTasks.filter((t) => t.status === "failed").length,
+    },
   };
 
   if (isLoading) {
@@ -221,7 +262,9 @@ export default function Analytics() {
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <div className="flex items-center justify-between mb-2">
                 <Workflow className="w-8 h-8 text-purple-400" />
-                <span className="text-xs text-blue-400">{reportData.workflows.totalExecutions} runs</span>
+                <span className="text-xs text-blue-400">
+                  {reportData.workflows.totalExecutions} runs
+                </span>
               </div>
               <div className="text-2xl font-bold">{workflows.length}</div>
               <div className="text-sm text-gray-400">Workflows</div>
@@ -230,7 +273,9 @@ export default function Analytics() {
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <div className="flex items-center justify-between mb-2">
                 <Bot className="w-8 h-8 text-green-400" />
-                <span className="text-xs text-green-400">{reportData.agentTasks.completed} done</span>
+                <span className="text-xs text-green-400">
+                  {reportData.agentTasks.completed} done
+                </span>
               </div>
               <div className="text-2xl font-bold">{agentTasks.length}</div>
               <div className="text-sm text-gray-400">Agent Tasks</div>
@@ -239,7 +284,9 @@ export default function Analytics() {
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <div className="flex items-center justify-between mb-2">
                 <Sparkles className="w-8 h-8 text-yellow-400" />
-                <span className="text-xs text-blue-400">{reportData.aiUsage.creditsUsed} credits</span>
+                <span className="text-xs text-blue-400">
+                  {reportData.aiUsage.creditsUsed} credits
+                </span>
               </div>
               <div className="text-2xl font-bold">{usageLogs.length}</div>
               <div className="text-sm text-gray-400">AI Operations</div>
@@ -254,15 +301,21 @@ export default function Analytics() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Active Workflows</span>
-                  <span className="font-semibold">{reportData.workflows.activeWorkflows}</span>
+                  <span className="font-semibold">
+                    {reportData.workflows.activeWorkflows}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Completed Tasks</span>
-                  <span className="font-semibold">{reportData.agentTasks.completed}</span>
+                  <span className="font-semibold">
+                    {reportData.agentTasks.completed}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Published Products</span>
-                  <span className="font-semibold">{reportData.ecommerce.publishedProducts}</span>
+                  <span className="font-semibold">
+                    {reportData.ecommerce.publishedProducts}
+                  </span>
                 </div>
               </div>
             </div>
@@ -272,15 +325,21 @@ export default function Analytics() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Plan</span>
-                  <span className="font-semibold text-blue-400">{user?.plan || 'Free'}</span>
+                  <span className="font-semibold text-blue-400">
+                    {user?.plan || "Free"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Credits Remaining</span>
-                  <span className="font-semibold text-yellow-400">{user?.credits_remaining?.toLocaleString() || 0}</span>
+                  <span className="font-semibold text-yellow-400">
+                    {user?.credits_remaining?.toLocaleString() || 0}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Credits Used</span>
-                  <span className="font-semibold">{reportData.aiUsage.creditsUsed.toLocaleString()}</span>
+                  <span className="font-semibold">
+                    {reportData.aiUsage.creditsUsed.toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>

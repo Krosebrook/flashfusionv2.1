@@ -5,7 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, Trash2, Edit2, Users, Shield } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -13,33 +19,42 @@ const ROLES = {
   admin: {
     label: "Admin",
     color: "bg-red-500/20 text-red-400",
-    description: "Full access to all features and settings"
+    description: "Full access to all features and settings",
   },
   editor: {
     label: "Editor",
     color: "bg-blue-500/20 text-blue-400",
-    description: "Can create, edit, and publish content"
+    description: "Can create, edit, and publish content",
   },
   viewer: {
     label: "Viewer",
     color: "bg-gray-500/20 text-gray-400",
-    description: "Read-only access to content and analytics"
-  }
+    description: "Read-only access to content and analytics",
+  },
 };
 
 const PERMISSION_GROUPS = {
   content: {
     label: "Content Management",
-    permissions: ["can_create_content", "can_edit_content", "can_delete_content", "can_publish_content"]
+    permissions: [
+      "can_create_content",
+      "can_edit_content",
+      "can_delete_content",
+      "can_publish_content",
+    ],
   },
   analytics: {
     label: "Analytics & Reporting",
-    permissions: ["can_view_analytics"]
+    permissions: ["can_view_analytics"],
   },
   admin: {
     label: "Administration",
-    permissions: ["can_manage_users", "can_manage_brands", "can_manage_products"]
-  }
+    permissions: [
+      "can_manage_users",
+      "can_manage_brands",
+      "can_manage_products",
+    ],
+  },
 };
 
 const ROLE_DEFAULTS = {
@@ -51,7 +66,7 @@ const ROLE_DEFAULTS = {
     can_view_analytics: true,
     can_manage_users: true,
     can_manage_brands: true,
-    can_manage_products: true
+    can_manage_products: true,
   },
   editor: {
     can_create_content: true,
@@ -61,7 +76,7 @@ const ROLE_DEFAULTS = {
     can_view_analytics: true,
     can_manage_users: false,
     can_manage_brands: false,
-    can_manage_products: false
+    can_manage_products: false,
   },
   viewer: {
     can_create_content: false,
@@ -71,8 +86,8 @@ const ROLE_DEFAULTS = {
     can_view_analytics: true,
     can_manage_users: false,
     can_manage_brands: false,
-    can_manage_products: false
-  }
+    can_manage_products: false,
+  },
 };
 
 export default function RoleManagementPanel() {
@@ -91,7 +106,7 @@ export default function RoleManagementPanel() {
     can_view_analytics: true,
     can_manage_users: false,
     can_manage_brands: false,
-    can_manage_products: false
+    can_manage_products: false,
   });
 
   useEffect(() => {
@@ -103,7 +118,7 @@ export default function RoleManagementPanel() {
     try {
       const [rolesData, user] = await Promise.all([
         base44.entities.UserRole.list("-created_date", 100),
-        base44.auth.me()
+        base44.auth.me(),
       ]);
       setRoles(rolesData);
       setCurrentUser(user);
@@ -115,17 +130,17 @@ export default function RoleManagementPanel() {
 
   const handleRoleChange = (role) => {
     const defaults = ROLE_DEFAULTS[role] || {};
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       role,
-      ...defaults
+      ...defaults,
     }));
   };
 
   const togglePermission = (permission) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [permission]: !prev[permission]
+      [permission]: !prev[permission],
     }));
   };
 
@@ -137,7 +152,9 @@ export default function RoleManagementPanel() {
         await base44.entities.UserRole.update(editingId, formData);
       } else {
         // Check if role already exists for this user
-        const existing = roles.find(r => r.user_email === formData.user_email);
+        const existing = roles.find(
+          (r) => r.user_email === formData.user_email
+        );
         if (existing) {
           await base44.entities.UserRole.update(existing.id, formData);
         } else {
@@ -178,7 +195,7 @@ export default function RoleManagementPanel() {
       can_view_analytics: true,
       can_manage_users: false,
       can_manage_brands: false,
-      can_manage_products: false
+      can_manage_products: false,
     });
     setEditingId(null);
     setShowForm(false);
@@ -194,13 +211,15 @@ export default function RoleManagementPanel() {
     );
   }
 
-  const isAdmin = currentUser?.role === 'admin';
+  const isAdmin = currentUser?.role === "admin";
 
   if (!isAdmin) {
     return (
       <Card className="bg-gray-800 border-gray-700 p-8 text-center">
         <Shield className="w-12 h-12 mx-auto text-gray-600 mb-3" />
-        <p className="text-gray-400">Only administrators can manage user roles</p>
+        <p className="text-gray-400">
+          Only administrators can manage user roles
+        </p>
       </Card>
     );
   }
@@ -212,7 +231,10 @@ export default function RoleManagementPanel() {
           <Users className="w-6 h-6 text-blue-400" />
           User Roles & Permissions
         </h2>
-        <Button onClick={() => setShowForm(!showForm)} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add User
         </Button>
@@ -226,12 +248,19 @@ export default function RoleManagementPanel() {
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Email Address</label>
+              <label className="block text-sm font-medium mb-2">
+                Email Address
+              </label>
               <Input
                 type="email"
                 placeholder="user@example.com"
                 value={formData.user_email}
-                onChange={(e) => setFormData(prev => ({ ...prev, user_email: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    user_email: e.target.value,
+                  }))
+                }
                 disabled={!!editingId}
                 className="bg-gray-900 border-gray-600"
               />
@@ -259,29 +288,38 @@ export default function RoleManagementPanel() {
             <div className="border-t border-gray-700 pt-6">
               <h4 className="font-medium mb-4">Custom Permissions</h4>
               <div className="space-y-4">
-                {Object.entries(PERMISSION_GROUPS).map(([group, { label, permissions }]) => (
-                  <div key={group}>
-                    <p className="text-sm text-gray-400 mb-3">{label}</p>
-                    <div className="space-y-2 ml-2">
-                      {permissions.map(perm => (
-                        <div key={perm} className="flex items-center gap-2">
-                          <Checkbox
-                            checked={formData[perm]}
-                            onCheckedChange={() => togglePermission(perm)}
-                          />
-                          <label className="text-sm cursor-pointer">
-                            {perm.replace(/can_|_/g, (m) => m === "_" ? " " : "").replace(/^./, str => str.toUpperCase())}
-                          </label>
-                        </div>
-                      ))}
+                {Object.entries(PERMISSION_GROUPS).map(
+                  ([group, { label, permissions }]) => (
+                    <div key={group}>
+                      <p className="text-sm text-gray-400 mb-3">{label}</p>
+                      <div className="space-y-2 ml-2">
+                        {permissions.map((perm) => (
+                          <div key={perm} className="flex items-center gap-2">
+                            <Checkbox
+                              checked={formData[perm]}
+                              onCheckedChange={() => togglePermission(perm)}
+                            />
+                            <label className="text-sm cursor-pointer">
+                              {perm
+                                .replace(/can_|_/g, (m) =>
+                                  m === "_" ? " " : ""
+                                )
+                                .replace(/^./, (str) => str.toUpperCase())}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleSave} className="flex-1 bg-blue-600 hover:bg-blue-700">
+              <Button
+                onClick={handleSave}
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
+              >
                 {editingId ? "Update" : "Add"} User
               </Button>
               <Button onClick={resetForm} variant="outline" className="flex-1">
@@ -296,11 +334,13 @@ export default function RoleManagementPanel() {
         <Card className="bg-gray-800 border-gray-700 p-12 text-center">
           <Users className="w-16 h-16 mx-auto text-gray-600 mb-4" />
           <h3 className="text-xl font-semibold mb-2">No users assigned</h3>
-          <p className="text-gray-400">Add your first team member to get started</p>
+          <p className="text-gray-400">
+            Add your first team member to get started
+          </p>
         </Card>
       ) : (
         <div className="space-y-4">
-          {roles.map(role => (
+          {roles.map((role) => (
             <Card key={role.id} className="bg-gray-800 border-gray-700 p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -310,22 +350,30 @@ export default function RoleManagementPanel() {
                       {ROLES[role.role]?.label || role.role}
                     </Badge>
                     {!role.is_active && (
-                      <Badge variant="outline" className="text-xs">Inactive</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Inactive
+                      </Badge>
                     )}
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                    {Object.entries(PERMISSION_GROUPS).map(([group, { permissions }]) => {
-                      const activePerms = permissions.filter(p => role[p]).length;
-                      return (
-                        <div key={group} className="text-xs">
-                          <p className="text-gray-400">{PERMISSION_GROUPS[group].label}</p>
-                          <p className="font-medium">
-                            {activePerms} of {permissions.length}
-                          </p>
-                        </div>
-                      );
-                    })}
+                    {Object.entries(PERMISSION_GROUPS).map(
+                      ([group, { permissions }]) => {
+                        const activePerms = permissions.filter(
+                          (p) => role[p]
+                        ).length;
+                        return (
+                          <div key={group} className="text-xs">
+                            <p className="text-gray-400">
+                              {PERMISSION_GROUPS[group].label}
+                            </p>
+                            <p className="font-medium">
+                              {activePerms} of {permissions.length}
+                            </p>
+                          </div>
+                        );
+                      }
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2">

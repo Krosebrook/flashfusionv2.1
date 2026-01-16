@@ -21,7 +21,7 @@ export default function ScheduleList({ schedules, onRefresh }) {
     try {
       await base44.entities.ContentSchedule.update(schedule.id, {
         status: "published",
-        published_date: new Date().toISOString()
+        published_date: new Date().toISOString(),
       });
       onRefresh?.();
     } catch (error) {
@@ -29,12 +29,12 @@ export default function ScheduleList({ schedules, onRefresh }) {
     }
   };
 
-  const upcomingSchedules = schedules.filter(s => 
-    s.status === 'scheduled' && new Date(s.scheduled_date) > new Date()
+  const upcomingSchedules = schedules.filter(
+    (s) => s.status === "scheduled" && new Date(s.scheduled_date) > new Date()
   );
 
-  const pastSchedules = schedules.filter(s => 
-    s.status === 'published' || new Date(s.scheduled_date) <= new Date()
+  const pastSchedules = schedules.filter(
+    (s) => s.status === "published" || new Date(s.scheduled_date) <= new Date()
   );
 
   return (
@@ -42,17 +42,26 @@ export default function ScheduleList({ schedules, onRefresh }) {
       <Card className="bg-gray-800 border-gray-700 p-6">
         <h3 className="text-lg font-semibold mb-4">Upcoming Schedules</h3>
         {upcomingSchedules.length === 0 ? (
-          <p className="text-center text-gray-400 py-8">No upcoming scheduled posts</p>
+          <p className="text-center text-gray-400 py-8">
+            No upcoming scheduled posts
+          </p>
         ) : (
           <div className="space-y-3">
             {upcomingSchedules.map((schedule) => (
               <div key={schedule.id} className="bg-gray-900 p-4 rounded-lg">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h4 className="font-semibold mb-1">{schedule.content_title}</h4>
+                    <h4 className="font-semibold mb-1">
+                      {schedule.content_title}
+                    </h4>
                     <div className="flex items-center gap-2 text-sm text-gray-400">
                       <Calendar className="w-4 h-4" />
-                      <span>{format(new Date(schedule.scheduled_date), "PPP 'at' p")}</span>
+                      <span>
+                        {format(
+                          new Date(schedule.scheduled_date),
+                          "PPP 'at' p"
+                        )}
+                      </span>
                     </div>
                   </div>
                   <Badge className="bg-yellow-500/20 text-yellow-400">
@@ -97,24 +106,32 @@ export default function ScheduleList({ schedules, onRefresh }) {
         <h3 className="text-lg font-semibold mb-4">Published & Past</h3>
         <div className="space-y-3">
           {pastSchedules.map((schedule) => (
-            <div key={schedule.id} className="bg-gray-900 p-4 rounded-lg opacity-75">
+            <div
+              key={schedule.id}
+              className="bg-gray-900 p-4 rounded-lg opacity-75"
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="font-semibold mb-1">{schedule.content_title}</h4>
+                  <h4 className="font-semibold mb-1">
+                    {schedule.content_title}
+                  </h4>
                   <div className="flex items-center gap-2 text-sm text-gray-400">
                     <Clock className="w-4 h-4" />
                     <span>
-                      {schedule.status === 'published' && schedule.published_date
+                      {schedule.status === "published" &&
+                      schedule.published_date
                         ? `Published ${format(new Date(schedule.published_date), "PPP")}`
-                        : `Scheduled for ${format(new Date(schedule.scheduled_date), "PPP")}`
-                      }
+                        : `Scheduled for ${format(new Date(schedule.scheduled_date), "PPP")}`}
                     </span>
                   </div>
                 </div>
-                <Badge className={
-                  schedule.status === 'published' ? 'bg-green-500/20 text-green-400' :
-                  'bg-gray-500/20 text-gray-400'
-                }>
+                <Badge
+                  className={
+                    schedule.status === "published"
+                      ? "bg-green-500/20 text-green-400"
+                      : "bg-gray-500/20 text-gray-400"
+                  }
+                >
                   {schedule.status}
                 </Badge>
               </div>

@@ -5,12 +5,14 @@ import { Star, Download, Sparkles, Crown } from "lucide-react";
 
 export default function MarketplaceCard({ template, onSelect }) {
   return (
-    <Card className="bg-gray-800 border-gray-700 p-4 hover:border-gray-600 transition-all cursor-pointer"
-      onClick={() => onSelect(template)}>
+    <Card
+      className="bg-gray-800 border-gray-700 p-4 hover:border-gray-600 transition-all cursor-pointer"
+      onClick={() => onSelect(template)}
+    >
       <div className="space-y-4">
         {template.preview_image && (
-          <img 
-            src={template.preview_image} 
+          <img
+            src={template.preview_image}
             alt={template.name}
             className="w-full h-40 object-cover rounded-lg"
           />

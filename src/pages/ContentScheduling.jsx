@@ -4,7 +4,14 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Clock, List, Plus, CheckCircle2, XCircle } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  List,
+  Plus,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 
 import ScheduleCalendar from "../components/scheduling/ScheduleCalendar";
 import ScheduleList from "../components/scheduling/ScheduleList";
@@ -26,7 +33,7 @@ export default function ContentScheduling() {
     try {
       const [schedulesData, contentsData] = await Promise.all([
         base44.entities.ContentSchedule.list("-scheduled_date"),
-        base44.entities.ContentPiece.list("-created_date", 50)
+        base44.entities.ContentPiece.list("-created_date", 50),
       ]);
       setSchedules(schedulesData);
       setContents(contentsData);
@@ -38,9 +45,11 @@ export default function ContentScheduling() {
 
   const stats = {
     total: schedules.length,
-    upcoming: schedules.filter(s => s.status === 'scheduled' && new Date(s.scheduled_date) > new Date()).length,
-    published: schedules.filter(s => s.status === 'published').length,
-    failed: schedules.filter(s => s.status === 'failed').length
+    upcoming: schedules.filter(
+      (s) => s.status === "scheduled" && new Date(s.scheduled_date) > new Date()
+    ).length,
+    published: schedules.filter((s) => s.status === "published").length,
+    failed: schedules.filter((s) => s.status === "failed").length,
   };
 
   return (
@@ -51,7 +60,8 @@ export default function ContentScheduling() {
           <span>Advanced Content Scheduling</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Schedule and auto-publish your content across multiple platforms at optimal times
+          Schedule and auto-publish your content across multiple platforms at
+          optimal times
         </p>
       </div>
 
@@ -70,7 +80,9 @@ export default function ContentScheduling() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Upcoming</p>
-              <p className="text-2xl font-bold text-yellow-400">{stats.upcoming}</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {stats.upcoming}
+              </p>
             </div>
             <Clock className="w-8 h-8 text-yellow-400 opacity-50" />
           </div>
@@ -80,7 +92,9 @@ export default function ContentScheduling() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Published</p>
-              <p className="text-2xl font-bold text-green-400">{stats.published}</p>
+              <p className="text-2xl font-bold text-green-400">
+                {stats.published}
+              </p>
             </div>
             <CheckCircle2 className="w-8 h-8 text-green-400 opacity-50" />
           </div>

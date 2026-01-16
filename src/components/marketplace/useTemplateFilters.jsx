@@ -6,14 +6,14 @@ export function useTemplateFilters(templates) {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filteredTemplates = useMemo(() => {
-    return templates.filter(template => {
-      const matchesSearch = 
+    return templates.filter((template) => {
+      const matchesSearch =
         template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         template.description.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesCategory = 
+
+      const matchesCategory =
         activeCategory === "all" || template.category === activeCategory;
-      
+
       return matchesSearch && matchesCategory;
     });
   }, [templates, searchQuery, activeCategory]);
@@ -23,6 +23,6 @@ export function useTemplateFilters(templates) {
     setSearchQuery,
     activeCategory,
     setActiveCategory,
-    filteredTemplates
+    filteredTemplates,
   };
 }

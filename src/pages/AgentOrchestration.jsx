@@ -35,36 +35,36 @@ export default function AgentOrchestration() {
 
     try {
       const user = await base44.auth.me();
-      
+
       // Simulate workflow execution
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        
+
         // Create agent task
         await base44.entities.AgentTask.create({
           project_id: "workflow_execution",
-          agent_type: node.type === 'condition' ? 'Orchestrator' : node.type,
+          agent_type: node.type === "condition" ? "Orchestrator" : node.type,
           task_description: node.config?.task || node.description,
           input_data: node.config,
           status: "in_progress",
-          credits_used: 0
+          credits_used: 0,
         });
 
         // Wait a bit to simulate processing
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       // Update execution count if workflow exists
       if (currentWorkflow?.id) {
         await base44.entities.Workflow.update(currentWorkflow.id, {
           execution_count: (currentWorkflow.execution_count || 0) + 1,
-          last_executed: new Date().toISOString()
+          last_executed: new Date().toISOString(),
         });
       }
 
-      setRefreshTrigger(prev => prev + 1);
+      setRefreshTrigger((prev) => prev + 1);
       setActiveTab("monitor");
-      
+
       alert(`Workflow execution started with ${nodes.length} agents!`);
     } catch (error) {
       console.error("Workflow execution failed:", error);
@@ -85,7 +85,8 @@ export default function AgentOrchestration() {
           <span>Agent Orchestration Hub</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Build, manage, and execute complex multi-agent workflows with visual drag-and-drop interface
+          Build, manage, and execute complex multi-agent workflows with visual
+          drag-and-drop interface
         </p>
       </div>
 

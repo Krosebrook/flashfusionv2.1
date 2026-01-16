@@ -89,7 +89,9 @@ export default function SyncHistory({ platformId }) {
                 </div>
 
                 {log.error_message && (
-                  <p className="text-xs text-red-400 mt-1">{log.error_message}</p>
+                  <p className="text-xs text-red-400 mt-1">
+                    {log.error_message}
+                  </p>
                 )}
 
                 <p className="text-xs text-gray-500 mt-2">

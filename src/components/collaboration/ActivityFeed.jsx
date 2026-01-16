@@ -5,11 +5,11 @@ import { formatDistanceToNow } from "date-fns";
 
 export default function ActivityFeed({ collaborations }) {
   const allActivities = collaborations
-    .flatMap(collab => 
-      (collab.activity_log || []).map(activity => ({
+    .flatMap((collab) =>
+      (collab.activity_log || []).map((activity) => ({
         ...activity,
         resource_title: collab.resource_title,
-        resource_type: collab.resource_type
+        resource_type: collab.resource_type,
       }))
     )
     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
@@ -23,9 +23,7 @@ export default function ActivityFeed({ collaborations }) {
       </div>
 
       {allActivities.length === 0 ? (
-        <div className="text-center py-12 text-gray-400">
-          No activity yet
-        </div>
+        <div className="text-center py-12 text-gray-400">No activity yet</div>
       ) : (
         <div className="space-y-3">
           {allActivities.map((activity, index) => (
@@ -44,7 +42,9 @@ export default function ActivityFeed({ collaborations }) {
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <Clock className="w-3 h-3" />
                 <span>
-                  {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(activity.timestamp), {
+                    addSuffix: true,
+                  })}
                 </span>
                 <span>•</span>
                 <span>{activity.user_email}</span>

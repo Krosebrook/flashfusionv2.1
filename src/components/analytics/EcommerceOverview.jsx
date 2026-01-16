@@ -1,22 +1,33 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { DollarSign, Package, TrendingUp, ShoppingCart } from "lucide-react";
 
 export default function EcommerceOverview({ products }) {
   const totalProducts = products.length;
-  const publishedProducts = products.filter(p => p.status === 'published').length;
-  const lowStockProducts = products.filter(p => 
-    p.inventory !== undefined && p.inventory <= (p.reorder_point || 10)
+  const publishedProducts = products.filter(
+    (p) => p.status === "published"
   ).length;
-  const outOfStockProducts = products.filter(p => 
-    p.inventory !== undefined && p.inventory === 0
+  const lowStockProducts = products.filter(
+    (p) => p.inventory !== undefined && p.inventory <= (p.reorder_point || 10)
+  ).length;
+  const outOfStockProducts = products.filter(
+    (p) => p.inventory !== undefined && p.inventory === 0
   ).length;
   const totalValue = products.reduce((sum, p) => sum + (p.price || 0), 0);
   const avgPrice = totalProducts > 0 ? totalValue / totalProducts : 0;
 
   const categoryBreakdown = products.reduce((acc, product) => {
-    const category = product.category || 'Uncategorized';
+    const category = product.category || "Uncategorized";
     if (!acc[category]) {
       acc[category] = { category, count: 0, revenue: 0 };
     }
@@ -32,7 +43,7 @@ export default function EcommerceOverview({ products }) {
     .slice(0, 5);
 
   const platformStats = products.reduce((acc, product) => {
-    (product.platforms || []).forEach(platform => {
+    (product.platforms || []).forEach((platform) => {
       acc[platform] = (acc[platform] || 0) + 1;
     });
     return acc;
@@ -45,7 +56,9 @@ export default function EcommerceOverview({ products }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Total Products</p>
-              <p className="text-2xl font-bold text-blue-400">{totalProducts}</p>
+              <p className="text-2xl font-bold text-blue-400">
+                {totalProducts}
+              </p>
             </div>
             <Package className="w-8 h-8 text-blue-400 opacity-50" />
           </div>
@@ -55,27 +68,37 @@ export default function EcommerceOverview({ products }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Published</p>
-              <p className="text-2xl font-bold text-green-400">{publishedProducts}</p>
+              <p className="text-2xl font-bold text-green-400">
+                {publishedProducts}
+              </p>
             </div>
             <ShoppingCart className="w-8 h-8 text-green-400 opacity-50" />
           </div>
         </Card>
 
-        <Card className={`border-gray-700 p-4 ${lowStockProducts > 0 ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-gray-800'}`}>
+        <Card
+          className={`border-gray-700 p-4 ${lowStockProducts > 0 ? "bg-yellow-500/10 border-yellow-500/30" : "bg-gray-800"}`}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Low Stock</p>
-              <p className="text-2xl font-bold text-yellow-400">{lowStockProducts}</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                {lowStockProducts}
+              </p>
             </div>
             <Package className="w-8 h-8 text-yellow-400 opacity-50" />
           </div>
         </Card>
 
-        <Card className={`border-gray-700 p-4 ${outOfStockProducts > 0 ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-800'}`}>
+        <Card
+          className={`border-gray-700 p-4 ${outOfStockProducts > 0 ? "bg-red-500/10 border-red-500/30" : "bg-gray-800"}`}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Out of Stock</p>
-              <p className="text-2xl font-bold text-red-400">{outOfStockProducts}</p>
+              <p className="text-2xl font-bold text-red-400">
+                {outOfStockProducts}
+              </p>
             </div>
             <Package className="w-8 h-8 text-red-400 opacity-50" />
           </div>
@@ -85,7 +108,9 @@ export default function EcommerceOverview({ products }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Total Value</p>
-              <p className="text-2xl font-bold text-yellow-400">${totalValue.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                ${totalValue.toFixed(2)}
+              </p>
             </div>
             <DollarSign className="w-8 h-8 text-yellow-400 opacity-50" />
           </div>
@@ -95,7 +120,9 @@ export default function EcommerceOverview({ products }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Avg Price</p>
-              <p className="text-2xl font-bold text-purple-400">${avgPrice.toFixed(2)}</p>
+              <p className="text-2xl font-bold text-purple-400">
+                ${avgPrice.toFixed(2)}
+              </p>
             </div>
             <TrendingUp className="w-8 h-8 text-purple-400 opacity-50" />
           </div>
@@ -110,8 +137,12 @@ export default function EcommerceOverview({ products }) {
             <XAxis dataKey="category" stroke="#9CA3AF" />
             <YAxis stroke="#9CA3AF" />
             <Tooltip
-              contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-              labelStyle={{ color: '#F3F4F6' }}
+              contentStyle={{
+                backgroundColor: "#1F2937",
+                border: "1px solid #374151",
+                borderRadius: "8px",
+              }}
+              labelStyle={{ color: "#F3F4F6" }}
             />
             <Legend />
             <Bar dataKey="count" fill="#3B82F6" name="Products" />
@@ -125,7 +156,10 @@ export default function EcommerceOverview({ products }) {
           <h3 className="text-lg font-semibold mb-4">Top Products by Value</h3>
           <div className="space-y-3">
             {topProducts.map((product, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-gray-900 rounded-lg"
+              >
                 <div className="flex items-center gap-3 flex-1">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500/20 text-green-400 font-bold">
                     {index + 1}
@@ -138,12 +172,16 @@ export default function EcommerceOverview({ products }) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-green-400">${product.price}</div>
-                  <Badge className={
-                    product.status === 'published' 
-                      ? 'bg-green-500/20 text-green-400 text-xs' 
-                      : 'bg-yellow-500/20 text-yellow-400 text-xs'
-                  }>
+                  <div className="text-lg font-bold text-green-400">
+                    ${product.price}
+                  </div>
+                  <Badge
+                    className={
+                      product.status === "published"
+                        ? "bg-green-500/20 text-green-400 text-xs"
+                        : "bg-yellow-500/20 text-yellow-400 text-xs"
+                    }
+                  >
                     {product.status}
                   </Badge>
                 </div>

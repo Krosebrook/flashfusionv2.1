@@ -14,22 +14,17 @@ import { useTemplateFilters } from "../components/marketplace/useTemplateFilters
 // Main component - now much cleaner with extracted logic and components
 export default function AgentMarketplace() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  
+
   // Custom hooks handle data fetching and filtering logic
-  const { 
-    templates, 
-    featuredTemplates, 
-    popularTemplates, 
-    stats, 
-    refetch 
-  } = useMarketplaceTemplates();
-  
+  const { templates, featuredTemplates, popularTemplates, stats, refetch } =
+    useMarketplaceTemplates();
+
   const {
     searchQuery,
     setSearchQuery,
     activeCategory,
     setActiveCategory,
-    filteredTemplates
+    filteredTemplates,
   } = useTemplateFilters(templates);
 
   // Early return for detail view - improves readability
@@ -50,8 +45,10 @@ export default function AgentMarketplace() {
     );
   }
 
-  const showFeaturedSection = featuredTemplates.length > 0 && activeCategory === "all";
-  const showPopularSection = popularTemplates.length > 0 && activeCategory === "all";
+  const showFeaturedSection =
+    featuredTemplates.length > 0 && activeCategory === "all";
+  const showPopularSection =
+    popularTemplates.length > 0 && activeCategory === "all";
 
   return (
     <div className="space-y-8">
@@ -62,7 +59,8 @@ export default function AgentMarketplace() {
           <span>AI Agent Marketplace</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Browse and install pre-built AI agent workflows created by the community
+          Browse and install pre-built AI agent workflows created by the
+          community
         </p>
       </div>
 
@@ -70,13 +68,17 @@ export default function AgentMarketplace() {
       <MarketplaceStats stats={stats} />
 
       {/* Search bar - extracted for clarity */}
-      <MarketplaceSearch 
-        searchQuery={searchQuery} 
-        onSearchChange={setSearchQuery} 
+      <MarketplaceSearch
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
       {/* Category tabs with template sections */}
-      <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+      <Tabs
+        value={activeCategory}
+        onValueChange={setActiveCategory}
+        className="w-full"
+      >
         <TabsList className="bg-gray-800">
           <TabsTrigger value="all">All Templates</TabsTrigger>
           <TabsTrigger value="marketing">Marketing</TabsTrigger>
@@ -110,7 +112,11 @@ export default function AgentMarketplace() {
 
           {/* All/filtered templates section */}
           <TemplateSection
-            title={activeCategory === "all" ? "All Templates" : `${activeCategory} Templates`}
+            title={
+              activeCategory === "all"
+                ? "All Templates"
+                : `${activeCategory} Templates`
+            }
             templates={filteredTemplates}
             onSelectTemplate={setSelectedTemplate}
           />

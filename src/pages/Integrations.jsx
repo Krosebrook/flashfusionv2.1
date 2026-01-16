@@ -3,8 +3,21 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plug, Plus, ShoppingBag, Store, Package, AlertCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Plug,
+  Plus,
+  ShoppingBag,
+  Store,
+  Package,
+  AlertCircle,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import PlatformConnectionCard from "../components/integrations/PlatformConnectionCard";
 import SyncHistory from "../components/integrations/SyncHistory";
@@ -17,7 +30,7 @@ const AVAILABLE_PLATFORMS = [
   "Etsy",
   "eBay",
   "Facebook",
-  "TikTok"
+  "TikTok",
 ];
 
 export default function Integrations() {
@@ -33,7 +46,10 @@ export default function Integrations() {
   const fetchConnections = async () => {
     setIsLoading(true);
     try {
-      const data = await base44.entities.PlatformConnection.list("-created_date", 100);
+      const data = await base44.entities.PlatformConnection.list(
+        "-created_date",
+        100
+      );
       setConnections(data);
     } catch (error) {
       console.error("Failed to fetch connections:", error);
@@ -47,13 +63,15 @@ export default function Integrations() {
     setSelectedPlatform("");
   };
 
-  const connectedPlatforms = connections.map(c => c.platform);
-  const availablePlatforms = AVAILABLE_PLATFORMS.filter(p => !connectedPlatforms.includes(p));
+  const connectedPlatforms = connections.map((c) => c.platform);
+  const availablePlatforms = AVAILABLE_PLATFORMS.filter(
+    (p) => !connectedPlatforms.includes(p)
+  );
 
   const stats = {
     total: connections.length,
-    connected: connections.filter(c => c.status === "connected").length,
-    errors: connections.filter(c => c.status === "error").length
+    connected: connections.filter((c) => c.status === "connected").length,
+    errors: connections.filter((c) => c.status === "error").length,
   };
 
   if (isLoading) {
@@ -77,7 +95,8 @@ export default function Integrations() {
           <span>Platform Integrations</span>
         </h1>
         <p className="text-gray-400">
-          Connect your e-commerce platforms to publish and sync products automatically
+          Connect your e-commerce platforms to publish and sync products
+          automatically
         </p>
       </div>
 
@@ -96,7 +115,9 @@ export default function Integrations() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Connected</p>
-              <p className="text-3xl font-bold mt-1 text-green-400">{stats.connected}</p>
+              <p className="text-3xl font-bold mt-1 text-green-400">
+                {stats.connected}
+              </p>
             </div>
             <ShoppingBag className="w-8 h-8 text-green-400" />
           </div>
@@ -106,7 +127,9 @@ export default function Integrations() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Errors</p>
-              <p className="text-3xl font-bold mt-1 text-red-400">{stats.errors}</p>
+              <p className="text-3xl font-bold mt-1 text-red-400">
+                {stats.errors}
+              </p>
             </div>
             <AlertCircle className="w-8 h-8 text-red-400" />
           </div>
@@ -119,12 +142,15 @@ export default function Integrations() {
             <h3 className="text-lg font-semibold">Add New Platform</h3>
           </div>
           <div className="flex gap-3">
-            <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+            <Select
+              value={selectedPlatform}
+              onValueChange={setSelectedPlatform}
+            >
               <SelectTrigger className="bg-gray-900 border-gray-600 flex-1">
                 <SelectValue placeholder="Select a platform to connect" />
               </SelectTrigger>
               <SelectContent>
-                {availablePlatforms.map(platform => (
+                {availablePlatforms.map((platform) => (
                   <SelectItem key={platform} value={platform}>
                     {platform}
                   </SelectItem>
@@ -167,7 +193,7 @@ export default function Integrations() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Connected Platforms</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {connections.map(connection => (
+              {connections.map((connection) => (
                 <PlatformConnectionCard
                   key={connection.id}
                   connection={connection}

@@ -44,7 +44,7 @@ export default function WSJFDialog({ item, onSave, onClose }) {
     job_size: 5,
     status: "backlog",
     owner_email: "",
-    tags: []
+    tags: [],
   });
 
   useEffect(() => {
@@ -58,13 +58,16 @@ export default function WSJFDialog({ item, onSave, onClose }) {
         job_size: item.job_size || 5,
         status: item.status || "backlog",
         owner_email: item.owner_email || "",
-        tags: item.tags || []
+        tags: item.tags || [],
       });
     }
   }, [item]);
 
   const calculateWSJF = () => {
-    const cod = formData.business_value + formData.time_criticality + formData.risk_reduction;
+    const cod =
+      formData.business_value +
+      formData.time_criticality +
+      formData.risk_reduction;
     return formData.job_size > 0 ? cod / formData.job_size : 0;
   };
 
@@ -91,7 +94,9 @@ export default function WSJFDialog({ item, onSave, onClose }) {
             <Label>Title *</Label>
             <Input
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               placeholder="Enter item title"
               required
               className="bg-gray-900 border-gray-700"
@@ -102,7 +107,9 @@ export default function WSJFDialog({ item, onSave, onClose }) {
             <Label>Description</Label>
             <Textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               placeholder="Enter description"
               className="bg-gray-900 border-gray-700"
             />
@@ -131,7 +138,9 @@ export default function WSJFDialog({ item, onSave, onClose }) {
               <Label>Owner Email</Label>
               <Input
                 value={formData.owner_email}
-                onChange={(e) => setFormData({ ...formData, owner_email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, owner_email: e.target.value })
+                }
                 placeholder="owner@example.com"
                 className="bg-gray-900 border-gray-700"
               />
@@ -140,7 +149,7 @@ export default function WSJFDialog({ item, onSave, onClose }) {
 
           <div className="bg-gray-900 p-4 rounded-lg space-y-4">
             <h3 className="font-medium text-center mb-2">WSJF Scoring</h3>
-            
+
             <ScoreSlider
               label="Business Value"
               value={formData.business_value}
@@ -152,7 +161,9 @@ export default function WSJFDialog({ item, onSave, onClose }) {
             <ScoreSlider
               label="Time Criticality"
               value={formData.time_criticality}
-              onChange={(v) => setFormData({ ...formData, time_criticality: v })}
+              onChange={(v) =>
+                setFormData({ ...formData, time_criticality: v })
+              }
               icon={Clock}
               description="How time-sensitive is this?"
             />
@@ -175,9 +186,13 @@ export default function WSJFDialog({ item, onSave, onClose }) {
 
             <div className="text-center p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg">
               <div className="text-sm text-gray-200">Calculated WSJF Score</div>
-              <div className="text-3xl font-bold">{calculateWSJF().toFixed(2)}</div>
+              <div className="text-3xl font-bold">
+                {calculateWSJF().toFixed(2)}
+              </div>
               <div className="text-xs text-gray-300 mt-1">
-                (BV + TC + RR) / Job Size = ({formData.business_value} + {formData.time_criticality} + {formData.risk_reduction}) / {formData.job_size}
+                (BV + TC + RR) / Job Size = ({formData.business_value} +{" "}
+                {formData.time_criticality} + {formData.risk_reduction}) /{" "}
+                {formData.job_size}
               </div>
             </div>
           </div>

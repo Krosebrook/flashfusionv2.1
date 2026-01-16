@@ -2,7 +2,13 @@ import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Image as ImageIcon, Loader2, Download, Share2 } from "lucide-react";
@@ -10,14 +16,42 @@ import { Image as ImageIcon, Loader2, Download, Share2 } from "lucide-react";
 import SocialPublisher from "./SocialPublisher";
 
 const assetTypes = [
-  { id: "instagram_post", name: "Instagram Post", platform: "Instagram", dimensions: "1080x1080" },
-  { id: "instagram_story", name: "Instagram Story", platform: "Instagram", dimensions: "1080x1920" },
-  { id: "facebook_post", name: "Facebook Post", platform: "Facebook", dimensions: "1200x630" },
-  { id: "twitter_header", name: "Twitter Header", platform: "Twitter", dimensions: "1500x500" },
-  { id: "linkedin_post", name: "LinkedIn Post", platform: "LinkedIn", dimensions: "1200x627" }
+  {
+    id: "instagram_post",
+    name: "Instagram Post",
+    platform: "Instagram",
+    dimensions: "1080x1080",
+  },
+  {
+    id: "instagram_story",
+    name: "Instagram Story",
+    platform: "Instagram",
+    dimensions: "1080x1920",
+  },
+  {
+    id: "facebook_post",
+    name: "Facebook Post",
+    platform: "Facebook",
+    dimensions: "1200x630",
+  },
+  {
+    id: "twitter_header",
+    name: "Twitter Header",
+    platform: "Twitter",
+    dimensions: "1500x500",
+  },
+  {
+    id: "linkedin_post",
+    name: "LinkedIn Post",
+    platform: "LinkedIn",
+    dimensions: "1200x627",
+  },
 ];
 
-export default function SocialMediaAssetGenerator({ brandKit, onAssetGenerated }) {
+export default function SocialMediaAssetGenerator({
+  brandKit,
+  onAssetGenerated,
+}) {
   const [selectedType, setSelectedType] = useState("instagram_post");
   const [message, setMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -30,14 +64,16 @@ export default function SocialMediaAssetGenerator({ brandKit, onAssetGenerated }
     setIsGenerating(true);
     try {
       const user = await base44.auth.me();
-      
+
       if (user.credits_remaining < 100) {
-        alert("Insufficient credits. You need at least 100 credits to generate social assets.");
+        alert(
+          "Insufficient credits. You need at least 100 credits to generate social assets."
+        );
         setIsGenerating(false);
         return;
       }
 
-      const assetType = assetTypes.find(t => t.id === selectedType);
+      const assetType = assetTypes.find((t) => t.id === selectedType);
 
       const prompt = `Create a social media graphic for ${assetType.platform}:
 
@@ -66,9 +102,9 @@ Include relevant hashtags and call-to-action.`;
           type: "object",
           properties: {
             caption: { type: "string" },
-            hashtags: { type: "array", items: { type: "string" } }
-          }
-        }
+            hashtags: { type: "array", items: { type: "string" } },
+          },
+        },
       });
 
       const asset = {
@@ -78,22 +114,21 @@ Include relevant hashtags and call-to-action.`;
         image_url: url,
         caption,
         hashtags,
-        dimensions: assetType.dimensions
+        dimensions: assetType.dimensions,
       };
 
       setGeneratedAssets([asset, ...generatedAssets]);
       onAssetGenerated?.(asset);
 
       await base44.auth.updateMe({
-        credits_remaining: user.credits_remaining - 100
+        credits_remaining: user.credits_remaining - 100,
       });
 
       await base44.entities.UsageLog.create({
         feature: "SocialMediaAssetGenerator",
         credits_used: 100,
-        details: `Generated ${assetType.name}: ${message}`
+        details: `Generated ${assetType.name}: ${message}`,
       });
-
     } catch (error) {
       console.error("Asset generation failed:", error);
       alert("Failed to generate social asset. Please try again.");
@@ -106,7 +141,7 @@ Include relevant hashtags and call-to-action.`;
       const response = await fetch(asset.image_url);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `${asset.platform}_${asset.type}_${Date.now()}.png`;
       a.click();
@@ -118,10 +153,7 @@ Include relevant hashtags and call-to-action.`;
   if (publishingAsset) {
     return (
       <div className="space-y-6">
-        <Button
-          onClick={() => setPublishingAsset(null)}
-          variant="outline"
-        >
+        <Button onClick={() => setPublishingAsset(null)} variant="outline">
           ← Back to Assets
         </Button>
         <SocialPublisher
@@ -140,7 +172,9 @@ Include relevant hashtags and call-to-action.`;
       <Card className="bg-gray-800 border-gray-700 p-6">
         <div className="flex items-center gap-2 mb-6">
           <ImageIcon className="w-5 h-5 text-purple-400" />
-          <h3 className="text-xl font-semibold">Social Media Asset Generator</h3>
+          <h3 className="text-xl font-semibold">
+            Social Media Asset Generator
+          </h3>
           <Badge className="ml-auto">100 credits</Badge>
         </div>
 
@@ -162,7 +196,9 @@ Include relevant hashtags and call-to-action.`;
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Message / Content</label>
+            <label className="block text-sm font-medium mb-2">
+              Message / Content
+            </label>
             <Input
               placeholder="e.g., New product launch announcement"
               value={message}
@@ -194,16 +230,21 @@ Include relevant hashtags and call-to-action.`;
       {generatedAssets.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {generatedAssets.map((asset, index) => (
-            <Card key={index} className="bg-gray-800 border-gray-700 overflow-hidden">
-              <img 
-                src={asset.image_url} 
+            <Card
+              key={index}
+              className="bg-gray-800 border-gray-700 overflow-hidden"
+            >
+              <img
+                src={asset.image_url}
                 alt={asset.type}
                 className="w-full h-64 object-cover"
               />
               <div className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">{asset.platform}</Badge>
-                  <span className="text-xs text-gray-400">{asset.dimensions}</span>
+                  <span className="text-xs text-gray-400">
+                    {asset.dimensions}
+                  </span>
                 </div>
                 <p className="text-sm text-gray-300">{asset.message}</p>
                 <div className="flex gap-2">

@@ -6,11 +6,23 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Play, Loader2, Copy, Check, Download, FileText, History
+import {
+  Play,
+  Loader2,
+  Copy,
+  Check,
+  Download,
+  FileText,
+  History,
 } from "lucide-react";
 
 export default function PluginRunner({ plugin, onClose }) {
@@ -41,11 +53,11 @@ export default function PluginRunner({ plugin, onClose }) {
 
       // Enhanced prompt with user customizations
       let enhancedPrompt = plugin.system_prompt;
-      
+
       if (customInstructions) {
         enhancedPrompt += `\n\nAdditional Instructions: ${customInstructions}`;
       }
-      
+
       if (outputFormat !== "text") {
         enhancedPrompt += `\n\nOutput Format: Please format the response as ${outputFormat.toUpperCase()}.`;
       }
@@ -62,36 +74,38 @@ export default function PluginRunner({ plugin, onClose }) {
           type: "object",
           properties: {
             result: { type: "string" },
-            metadata: { type: "object" }
-          }
+            metadata: { type: "object" },
+          },
         };
       }
 
       const result = await InvokeLLM(requestOptions);
-      
-      const formattedResult = typeof result === 'object' ? JSON.stringify(result, null, 2) : result;
+
+      const formattedResult =
+        typeof result === "object" ? JSON.stringify(result, null, 2) : result;
       setOutput(formattedResult);
 
       // Add to history
       const newHistoryItem = {
         input: input.substring(0, 100) + (input.length > 100 ? "..." : ""),
-        output: formattedResult.substring(0, 200) + (formattedResult.length > 200 ? "..." : ""),
+        output:
+          formattedResult.substring(0, 200) +
+          (formattedResult.length > 200 ? "..." : ""),
         timestamp: new Date().toISOString(),
-        credits_used: creditsToUse
+        credits_used: creditsToUse,
       };
       setHistory([newHistoryItem, ...history.slice(0, 9)]); // Keep last 10 runs
 
       // Update user credits and log usage
-      await base44.auth.updateMyUserData({ 
-        credits_remaining: user.credits_remaining - creditsToUse 
+      await base44.auth.updateMyUserData({
+        credits_remaining: user.credits_remaining - creditsToUse,
       });
-      
+
       await base44.entities.UsageLog.create({
         feature: "PluginRunner",
         credits_used: creditsToUse,
-        details: `Ran plugin: ${plugin.name} - ${input.substring(0, 50)}${input.length > 50 ? "..." : ""}`
+        details: `Ran plugin: ${plugin.name} - ${input.substring(0, 50)}${input.length > 50 ? "..." : ""}`,
       });
-
     } catch (e) {
       console.error(e);
       setError("Plugin execution failed. Please try again or contact support.");
@@ -106,16 +120,16 @@ export default function PluginRunner({ plugin, onClose }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   const downloadOutput = () => {
-    const blob = new Blob([output], { type: 'text/plain' });
+    const blob = new Blob([output], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `${plugin.name.toLowerCase().replace(/\s+/g, '-')}-output.${outputFormat}`;
+    a.download = `${plugin.name.toLowerCase().replace(/\s+/g, "-")}-output.${outputFormat}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -175,8 +189,8 @@ export default function PluginRunner({ plugin, onClose }) {
                 </Select>
               </div>
 
-              <Button 
-                onClick={runPlugin} 
+              <Button
+                onClick={runPlugin}
                 disabled={isProcessing || !input}
                 className="bg-blue-600 hover:bg-blue-700 self-end"
                 size="lg"
@@ -227,13 +241,15 @@ export default function PluginRunner({ plugin, onClose }) {
               <div className="text-center py-8 text-gray-400">
                 <History className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>No previous runs yet</p>
-                <p className="text-sm">Your plugin execution history will appear here</p>
+                <p className="text-sm">
+                  Your plugin execution history will appear here
+                </p>
               </div>
             ) : (
               <div className="space-y-3">
                 <h3 className="font-medium">Previous Runs</h3>
                 {history.map((item, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-600 transition-colors"
                     onClick={() => loadFromHistory(item)}
@@ -279,19 +295,15 @@ export default function PluginRunner({ plugin, onClose }) {
               Output
             </h3>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyOutput}
-              >
-                {copied ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
-                {copied ? 'Copied' : 'Copy'}
+              <Button variant="outline" size="sm" onClick={copyOutput}>
+                {copied ? (
+                  <Check className="w-3 h-3 mr-1" />
+                ) : (
+                  <Copy className="w-3 h-3 mr-1" />
+                )}
+                {copied ? "Copied" : "Copy"}
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={downloadOutput}
-              >
+              <Button variant="outline" size="sm" onClick={downloadOutput}>
                 <Download className="w-3 h-3 mr-1" />
                 Download
               </Button>

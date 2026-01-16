@@ -2,9 +2,16 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  ChevronDown, ChevronUp, Edit, Trash2, History, 
-  TrendingUp, Clock, Shield, Box 
+import {
+  ChevronDown,
+  ChevronUp,
+  Edit,
+  Trash2,
+  History,
+  TrendingUp,
+  Clock,
+  Shield,
+  Box,
 } from "lucide-react";
 import WSJFHistory from "./WSJFHistory";
 
@@ -13,7 +20,7 @@ const statusColors = {
   ready: "bg-blue-500",
   in_progress: "bg-yellow-500",
   done: "bg-green-500",
-  cancelled: "bg-red-500"
+  cancelled: "bg-red-500",
 };
 
 const ScoreBar = ({ label, value, icon: Icon, color }) => (
@@ -26,7 +33,7 @@ const ScoreBar = ({ label, value, icon: Icon, color }) => (
       <span className="font-medium">{value}</span>
     </div>
     <div className="w-full bg-gray-700 rounded-full h-1.5">
-      <div 
+      <div
         className={`h-1.5 rounded-full ${color}`}
         style={{ width: `${value * 10}%` }}
       />
@@ -44,19 +51,28 @@ export default function WSJFCard({ item, onEdit, onDelete, history }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-semibold truncate">{item.title}</h3>
-              <Badge className={`${statusColors[item.status]} text-white text-xs`}>
+              <Badge
+                className={`${statusColors[item.status]} text-white text-xs`}
+              >
                 {item.status.replace("_", " ")}
               </Badge>
             </div>
             {item.description && (
-              <p className="text-sm text-gray-400 line-clamp-2">{item.description}</p>
+              <p className="text-sm text-gray-400 line-clamp-2">
+                {item.description}
+              </p>
             )}
           </div>
           <div className="flex items-center gap-1 ml-2">
             <Button size="sm" variant="ghost" onClick={() => onEdit(item)}>
               <Edit className="w-4 h-4" />
             </Button>
-            <Button size="sm" variant="ghost" className="text-red-400" onClick={() => onDelete(item)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-red-400"
+              onClick={() => onDelete(item)}
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
@@ -64,15 +80,37 @@ export default function WSJFCard({ item, onEdit, onDelete, history }) {
 
         <div className="flex items-center justify-between">
           <div className="text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg">
-            <div className="text-2xl font-bold">{item.wsjf_score?.toFixed(1) || "N/A"}</div>
+            <div className="text-2xl font-bold">
+              {item.wsjf_score?.toFixed(1) || "N/A"}
+            </div>
             <div className="text-xs text-gray-200">WSJF Score</div>
           </div>
-          
+
           <div className="flex-1 ml-4 grid grid-cols-2 gap-2">
-            <ScoreBar label="Business Value" value={item.business_value} icon={TrendingUp} color="bg-green-500" />
-            <ScoreBar label="Time Critical" value={item.time_criticality} icon={Clock} color="bg-yellow-500" />
-            <ScoreBar label="Risk Reduction" value={item.risk_reduction} icon={Shield} color="bg-blue-500" />
-            <ScoreBar label="Job Size" value={item.job_size} icon={Box} color="bg-purple-500" />
+            <ScoreBar
+              label="Business Value"
+              value={item.business_value}
+              icon={TrendingUp}
+              color="bg-green-500"
+            />
+            <ScoreBar
+              label="Time Critical"
+              value={item.time_criticality}
+              icon={Clock}
+              color="bg-yellow-500"
+            />
+            <ScoreBar
+              label="Risk Reduction"
+              value={item.risk_reduction}
+              icon={Shield}
+              color="bg-blue-500"
+            />
+            <ScoreBar
+              label="Job Size"
+              value={item.job_size}
+              icon={Box}
+              color="bg-purple-500"
+            />
           </div>
         </div>
 
@@ -92,12 +130,14 @@ export default function WSJFCard({ item, onEdit, onDelete, history }) {
             <History className="w-4 h-4" />
             History ({history?.length || 0} changes)
           </span>
-          {showHistory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {showHistory ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
         </Button>
 
-        {showHistory && (
-          <WSJFHistory history={history} />
-        )}
+        {showHistory && <WSJFHistory history={history} />}
       </div>
     </Card>
   );

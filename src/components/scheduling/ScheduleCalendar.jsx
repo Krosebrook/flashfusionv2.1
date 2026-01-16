@@ -2,7 +2,16 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  addMonths,
+  subMonths,
+} from "date-fns";
 
 export default function ScheduleCalendar({ schedules, onRefresh }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -12,9 +21,7 @@ export default function ScheduleCalendar({ schedules, onRefresh }) {
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   const getSchedulesForDay = (day) => {
-    return schedules.filter(s => 
-      isSameDay(new Date(s.scheduled_date), day)
-    );
+    return schedules.filter((s) => isSameDay(new Date(s.scheduled_date), day));
   };
 
   return (
@@ -50,8 +57,11 @@ export default function ScheduleCalendar({ schedules, onRefresh }) {
       </div>
 
       <div className="grid grid-cols-7 gap-2">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="text-center text-sm font-semibold text-gray-400 p-2">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div
+            key={day}
+            className="text-center text-sm font-semibold text-gray-400 p-2"
+          >
             {day}
           </div>
         ))}
@@ -64,23 +74,28 @@ export default function ScheduleCalendar({ schedules, onRefresh }) {
             <div
               key={day.toISOString()}
               className={`min-h-[100px] p-2 rounded-lg border ${
-                isToday ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 bg-gray-900'
-              } ${!isSameMonth(day, currentMonth) ? 'opacity-50' : ''}`}
+                isToday
+                  ? "border-blue-500 bg-blue-500/10"
+                  : "border-gray-700 bg-gray-900"
+              } ${!isSameMonth(day, currentMonth) ? "opacity-50" : ""}`}
             >
               <div className="text-sm font-semibold mb-2">
-                {format(day, 'd')}
+                {format(day, "d")}
               </div>
               <div className="space-y-1">
                 {daySchedules.slice(0, 3).map((schedule) => (
                   <div
                     key={schedule.id}
                     className={`text-xs p-1 rounded truncate ${
-                      schedule.status === 'scheduled' ? 'bg-yellow-500/20 text-yellow-400' :
-                      schedule.status === 'published' ? 'bg-green-500/20 text-green-400' :
-                      'bg-red-500/20 text-red-400'
+                      schedule.status === "scheduled"
+                        ? "bg-yellow-500/20 text-yellow-400"
+                        : schedule.status === "published"
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-red-500/20 text-red-400"
                     }`}
                   >
-                    {format(new Date(schedule.scheduled_date), 'HH:mm')} - {schedule.content_title}
+                    {format(new Date(schedule.scheduled_date), "HH:mm")} -{" "}
+                    {schedule.content_title}
                   </div>
                 ))}
                 {daySchedules.length > 3 && (

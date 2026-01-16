@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Build outputs
+dist
+build
+.vite
+coverage
+
+# Config files
+*.config.js
+
+# Documentation
+*.md
+
+# Git
+.git
+.gitignore
+
+# Misc
+.DS_Store
+*.log

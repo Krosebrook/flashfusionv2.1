@@ -4,17 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Sparkles, Mail, Copy, Check } from "lucide-react";
 
 const emailTypes = {
   promotional: "Promotional - Sales and offers",
   newsletter: "Newsletter - Updates and content",
   welcome: "Welcome - Onboarding new subscribers",
-  announcement: "Announcement - Product/company news"
+  announcement: "Announcement - Product/company news",
 };
 
-export default function EmailMarketingGenerator({ brandKitId, onEmailGenerated }) {
+export default function EmailMarketingGenerator({
+  brandKitId,
+  onEmailGenerated,
+}) {
   const [emailType, setEmailType] = useState("promotional");
   const [purpose, setPurpose] = useState("");
   const [audience, setAudience] = useState("");
@@ -31,8 +40,8 @@ export default function EmailMarketingGenerator({ brandKitId, onEmailGenerated }
       const prompt = `Generate email marketing copy for a ${emailType} email.
 
 Purpose: ${purpose}
-${audience ? `Target Audience: ${audience}` : ''}
-${keyPoints ? `Key Points to Include: ${keyPoints}` : ''}
+${audience ? `Target Audience: ${audience}` : ""}
+${keyPoints ? `Key Points to Include: ${keyPoints}` : ""}
 
 Requirements:
 - Compelling subject line (under 50 characters, attention-grabbing)
@@ -60,9 +69,9 @@ Return JSON with structure:
             preview_text: { type: "string" },
             body: { type: "string" },
             cta: { type: "string" },
-            cta_button: { type: "string" }
-          }
-        }
+            cta_button: { type: "string" },
+          },
+        },
       });
 
       setGeneratedEmail(result);
@@ -79,8 +88,8 @@ Return JSON with structure:
           preview_text: result.preview_text,
           cta: result.cta,
           cta_button: result.cta_button,
-          email_type: emailType
-        }
+          email_type: emailType,
+        },
       });
 
       if (onEmailGenerated) onEmailGenerated();
@@ -122,7 +131,9 @@ Return JSON with structure:
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Email Purpose</label>
+            <label className="block text-sm font-medium mb-2">
+              Email Purpose
+            </label>
             <Input
               placeholder="E.g., Announce 30% off sale on all products"
               value={purpose}
@@ -132,7 +143,9 @@ Return JSON with structure:
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Target Audience (Optional)</label>
+            <label className="block text-sm font-medium mb-2">
+              Target Audience (Optional)
+            </label>
             <Input
               placeholder="E.g., Existing customers, Newsletter subscribers"
               value={audience}
@@ -142,7 +155,9 @@ Return JSON with structure:
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Key Points to Include (Optional)</label>
+            <label className="block text-sm font-medium mb-2">
+              Key Points to Include (Optional)
+            </label>
             <Textarea
               placeholder="List important details, offers, deadlines, or features to highlight..."
               value={keyPoints}
@@ -166,27 +181,45 @@ Return JSON with structure:
         <div className="space-y-4">
           <Card className="bg-gray-800 border-gray-700 p-6">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-sm font-semibold text-gray-400">Subject Line</h4>
+              <h4 className="text-sm font-semibold text-gray-400">
+                Subject Line
+              </h4>
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => handleCopy("subject", generatedEmail.subject_line)}
+                onClick={() =>
+                  handleCopy("subject", generatedEmail.subject_line)
+                }
               >
-                {copiedField === "subject" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copiedField === "subject" ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
               </Button>
             </div>
-            <p className="text-lg font-semibold">{generatedEmail.subject_line}</p>
+            <p className="text-lg font-semibold">
+              {generatedEmail.subject_line}
+            </p>
           </Card>
 
           <Card className="bg-gray-800 border-gray-700 p-6">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-sm font-semibold text-gray-400">Preview Text</h4>
+              <h4 className="text-sm font-semibold text-gray-400">
+                Preview Text
+              </h4>
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => handleCopy("preview", generatedEmail.preview_text)}
+                onClick={() =>
+                  handleCopy("preview", generatedEmail.preview_text)
+                }
               >
-                {copiedField === "preview" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copiedField === "preview" ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
               </Button>
             </div>
             <p className="text-gray-300">{generatedEmail.preview_text}</p>
@@ -194,13 +227,19 @@ Return JSON with structure:
 
           <Card className="bg-gray-800 border-gray-700 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-semibold text-gray-400">Email Body</h4>
+              <h4 className="text-sm font-semibold text-gray-400">
+                Email Body
+              </h4>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => handleCopy("body", generatedEmail.body)}
               >
-                {copiedField === "body" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copiedField === "body" ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
               </Button>
             </div>
             <div className="bg-gray-900 rounded-lg p-4">
@@ -210,13 +249,19 @@ Return JSON with structure:
 
           <Card className="bg-gray-800 border-gray-700 p-6">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-sm font-semibold text-gray-400">Call to Action</h4>
+              <h4 className="text-sm font-semibold text-gray-400">
+                Call to Action
+              </h4>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => handleCopy("cta", generatedEmail.cta)}
               >
-                {copiedField === "cta" ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copiedField === "cta" ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
               </Button>
             </div>
             <div className="space-y-2">

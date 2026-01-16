@@ -14,7 +14,7 @@ import {
   Workflow,
   Clock,
   Store,
-  FileText
+  FileText,
 } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,14 +67,17 @@ const RecentActivity = ({ activities, isLoading }) => {
   return (
     <div className="space-y-3">
       {activities.map((activity, index) => (
-        <div key={index} className="flex items-center gap-3 p-3 bg-gray-700 rounded-md">
+        <div
+          key={index}
+          className="flex items-center gap-3 p-3 bg-gray-700 rounded-md"
+        >
           <div className="w-8 h-8 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center">
             <Activity className="w-4 h-4 text-blue-400" />
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium">{activity.details}</p>
             <p className="text-xs text-gray-400">
-              {format(new Date(activity.created_date), 'MMM d, h:mm a')}
+              {format(new Date(activity.created_date), "MMM d, h:mm a")}
             </p>
           </div>
           <Badge variant="outline" className="text-xs">
@@ -105,14 +108,14 @@ export default function Dashboard() {
       setIsLoading(true);
       try {
         const [
-          currentUser, 
-          usageLogs, 
-          plugins, 
+          currentUser,
+          usageLogs,
+          plugins,
           brandKits,
           collaborations,
           schedules,
           workflows,
-          templates
+          templates,
         ] = await Promise.all([
           base44.auth.me(),
           base44.entities.UsageLog.list("-created_date", 100),
@@ -121,21 +124,25 @@ export default function Dashboard() {
           base44.entities.Collaboration.list(),
           base44.entities.ContentSchedule.list(),
           base44.entities.Workflow.list(),
-          base44.entities.AgentTemplate.list()
+          base44.entities.AgentTemplate.list(),
         ]);
-        
+
         setUser(currentUser);
         setRecentActivity(usageLogs.slice(0, 10));
-        
-        const days = timeRange === "7days" ? 7 : timeRange === "30days" ? 30 : 90;
+
+        const days =
+          timeRange === "7days" ? 7 : timeRange === "30days" ? 30 : 90;
         const startDate = subDays(new Date(), days);
-        
-        const filteredLogs = usageLogs.filter(log => 
-          new Date(log.created_date) >= startDate
+
+        const filteredLogs = usageLogs.filter(
+          (log) => new Date(log.created_date) >= startDate
         );
-        
+
         const formattedUsage = filteredLogs.reduce((acc, log) => {
-          const date = format(new Date(log.created_date), days <= 7 ? "MMM d" : "MMM d");
+          const date = format(
+            new Date(log.created_date),
+            days <= 7 ? "MMM d" : "MMM d"
+          );
           if (!acc[date]) {
             acc[date] = { date, credits_used: 0, sessions: 0 };
           }
@@ -148,7 +155,9 @@ export default function Dashboard() {
         setPluginCount(plugins.length);
         setBrandKitCount(brandKits.length);
         setCollaborationCount(collaborations.length);
-        setScheduleCount(schedules.filter(s => s.status === 'scheduled').length);
+        setScheduleCount(
+          schedules.filter((s) => s.status === "scheduled").length
+        );
         setWorkflowCount(workflows.length);
         setTemplateCount(templates.length);
       } catch (error) {
@@ -160,16 +169,20 @@ export default function Dashboard() {
   }, [timeRange]);
 
   const calculateStats = () => {
-    const totalCreditsUsed = usage.reduce((sum, item) => sum + item.credits_used, 0);
+    const totalCreditsUsed = usage.reduce(
+      (sum, item) => sum + item.credits_used,
+      0
+    );
     const totalSessions = usage.reduce((sum, item) => sum + item.sessions, 0);
-    const avgCreditsPerDay = usage.length > 0 ? Math.round(totalCreditsUsed / usage.length) : 0;
-    
+    const avgCreditsPerDay =
+      usage.length > 0 ? Math.round(totalCreditsUsed / usage.length) : 0;
+
     return {
       totalCreditsUsed,
       totalSessions,
       avgCreditsPerDay,
       creditsRemaining: user?.credits_remaining || 0,
-      currentPlan: user?.plan || 'Free'
+      currentPlan: user?.plan || "Free",
     };
   };
 
@@ -183,26 +196,28 @@ export default function Dashboard() {
           <Skeleton className="h-4 w-96" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-32" />)}
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
         </div>
         <Skeleton className="h-96 w-full" />
       </div>
     );
   }
-  
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">
-            Welcome back, {user?.full_name?.split(' ')[0] || 'User'}
+            Welcome back, {user?.full_name?.split(" ")[0] || "User"}
           </h1>
           <p className="text-gray-400 mt-1">
             Here's what's happening with your AI-powered workspace today.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <select 
+          <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
             className="bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-sm"
@@ -219,7 +234,9 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">Running Low on Credits</p>
-              <p className="text-sm">You have {stats.creditsRemaining} credits remaining.</p>
+              <p className="text-sm">
+                You have {stats.creditsRemaining} credits remaining.
+              </p>
             </div>
             <Link to={createPageUrl("Billing")}>
               <Button variant="outline" size="sm">
@@ -239,32 +256,32 @@ export default function Dashboard() {
 
         <TabsContent value="overview" className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard 
-              title="Credits Remaining" 
-              value={stats.creditsRemaining.toLocaleString()} 
-              icon={Zap} 
+            <StatCard
+              title="Credits Remaining"
+              value={stats.creditsRemaining.toLocaleString()}
+              icon={Zap}
               color="yellow"
               subtitle={`${stats.currentPlan} plan`}
             />
-            <StatCard 
-              title="Credits Used" 
-              value={stats.totalCreditsUsed.toLocaleString()} 
-              icon={BarChart3} 
+            <StatCard
+              title="Credits Used"
+              value={stats.totalCreditsUsed.toLocaleString()}
+              icon={BarChart3}
               color="blue"
-              trend={`${timeRange.replace('days', 'd')}`}
+              trend={`${timeRange.replace("days", "d")}`}
               subtitle={`${stats.avgCreditsPerDay}/day avg`}
             />
-            <StatCard 
-              title="AI Sessions" 
-              value={stats.totalSessions} 
-              icon={Activity} 
+            <StatCard
+              title="AI Sessions"
+              value={stats.totalSessions}
+              icon={Activity}
               color="green"
               subtitle="AI generations"
             />
-            <StatCard 
-              title="Active Workflows" 
-              value={workflowCount} 
-              icon={Workflow} 
+            <StatCard
+              title="Active Workflows"
+              value={workflowCount}
+              icon={Workflow}
               color="purple"
               subtitle="Orchestrations"
             />
@@ -303,9 +320,15 @@ export default function Dashboard() {
 
           <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
             <h2 className="text-xl font-semibold mb-4">Credit Usage</h2>
-            <CreditMeter 
+            <CreditMeter
               current={stats.creditsRemaining}
-              max={stats.currentPlan === 'Free' ? 1000 : stats.currentPlan === 'Creator' ? 50000 : 250000}
+              max={
+                stats.currentPlan === "Free"
+                  ? 1000
+                  : stats.currentPlan === "Creator"
+                    ? 50000
+                    : 250000
+              }
             />
           </div>
 
@@ -356,19 +379,34 @@ export default function Dashboard() {
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <h3 className="text-lg font-semibold mb-4">Usage Breakdown</h3>
               <div className="space-y-4">
-                {['FeatureGenerator', 'BrandKitGenerator', 'ContentCreator', 'AgentOrchestration'].map((feature) => {
-                  const featureUsage = recentActivity.filter(a => a.feature === feature);
-                  const totalCredits = featureUsage.reduce((sum, a) => sum + a.credits_used, 0);
-                  const percentage = stats.totalCreditsUsed > 0 ? (totalCredits / stats.totalCreditsUsed) * 100 : 0;
-                  
+                {[
+                  "FeatureGenerator",
+                  "BrandKitGenerator",
+                  "ContentCreator",
+                  "AgentOrchestration",
+                ].map((feature) => {
+                  const featureUsage = recentActivity.filter(
+                    (a) => a.feature === feature
+                  );
+                  const totalCredits = featureUsage.reduce(
+                    (sum, a) => sum + a.credits_used,
+                    0
+                  );
+                  const percentage =
+                    stats.totalCreditsUsed > 0
+                      ? (totalCredits / stats.totalCreditsUsed) * 100
+                      : 0;
+
                   return (
                     <div key={feature}>
                       <div className="flex justify-between items-center mb-1">
                         <span className="text-sm font-medium">{feature}</span>
-                        <span className="text-sm text-gray-400">{totalCredits} credits</span>
+                        <span className="text-sm text-gray-400">
+                          {totalCredits} credits
+                        </span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${Math.max(percentage, 2)}%` }}
                         />

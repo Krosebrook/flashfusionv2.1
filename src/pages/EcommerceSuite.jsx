@@ -4,7 +4,15 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Package, TrendingUp, Share2, Plus, Sparkles, Image as ImageIcon } from "lucide-react";
+import {
+  ShoppingCart,
+  Package,
+  TrendingUp,
+  Share2,
+  Plus,
+  Sparkles,
+  Image as ImageIcon,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import AIProductGenerator from "../components/ecommerce/AIProductGenerator";
@@ -22,7 +30,7 @@ const platforms = {
   Etsy: { icon: Package, color: "text-orange-400" },
   eBay: { icon: TrendingUp, color: "text-yellow-400" },
   Facebook: { icon: Share2, color: "text-blue-400" },
-  TikTok: { icon: Share2, color: "text-pink-400" }
+  TikTok: { icon: Share2, color: "text-pink-400" },
 };
 
 const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
@@ -31,15 +39,18 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
   const [showDescGenerator, setShowDescGenerator] = useState(false);
   const [showImageGenerator, setShowImageGenerator] = useState(false);
 
-  const isLowStock = product.inventory !== undefined && product.inventory <= (product.reorder_point || 10);
-  const isOutOfStock = product.inventory !== undefined && product.inventory === 0;
-  const brandKit = brandKits.find(b => b.id === product.brand_kit_id);
+  const isLowStock =
+    product.inventory !== undefined &&
+    product.inventory <= (product.reorder_point || 10);
+  const isOutOfStock =
+    product.inventory !== undefined && product.inventory === 0;
+  const brandKit = brandKits.find((b) => b.id === product.brand_kit_id);
 
   return (
     <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden hover:border-gray-600 transition-all">
       {product.images?.[0] && (
-        <img 
-          src={product.images[0]} 
+        <img
+          src={product.images[0]}
           alt={product.title}
           className="w-full h-48 object-cover"
         />
@@ -48,23 +59,34 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-lg">{product.title}</h3>
-            <p className="text-2xl font-bold text-green-400 mt-1">${product.price}</p>
+            <p className="text-2xl font-bold text-green-400 mt-1">
+              ${product.price}
+            </p>
           </div>
           <div className="flex flex-col gap-2 items-end">
-            <Badge className={
-              product.status === 'published' ? 'bg-green-500/20 text-green-400' :
-              product.status === 'out_of_stock' ? 'bg-red-500/20 text-red-400' :
-              product.status === 'draft' ? 'bg-yellow-500/20 text-yellow-400' :
-              'bg-gray-500/20 text-gray-400'
-            }>
-              {product.status.replace(/_/g, ' ')}
+            <Badge
+              className={
+                product.status === "published"
+                  ? "bg-green-500/20 text-green-400"
+                  : product.status === "out_of_stock"
+                    ? "bg-red-500/20 text-red-400"
+                    : product.status === "draft"
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-gray-500/20 text-gray-400"
+              }
+            >
+              {product.status.replace(/_/g, " ")}
             </Badge>
             {product.inventory !== undefined && (
-              <Badge className={
-                isOutOfStock ? 'bg-red-500/20 text-red-400' :
-                isLowStock ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-green-500/20 text-green-400'
-              }>
+              <Badge
+                className={
+                  isOutOfStock
+                    ? "bg-red-500/20 text-red-400"
+                    : isLowStock
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-green-500/20 text-green-400"
+                }
+              >
                 {product.inventory} in stock
               </Badge>
             )}
@@ -182,7 +204,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
               brandKit={brandKit}
               onSelect={async (description) => {
                 await base44.entities.EcommerceProduct.update(product.id, {
-                  description: description
+                  description: description,
                 });
                 setShowDescGenerator(false);
                 onRefresh?.();
@@ -193,10 +215,13 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
 
         {showPublisher && (
           <div className="mt-4 pt-4 border-t border-gray-700">
-            <PlatformPublisher 
+            <PlatformPublisher
               product={product}
               onPublished={async (updated) => {
-                await base44.entities.EcommerceProduct.update(product.id, updated);
+                await base44.entities.EcommerceProduct.update(
+                  product.id,
+                  updated
+                );
                 setShowPublisher(false);
                 onRefresh?.();
               }}
@@ -231,7 +256,7 @@ export default function EcommerceSuite() {
     try {
       const [productsData, brandKitsData] = await Promise.all([
         base44.entities.EcommerceProduct.list("-created_date"),
-        base44.entities.BrandKit.list()
+        base44.entities.BrandKit.list(),
       ]);
       setProducts(productsData);
       setBrandKits(brandKitsData);
@@ -250,10 +275,12 @@ export default function EcommerceSuite() {
 
   const stats = {
     total: products.length,
-    published: products.filter(p => p.status === 'published').length,
-    draft: products.filter(p => p.status === 'draft').length,
-    lowStock: products.filter(p => p.inventory !== undefined && p.inventory <= (p.reorder_point || 10)).length,
-    totalValue: products.reduce((sum, p) => sum + (p.price || 0), 0)
+    published: products.filter((p) => p.status === "published").length,
+    draft: products.filter((p) => p.status === "draft").length,
+    lowStock: products.filter(
+      (p) => p.inventory !== undefined && p.inventory <= (p.reorder_point || 10)
+    ).length,
+    totalValue: products.reduce((sum, p) => sum + (p.price || 0), 0),
   };
 
   return (
@@ -264,7 +291,8 @@ export default function EcommerceSuite() {
           <span>E-commerce Suite</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          AI-powered product creation, multi-channel publishing, and advanced inventory management
+          AI-powered product creation, multi-channel publishing, and advanced
+          inventory management
         </p>
       </div>
 
@@ -275,26 +303,36 @@ export default function EcommerceSuite() {
           <div className="text-sm text-gray-400">Total Products</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-green-400">{stats.published}</div>
+          <div className="text-2xl font-bold text-green-400">
+            {stats.published}
+          </div>
           <div className="text-sm text-gray-400">Published</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-yellow-400">{stats.draft}</div>
+          <div className="text-2xl font-bold text-yellow-400">
+            {stats.draft}
+          </div>
           <div className="text-sm text-gray-400">Drafts</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-red-400">{stats.lowStock}</div>
+          <div className="text-2xl font-bold text-red-400">
+            {stats.lowStock}
+          </div>
           <div className="text-sm text-gray-400">Low Stock</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-purple-400">${stats.totalValue.toFixed(2)}</div>
+          <div className="text-2xl font-bold text-purple-400">
+            ${stats.totalValue.toFixed(2)}
+          </div>
           <div className="text-sm text-gray-400">Total Value</div>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="bg-gray-800">
-          <TabsTrigger value="products">Products ({products.length})</TabsTrigger>
+          <TabsTrigger value="products">
+            Products ({products.length})
+          </TabsTrigger>
           <TabsTrigger value="generate">AI Generator</TabsTrigger>
           <TabsTrigger value="bulk">Bulk Import</TabsTrigger>
         </TabsList>
@@ -309,12 +347,17 @@ export default function EcommerceSuite() {
           ) : products.length === 0 ? (
             <div className="text-center py-12 bg-gray-800 rounded-lg border border-gray-700">
               <Package className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-              <h3 className="text-xl font-semibold text-gray-400 mb-2">No products yet</h3>
+              <h3 className="text-xl font-semibold text-gray-400 mb-2">
+                No products yet
+              </h3>
               <p className="text-gray-500 mb-6">
                 Start by generating products with AI or importing from CSV
               </p>
               <div className="flex gap-3 justify-center">
-                <Button onClick={() => setActiveTab("generate")} className="bg-purple-600 hover:bg-purple-700">
+                <Button
+                  onClick={() => setActiveTab("generate")}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Generate Products
                 </Button>
