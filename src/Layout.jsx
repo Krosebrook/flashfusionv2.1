@@ -23,6 +23,7 @@ import {
   Clock,
   Store,
   ArrowUpDown,
+  ClipboardList,
 } from "lucide-react";
 
 const navigationItems = [
@@ -46,6 +47,11 @@ const navigationItems = [
     name: "Feature Generator",
     href: createPageUrl("FeatureGenerator"),
     icon: Atom,
+  },
+  {
+    name: "PRD Generator",
+    href: createPageUrl("PRDGenerator"),
+    icon: ClipboardList,
   },
   {
     name: "BrandKit Generator",
