@@ -6,7 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Loader2, Check, Download, Plus } from "lucide-react";
 
-export default function AIImageGenerator({ product, brandKit, onImagesGenerated }) {
+export default function AIImageGenerator({
+  product,
+  brandKit,
+  onImagesGenerated,
+}) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [numVariations, setNumVariations] = useState(3);
   const [generatedImages, setGeneratedImages] = useState([]);
@@ -18,48 +22,53 @@ export default function AIImageGenerator({ product, brandKit, onImagesGenerated 
     try {
       const user = await base44.auth.me();
       const creditsNeeded = numVariations * 100;
-      
+
       if (user.credits_remaining < creditsNeeded) {
-        alert(`Insufficient credits. You need ${creditsNeeded} credits to generate ${numVariations} images.`);
+        alert(
+          `Insufficient credits. You need ${creditsNeeded} credits to generate ${numVariations} images.`
+        );
         setIsGenerating(false);
         return;
       }
 
-      const brandContext = brandKit ? `
+      const brandContext = brandKit
+        ? `
 Style: ${brandKit.name} brand aesthetic
 Colors: ${brandKit.colors?.join(", ") || "vibrant and modern"}
-Mood: ${brandKit.voice_guide || "professional and appealing"}` : "";
+Mood: ${brandKit.voice_guide || "professional and appealing"}`
+        : "";
 
-      const basePrompt = customPrompt || `Professional product photography of ${product.title}. 
+      const basePrompt =
+        customPrompt ||
+        `Professional product photography of ${product.title}. 
 ${product.description?.substring(0, 200)}
 High quality, studio lighting, clean background, commercial photography style.
 ${brandContext}`;
 
       const images = [];
-      
+
       for (let i = 0; i < numVariations; i++) {
         const result = await base44.integrations.Core.GenerateImage({
-          prompt: `${basePrompt}\nVariation ${i + 1}: ${i === 0 ? 'front view' : i === 1 ? 'detail shot' : 'lifestyle context'}`
+          prompt: `${basePrompt}\nVariation ${i + 1}: ${i === 0 ? "front view" : i === 1 ? "detail shot" : "lifestyle context"}`,
         });
-        
+
         images.push({
           url: result.url,
-          variation: i + 1
+          variation: i + 1,
         });
       }
 
       setGeneratedImages(images);
 
       await base44.auth.updateMe({
-        credits_remaining: user.credits_remaining - creditsNeeded
+        credits_remaining: user.credits_remaining - creditsNeeded,
       });
 
       await base44.entities.UsageLog.create({
         feature: "AIImageGenerator",
         credits_used: creditsNeeded,
-        details: `Generated ${numVariations} images for: ${product.title}`
+        details: `Generated ${numVariations} images for: ${product.title}`,
       });
-
     } catch (error) {
       console.error("Failed to generate images:", error);
       alert("Failed to generate images. Please try again.");
@@ -68,10 +77,8 @@ ${brandContext}`;
   };
 
   const toggleImageSelection = (url) => {
-    setSelectedImages(prev =>
-      prev.includes(url)
-        ? prev.filter(u => u !== url)
-        : [...prev, url]
+    setSelectedImages((prev) =>
+      prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url]
     );
   };
 
@@ -83,7 +90,7 @@ ${brandContext}`;
       const updatedImages = [...currentImages, ...selectedImages];
 
       await base44.entities.EcommerceProduct.update(product.id, {
-        images: updatedImages
+        images: updatedImages,
       });
 
       onImagesGenerated?.(updatedImages);
@@ -96,9 +103,9 @@ ${brandContext}`;
   };
 
   const downloadImage = (url, index) => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `${product.title.replace(/\s+/g, '_')}_${index + 1}.png`;
+    link.download = `${product.title.replace(/\s+/g, "_")}_${index + 1}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -112,7 +119,9 @@ ${brandContext}`;
             <Sparkles className="w-5 h-5 text-purple-400" />
             AI Image Generator
           </h3>
-          <p className="text-sm text-gray-400">Generate product images with AI</p>
+          <p className="text-sm text-gray-400">
+            Generate product images with AI
+          </p>
         </div>
         <Badge>{numVariations * 100} credits</Badge>
       </div>
@@ -120,9 +129,11 @@ ${brandContext}`;
       {generatedImages.length === 0 ? (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Number of Variations</label>
+            <label className="block text-sm font-medium mb-2">
+              Number of Variations
+            </label>
             <div className="flex gap-2">
-              {[2, 3, 4, 5].map(num => (
+              {[2, 3, 4, 5].map((num) => (
                 <Button
                   key={num}
                   size="sm"
@@ -138,7 +149,9 @@ ${brandContext}`;
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Custom Prompt (Optional)</label>
+            <label className="block text-sm font-medium mb-2">
+              Custom Prompt (Optional)
+            </label>
             <Input
               placeholder="e.g., Add warm lighting, show product in kitchen setting..."
               value={customPrompt}
@@ -213,7 +226,7 @@ ${brandContext}`;
           <p className="text-sm text-gray-400 text-center">
             {selectedImages.length === 0
               ? "Click images to select for your product"
-              : `${selectedImages.length} image${selectedImages.length !== 1 ? 's' : ''} selected`}
+              : `${selectedImages.length} image${selectedImages.length !== 1 ? "s" : ""} selected`}
           </p>
 
           <div className="flex gap-2">

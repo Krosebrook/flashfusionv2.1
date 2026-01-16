@@ -3,19 +3,58 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Play, Save, ArrowRight, 
-  Bot, Code, FileText, Database, Image, ShoppingCart, GitBranch
+import {
+  Play,
+  Save,
+  ArrowRight,
+  Bot,
+  Code,
+  FileText,
+  Database,
+  Image,
+  ShoppingCart,
+  GitBranch,
 } from "lucide-react";
 
 import WorkflowNode from "./WorkflowNode";
 
 const agentTypes = [
-  { id: "CodeGen", name: "Code Generator", icon: Code, description: "Generate code and features" },
-  { id: "Content", name: "Content Creator", icon: FileText, description: "Create content and copy" },
-  { id: "Database", name: "Database Agent", icon: Database, description: "Manage data operations" },
-  { id: "Branding", name: "Brand Agent", icon: Image, description: "Create brand assets" },
-  { id: "Commerce", name: "E-commerce Agent", icon: ShoppingCart, description: "Manage products" },
-  { id: "condition", name: "Conditional Branch", icon: GitBranch, description: "Add conditional logic" }
+  {
+    id: "CodeGen",
+    name: "Code Generator",
+    icon: Code,
+    description: "Generate code and features",
+  },
+  {
+    id: "Content",
+    name: "Content Creator",
+    icon: FileText,
+    description: "Create content and copy",
+  },
+  {
+    id: "Database",
+    name: "Database Agent",
+    icon: Database,
+    description: "Manage data operations",
+  },
+  {
+    id: "Branding",
+    name: "Brand Agent",
+    icon: Image,
+    description: "Create brand assets",
+  },
+  {
+    id: "Commerce",
+    name: "E-commerce Agent",
+    icon: ShoppingCart,
+    description: "Manage products",
+  },
+  {
+    id: "condition",
+    name: "Conditional Branch",
+    icon: GitBranch,
+    description: "Add conditional logic",
+  },
 ];
 
 export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
@@ -31,13 +70,13 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
       name: agentType.name,
       description: agentType.description,
       config: {},
-      position: nodes.length
+      position: nodes.length,
     };
     setNodes([...nodes, newNode]);
   };
 
   const deleteNode = (nodeId) => {
-    setNodes(nodes.filter(n => n.id !== nodeId));
+    setNodes(nodes.filter((n) => n.id !== nodeId));
   };
 
   const editNode = (node) => {
@@ -46,7 +85,7 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
   };
 
   const updateNode = (updatedNode) => {
-    setNodes(nodes.map(n => n.id === updatedNode.id ? updatedNode : n));
+    setNodes(nodes.map((n) => (n.id === updatedNode.id ? updatedNode : n)));
     setShowNodeConfig(false);
     setEditingNode(null);
   };
@@ -60,7 +99,7 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
 
     const updatedNodes = items.map((node, index) => ({
       ...node,
-      position: index
+      position: index,
     }));
 
     setNodes(updatedNodes);
@@ -70,11 +109,13 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
     const workflowData = {
       name: workflowName || "Untitled Workflow",
       nodes,
-      connections: nodes.map((node, index) => ({
-        from: node.id,
-        to: nodes[index + 1]?.id || null
-      })).filter(c => c.to),
-      status: "draft"
+      connections: nodes
+        .map((node, index) => ({
+          from: node.id,
+          to: nodes[index + 1]?.id || null,
+        }))
+        .filter((c) => c.to),
+      status: "draft",
     };
     onSave?.(workflowData);
   };
@@ -131,7 +172,9 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
 
           {/* Workflow Canvas */}
           <div className="lg:col-span-3">
-            <h3 className="font-semibold mb-4">Workflow ({nodes.length} nodes)</h3>
+            <h3 className="font-semibold mb-4">
+              Workflow ({nodes.length} nodes)
+            </h3>
             {nodes.length === 0 ? (
               <div className="bg-gray-900 border-2 border-dashed border-gray-700 rounded-lg p-12 text-center">
                 <Bot className="w-16 h-16 mx-auto text-gray-600 mb-4" />
@@ -148,7 +191,9 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                       className={`space-y-3 p-4 rounded-lg border-2 border-dashed transition-colors ${
-                        snapshot.isDraggingOver ? 'border-blue-500 bg-blue-500/5' : 'border-gray-700'
+                        snapshot.isDraggingOver
+                          ? "border-blue-500 bg-blue-500/5"
+                          : "border-gray-700"
                       }`}
                     >
                       {nodes.map((node, index) => (
@@ -159,7 +204,9 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className={snapshot.isDragging ? 'opacity-50' : ''}
+                                className={
+                                  snapshot.isDragging ? "opacity-50" : ""
+                                }
                               >
                                 <WorkflowNode
                                   node={node}
@@ -189,30 +236,43 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
       {/* Node Configuration Modal */}
       {showNodeConfig && editingNode && (
         <Card className="bg-gray-800 border-gray-700 p-6">
-          <h3 className="text-xl font-semibold mb-4">Configure: {editingNode.name}</h3>
+          <h3 className="text-xl font-semibold mb-4">
+            Configure: {editingNode.name}
+          </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Task Description</label>
+              <label className="block text-sm font-medium mb-2">
+                Task Description
+              </label>
               <Input
                 value={editingNode.config?.task || ""}
-                onChange={(e) => setEditingNode({
-                  ...editingNode,
-                  config: { ...editingNode.config, task: e.target.value }
-                })}
+                onChange={(e) =>
+                  setEditingNode({
+                    ...editingNode,
+                    config: { ...editingNode.config, task: e.target.value },
+                  })
+                }
                 placeholder="What should this agent do?"
                 className="bg-gray-900 border-gray-600"
               />
             </div>
 
-            {editingNode.type === 'condition' && (
+            {editingNode.type === "condition" && (
               <div>
-                <label className="block text-sm font-medium mb-2">Condition</label>
+                <label className="block text-sm font-medium mb-2">
+                  Condition
+                </label>
                 <Input
                   value={editingNode.config?.condition || ""}
-                  onChange={(e) => setEditingNode({
-                    ...editingNode,
-                    config: { ...editingNode.config, condition: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setEditingNode({
+                      ...editingNode,
+                      config: {
+                        ...editingNode.config,
+                        condition: e.target.value,
+                      },
+                    })
+                  }
                   placeholder="e.g., result.status === 'success'"
                   className="bg-gray-900 border-gray-600"
                 />
@@ -220,10 +280,16 @@ export default function WorkflowBuilder({ workflow, onSave, onExecute }) {
             )}
 
             <div className="flex gap-3">
-              <Button onClick={() => updateNode(editingNode)} className="flex-1">
+              <Button
+                onClick={() => updateNode(editingNode)}
+                className="flex-1"
+              >
                 Save Changes
               </Button>
-              <Button onClick={() => setShowNodeConfig(false)} variant="outline">
+              <Button
+                onClick={() => setShowNodeConfig(false)}
+                variant="outline"
+              >
                 Cancel
               </Button>
             </div>

@@ -4,17 +4,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Copy, Check } from "lucide-react";
 
 const platformSpecs = {
   Twitter: { maxLength: 280, tone: "concise and punchy", icon: "🐦" },
-  LinkedIn: { maxLength: 3000, tone: "professional and insightful", icon: "💼" },
-  Instagram: { maxLength: 2200, tone: "engaging and visual", icon: "📸" }
+  LinkedIn: {
+    maxLength: 3000,
+    tone: "professional and insightful",
+    icon: "💼",
+  },
+  Instagram: { maxLength: 2200, tone: "engaging and visual", icon: "📸" },
 };
 
-export default function SocialMediaCopyGenerator({ brandKitId, onCopyGenerated }) {
+export default function SocialMediaCopyGenerator({
+  brandKitId,
+  onCopyGenerated,
+}) {
   const [topic, setTopic] = useState("");
   const [platform, setPlatform] = useState("Twitter");
   const [context, setContext] = useState("");
@@ -31,16 +44,16 @@ export default function SocialMediaCopyGenerator({ brandKitId, onCopyGenerated }
       const spec = platformSpecs[platform];
       const prompt = `Generate ${platform} post copy about: ${topic}
 
-${context ? `Additional context: ${context}` : ''}
+${context ? `Additional context: ${context}` : ""}
 
 Requirements:
 - Maximum ${spec.maxLength} characters
 - Tone: ${spec.tone}
 - Include relevant hashtags (3-5)
 - Make it engaging and shareable
-- ${platform === 'Instagram' ? 'Include emoji where appropriate' : ''}
-- ${platform === 'LinkedIn' ? 'Professional but personable' : ''}
-- ${platform === 'Twitter' ? 'Concise with strong hook' : ''}
+- ${platform === "Instagram" ? "Include emoji where appropriate" : ""}
+- ${platform === "LinkedIn" ? "Professional but personable" : ""}
+- ${platform === "Twitter" ? "Concise with strong hook" : ""}
 
 Return JSON with structure:
 {
@@ -54,9 +67,9 @@ Return JSON with structure:
           type: "object",
           properties: {
             copy: { type: "string" },
-            hashtags: { type: "array", items: { type: "string" } }
-          }
-        }
+            hashtags: { type: "array", items: { type: "string" } },
+          },
+        },
       });
 
       setGeneratedCopy(result.copy);
@@ -71,8 +84,8 @@ Return JSON with structure:
         brand_kit_id: brandKitId,
         metadata: {
           hashtags: result.hashtags,
-          topic
-        }
+          topic,
+        },
       });
 
       if (onCopyGenerated) onCopyGenerated();
@@ -83,7 +96,7 @@ Return JSON with structure:
   };
 
   const handleCopy = () => {
-    const fullCopy = `${generatedCopy}\n\n${hashtags.map(h => `#${h}`).join(' ')}`;
+    const fullCopy = `${generatedCopy}\n\n${hashtags.map((h) => `#${h}`).join(" ")}`;
     navigator.clipboard.writeText(fullCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -115,7 +128,9 @@ Return JSON with structure:
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Topic or Key Message</label>
+            <label className="block text-sm font-medium mb-2">
+              Topic or Key Message
+            </label>
             <Input
               placeholder="E.g., Launching our new product feature"
               value={topic}
@@ -125,7 +140,9 @@ Return JSON with structure:
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Additional Context (Optional)</label>
+            <label className="block text-sm font-medium mb-2">
+              Additional Context (Optional)
+            </label>
             <Textarea
               placeholder="Add any additional details, target audience, or specific angles you want to emphasize..."
               value={context}
@@ -155,7 +172,11 @@ Return JSON with structure:
               onClick={handleCopy}
               className="gap-2"
             >
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copied ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
               {copied ? "Copied!" : "Copy"}
             </Button>
           </div>
@@ -178,7 +199,8 @@ Return JSON with structure:
           )}
 
           <div className="mt-4 text-xs text-gray-500">
-            Character count: {generatedCopy.length} / {platformSpecs[platform].maxLength}
+            Character count: {generatedCopy.length} /{" "}
+            {platformSpecs[platform].maxLength}
           </div>
         </Card>
       )}

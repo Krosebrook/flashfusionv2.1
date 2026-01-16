@@ -16,7 +16,8 @@ export default function TeamManagement() {
           <span>Team Management</span>
         </h1>
         <p className="text-gray-400">
-          Manage user roles, permissions, and brand kit assignments for your team
+          Manage user roles, permissions, and brand kit assignments for your
+          team
         </p>
       </div>
 

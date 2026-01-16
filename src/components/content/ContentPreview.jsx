@@ -15,9 +15,11 @@ export default function ContentPreview({ content, onVariationsGenerated }) {
     setIsGenerating(true);
     try {
       const user = await base44.auth.me();
-      
+
       if (user.credits_remaining < 60) {
-        alert("Insufficient credits. You need at least 60 credits to generate A/B test variations.");
+        alert(
+          "Insufficient credits. You need at least 60 credits to generate A/B test variations."
+        );
         setIsGenerating(false);
         return;
       }
@@ -55,12 +57,12 @@ Keep the core message but test different approaches.`;
                   title: { type: "string" },
                   content: { type: "string" },
                   key_differences: { type: "string" },
-                  predicted_performance: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+                  predicted_performance: { type: "string" },
+                },
+              },
+            },
+          },
+        },
       });
 
       const newVariations = [
@@ -69,30 +71,29 @@ Keep the core message but test different approaches.`;
           title: content.title,
           content: content.content,
           key_differences: "Original version",
-          predicted_performance: "Baseline"
+          predicted_performance: "Baseline",
         },
-        ...result.variations
+        ...result.variations,
       ];
 
       setVariations(newVariations);
 
       // Update content with variations
       await base44.entities.ContentPiece.update(content.id, {
-        variations: newVariations
+        variations: newVariations,
       });
 
       await base44.auth.updateMe({
-        credits_remaining: user.credits_remaining - 60
+        credits_remaining: user.credits_remaining - 60,
       });
 
       await base44.entities.UsageLog.create({
         feature: "ABTestingVariations",
         credits_used: 60,
-        details: `Generated A/B variations for: ${content.title}`
+        details: `Generated A/B variations for: ${content.title}`,
       });
 
       onVariationsGenerated?.(newVariations);
-
     } catch (error) {
       console.error("Variation generation failed:", error);
       alert("Failed to generate variations. Please try again.");
@@ -106,7 +107,9 @@ Keep the core message but test different approaches.`;
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Eye className="w-5 h-5 text-blue-400" />
-            <h3 className="text-xl font-semibold">Content Preview & A/B Testing</h3>
+            <h3 className="text-xl font-semibold">
+              Content Preview & A/B Testing
+            </h3>
           </div>
           {variations.length === 0 && (
             <Button
@@ -137,25 +140,45 @@ Keep the core message but test different approaches.`;
               <Badge>{content.type}</Badge>
               <Badge variant="outline">{content.platform}</Badge>
             </div>
-            <p className="text-gray-300 whitespace-pre-line">{content.content}</p>
+            <p className="text-gray-300 whitespace-pre-line">
+              {content.content}
+            </p>
           </div>
         ) : (
-          <Tabs value={`variation-${selectedVariation}`} onValueChange={(v) => setSelectedVariation(parseInt(v.split('-')[1]))} className="w-full">
+          <Tabs
+            value={`variation-${selectedVariation}`}
+            onValueChange={(v) =>
+              setSelectedVariation(parseInt(v.split("-")[1]))
+            }
+            className="w-full"
+          >
             <TabsList className="bg-gray-900 w-full justify-start">
               {variations.map((variation, index) => (
-                <TabsTrigger key={index} value={`variation-${index}`} className="flex-1">
+                <TabsTrigger
+                  key={index}
+                  value={`variation-${index}`}
+                  className="flex-1"
+                >
                   {variation.name}
-                  {index === 0 && <Badge className="ml-2 bg-gray-600 text-xs">Control</Badge>}
+                  {index === 0 && (
+                    <Badge className="ml-2 bg-gray-600 text-xs">Control</Badge>
+                  )}
                 </TabsTrigger>
               ))}
             </TabsList>
 
             {variations.map((variation, index) => (
-              <TabsContent key={index} value={`variation-${index}`} className="space-y-4">
+              <TabsContent
+                key={index}
+                value={`variation-${index}`}
+                className="space-y-4"
+              >
                 <Card className="bg-gray-900 border-gray-700 p-6">
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-semibold text-lg mb-2">{variation.title}</h4>
+                      <h4 className="font-semibold text-lg mb-2">
+                        {variation.title}
+                      </h4>
                       <div className="flex items-center gap-2">
                         <Badge>{content.type}</Badge>
                         <Badge variant="outline">{content.platform}</Badge>
@@ -163,7 +186,9 @@ Keep the core message but test different approaches.`;
                     </div>
 
                     <div className="border-t border-gray-700 pt-4">
-                      <p className="text-gray-300 whitespace-pre-line">{variation.content}</p>
+                      <p className="text-gray-300 whitespace-pre-line">
+                        {variation.content}
+                      </p>
                     </div>
 
                     {index > 0 && (
@@ -173,7 +198,9 @@ Keep the core message but test different approaches.`;
                             <TrendingUp className="w-4 h-4 text-blue-400" />
                             Key Differences
                           </h5>
-                          <p className="text-sm text-gray-400">{variation.key_differences}</p>
+                          <p className="text-sm text-gray-400">
+                            {variation.key_differences}
+                          </p>
                         </div>
 
                         <div className="border-t border-gray-700 pt-4">
@@ -181,7 +208,9 @@ Keep the core message but test different approaches.`;
                             <BarChart3 className="w-4 h-4 text-green-400" />
                             Predicted Performance
                           </h5>
-                          <p className="text-sm text-gray-400">{variation.predicted_performance}</p>
+                          <p className="text-sm text-gray-400">
+                            {variation.predicted_performance}
+                          </p>
                         </div>
                       </>
                     )}
@@ -191,7 +220,10 @@ Keep the core message but test different approaches.`;
                 {index > 0 && (
                   <div className="bg-blue-900/20 border border-blue-700 p-4 rounded-lg">
                     <p className="text-sm text-blue-300">
-                      💡 <strong>Testing Tip:</strong> Run both versions simultaneously on your platform and track engagement metrics like clicks, shares, and conversions to determine the winner.
+                      💡 <strong>Testing Tip:</strong> Run both versions
+                      simultaneously on your platform and track engagement
+                      metrics like clicks, shares, and conversions to determine
+                      the winner.
                     </p>
                   </div>
                 )}
@@ -215,11 +247,17 @@ Keep the core message but test different approaches.`;
             </div>
             <div className="flex items-start gap-2">
               <span className="text-blue-400 font-bold">3.</span>
-              <p>Track key metrics: engagement rate, click-through rate, conversions</p>
+              <p>
+                Track key metrics: engagement rate, click-through rate,
+                conversions
+              </p>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-blue-400 font-bold">4.</span>
-              <p>Run the test for at least 7 days or until statistical significance</p>
+              <p>
+                Run the test for at least 7 days or until statistical
+                significance
+              </p>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-blue-400 font-bold">5.</span>

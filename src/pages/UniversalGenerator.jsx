@@ -8,12 +8,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { 
-  Wand2, Loader2, Code, Smartphone, Globe, ShoppingCart, 
-  FileText, Sparkles, Settings, Play, Eye
+import {
+  Wand2,
+  Loader2,
+  Code,
+  Smartphone,
+  Globe,
+  ShoppingCart,
+  FileText,
+  Sparkles,
+  Settings,
+  Play,
+  Eye,
 } from "lucide-react";
 
 const projectTypes = {
@@ -22,58 +37,68 @@ const projectTypes = {
     name: "Web Application",
     description: "Responsive web apps with modern frameworks",
     frameworks: ["React", "Next.js", "Angular", "Vue.js"],
-    baseCredits: 100
+    baseCredits: 100,
   },
   mobile: {
     icon: Smartphone,
     name: "Mobile App",
     description: "Cross-platform mobile applications",
     frameworks: ["Flutter", "React Native"],
-    baseCredits: 150
+    baseCredits: 150,
   },
   desktop: {
     icon: Code,
     name: "Desktop App",
     description: "Native desktop applications",
     frameworks: ["Electron", "Tauri"],
-    baseCredits: 120
+    baseCredits: 120,
   },
   ecommerce: {
     icon: ShoppingCart,
     name: "E-commerce Store",
     description: "Full-featured online stores",
     frameworks: ["Next.js + Shopify", "React + Stripe"],
-    baseCredits: 200
+    baseCredits: 200,
   },
   content: {
     icon: FileText,
     name: "Content Platform",
     description: "Blogs, portfolios, and content sites",
     frameworks: ["Next.js", "Gatsby", "WordPress"],
-    baseCredits: 80
-  }
+    baseCredits: 80,
+  },
 };
 
 const AgentStatus = ({ agents, activeAgents }) => {
   const allAgents = [
-    "Orchestrator", "CodeGen", "Database", "Security", 
-    "Content", "Branding", "SEO", "Deployment"
+    "Orchestrator",
+    "CodeGen",
+    "Database",
+    "Security",
+    "Content",
+    "Branding",
+    "SEO",
+    "Deployment",
   ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      {allAgents.map(agent => (
-        <div 
+      {allAgents.map((agent) => (
+        <div
           key={agent}
           className={`p-3 rounded-lg border text-center transition-all ${
             activeAgents.includes(agent)
-              ? 'bg-blue-500/20 border-blue-500 text-blue-300'
-              : 'bg-gray-700/50 border-gray-600 text-gray-400'
+              ? "bg-blue-500/20 border-blue-500 text-blue-300"
+              : "bg-gray-700/50 border-gray-600 text-gray-400"
           }`}
         >
-          <div className={`w-2 h-2 rounded-full mx-auto mb-2 ${
-            activeAgents.includes(agent) ? 'bg-blue-400 animate-pulse' : 'bg-gray-500'
-          }`} />
+          <div
+            className={`w-2 h-2 rounded-full mx-auto mb-2 ${
+              activeAgents.includes(agent)
+                ? "bg-blue-400 animate-pulse"
+                : "bg-gray-500"
+            }`}
+          />
           <p className="text-xs font-medium">{agent}</p>
         </div>
       ))}
@@ -88,9 +113,9 @@ export default function UniversalGenerator() {
     type: "",
     framework: "",
     features: [],
-    customInstructions: ""
+    customInstructions: "",
   });
-  
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [activeAgents, setActiveAgents] = useState([]);
@@ -109,7 +134,7 @@ export default function UniversalGenerator() {
     setIsGenerating(true);
     setError(null);
     setGenerationProgress(0);
-    
+
     const creditsToUse = calculateCredits();
 
     try {
@@ -129,14 +154,20 @@ export default function UniversalGenerator() {
         status: "generating",
         config: {
           features: projectData.features,
-          customInstructions: projectData.customInstructions
-        }
+          customInstructions: projectData.customInstructions,
+        },
       });
 
       // Simulate multi-agent orchestration
       const agentSequence = [
-        "Orchestrator", "CodeGen", "Database", "Security", 
-        "Content", "Branding", "SEO", "Deployment"
+        "Orchestrator",
+        "CodeGen",
+        "Database",
+        "Security",
+        "Content",
+        "Branding",
+        "SEO",
+        "Deployment",
       ];
 
       let progress = 0;
@@ -150,7 +181,7 @@ export default function UniversalGenerator() {
           agent_type: agent,
           task_description: `Generate ${agent.toLowerCase()} for ${projectData.name}`,
           input_data: projectData,
-          status: "in_progress"
+          status: "in_progress",
         });
 
         // Simulate agent work with actual AI generation for key components
@@ -160,60 +191,59 @@ export default function UniversalGenerator() {
             
             Project: ${projectData.name}
             Description: ${projectData.description}
-            Features: ${projectData.features.join(', ')}
+            Features: ${projectData.features.join(", ")}
             
             Requirements:
             - Modern, responsive design
             - Clean, production-ready code
             - Proper file structure
             - Include all necessary dependencies
-            - ${projectData.customInstructions || 'Follow best practices'}
+            - ${projectData.customInstructions || "Follow best practices"}
             
             Generate the complete codebase with file structure.
           `;
-          
+
           const generatedCode = await InvokeLLM({ prompt: codePrompt });
-          
+
           await base44.entities.AgentTask.update(task.id, {
             status: "completed",
             output_data: { code: generatedCode },
-            credits_used: Math.round(creditsToUse * 0.6)
+            credits_used: Math.round(creditsToUse * 0.6),
           });
         } else {
           // Simulate other agents
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           await base44.entities.AgentTask.update(task.id, {
             status: "completed",
             output_data: { result: `${agent} completed successfully` },
-            credits_used: Math.round(creditsToUse * 0.05)
+            credits_used: Math.round(creditsToUse * 0.05),
           });
         }
 
-        progress += (100 / agentSequence.length);
+        progress += 100 / agentSequence.length;
       }
 
       // Update project status
       await base44.entities.Project.update(project.id, {
         status: "ready",
         generated_code: "// Generated project code...",
-        agents_used: agentSequence
+        agents_used: agentSequence,
       });
 
       // Update user credits and log usage
-      await base44.auth.updateMyUserData({ 
-        credits_remaining: user.credits_remaining - creditsToUse 
+      await base44.auth.updateMyUserData({
+        credits_remaining: user.credits_remaining - creditsToUse,
       });
-      
+
       await base44.entities.UsageLog.create({
         feature: "UniversalGenerator",
         credits_used: creditsToUse,
-        details: `Generated ${projectData.type} project: ${projectData.name}`
+        details: `Generated ${projectData.type} project: ${projectData.name}`,
       });
 
       setGeneratedProject(project);
       setGenerationProgress(100);
       setActiveAgents([]);
-
     } catch (e) {
       console.error(e);
       setError("Project generation failed. Please try again.");
@@ -233,7 +263,8 @@ export default function UniversalGenerator() {
           Universal App Generator
         </h1>
         <p className="text-gray-400">
-          Transform your ideas into production-ready applications with AI-powered multi-agent orchestration
+          Transform your ideas into production-ready applications with
+          AI-powered multi-agent orchestration
         </p>
       </div>
 
@@ -251,16 +282,24 @@ export default function UniversalGenerator() {
                   <Input
                     placeholder="My Awesome App"
                     value={projectData.name}
-                    onChange={(e) => setProjectData({...projectData, name: e.target.value})}
+                    onChange={(e) =>
+                      setProjectData({ ...projectData, name: e.target.value })
+                    }
                     className="bg-gray-900 border-gray-600"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>Project Type *</Label>
-                  <Select 
-                    value={projectData.type} 
-                    onValueChange={(value) => setProjectData({...projectData, type: value, framework: ""})}
+                  <Select
+                    value={projectData.type}
+                    onValueChange={(value) =>
+                      setProjectData({
+                        ...projectData,
+                        type: value,
+                        framework: "",
+                      })
+                    }
                   >
                     <SelectTrigger className="bg-gray-900 border-gray-600">
                       <SelectValue placeholder="Select project type" />
@@ -282,15 +321,17 @@ export default function UniversalGenerator() {
               {selectedType && (
                 <div className="space-y-2">
                   <Label>Framework</Label>
-                  <Select 
-                    value={projectData.framework} 
-                    onValueChange={(value) => setProjectData({...projectData, framework: value})}
+                  <Select
+                    value={projectData.framework}
+                    onValueChange={(value) =>
+                      setProjectData({ ...projectData, framework: value })
+                    }
                   >
                     <SelectTrigger className="bg-gray-900 border-gray-600">
                       <SelectValue placeholder="Select framework" />
                     </SelectTrigger>
                     <SelectContent>
-                      {selectedType.frameworks.map(framework => (
+                      {selectedType.frameworks.map((framework) => (
                         <SelectItem key={framework} value={framework}>
                           {framework}
                         </SelectItem>
@@ -305,7 +346,12 @@ export default function UniversalGenerator() {
                 <Textarea
                   placeholder="Describe your project, its purpose, target audience, and key features..."
                   value={projectData.description}
-                  onChange={(e) => setProjectData({...projectData, description: e.target.value})}
+                  onChange={(e) =>
+                    setProjectData({
+                      ...projectData,
+                      description: e.target.value,
+                    })
+                  }
                   className="bg-gray-900 border-gray-600 min-h-[100px]"
                 />
               </div>
@@ -315,7 +361,12 @@ export default function UniversalGenerator() {
                 <Textarea
                   placeholder="Any specific requirements, design preferences, or technical constraints..."
                   value={projectData.customInstructions}
-                  onChange={(e) => setProjectData({...projectData, customInstructions: e.target.value})}
+                  onChange={(e) =>
+                    setProjectData({
+                      ...projectData,
+                      customInstructions: e.target.value,
+                    })
+                  }
                   className="bg-gray-900 border-gray-600 h-20"
                 />
               </div>
@@ -326,19 +377,28 @@ export default function UniversalGenerator() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Estimated Credits</p>
-                      <p className="text-sm text-gray-400">{selectedType.description}</p>
+                      <p className="text-sm text-gray-400">
+                        {selectedType.description}
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-blue-400">{calculateCredits()}</p>
+                      <p className="text-2xl font-bold text-blue-400">
+                        {calculateCredits()}
+                      </p>
                       <p className="text-sm text-gray-400">credits</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              <Button 
+              <Button
                 onClick={() => setStep(2)}
-                disabled={!projectData.name || !projectData.description || !projectData.type || !projectData.framework}
+                disabled={
+                  !projectData.name ||
+                  !projectData.description ||
+                  !projectData.type ||
+                  !projectData.framework
+                }
                 className="w-full bg-purple-600 hover:bg-purple-700"
                 size="lg"
               >
@@ -373,7 +433,9 @@ export default function UniversalGenerator() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Credits</p>
-                  <p className="font-medium text-blue-400">{calculateCredits()}</p>
+                  <p className="font-medium text-blue-400">
+                    {calculateCredits()}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -386,7 +448,7 @@ export default function UniversalGenerator() {
             </CardHeader>
             <CardContent className="space-y-4">
               <AgentStatus activeAgents={activeAgents} />
-              
+
               {isGenerating && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
@@ -398,14 +460,14 @@ export default function UniversalGenerator() {
               )}
 
               <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setStep(1)}
                   disabled={isGenerating}
                 >
                   Back
                 </Button>
-                <Button 
+                <Button
                   onClick={startGeneration}
                   disabled={isGenerating}
                   className="flex-1 bg-purple-600 hover:bg-purple-700"
@@ -441,11 +503,14 @@ export default function UniversalGenerator() {
       {generatedProject && (
         <Card className="bg-green-900/20 border-green-700">
           <CardHeader>
-            <CardTitle className="text-green-400">Project Generated Successfully!</CardTitle>
+            <CardTitle className="text-green-400">
+              Project Generated Successfully!
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-300">
-              Your {selectedType?.name} has been generated and is ready for preview and deployment.
+              Your {selectedType?.name} has been generated and is ready for
+              preview and deployment.
             </p>
             <div className="flex gap-3">
               <Button variant="outline">

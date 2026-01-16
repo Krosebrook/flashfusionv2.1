@@ -161,7 +161,23 @@ Fix issues automatically:
 npm run lint:fix
 ```
 
-### 4. Type Check
+### 4. Format Your Code
+
+Format your code with Prettier:
+
+```bash
+npm run format
+```
+
+Check formatting without making changes:
+
+```bash
+npm run format:check
+```
+
+**Note:** Pre-commit hooks will automatically run ESLint before each commit and block commits with errors.
+
+### 5. Type Check
 
 Verify type correctness:
 
@@ -169,16 +185,22 @@ Verify type correctness:
 npm run typecheck
 ```
 
-### 5. Test Your Changes
+### 6. Test Your Changes
 
 Test your changes manually in the browser at `http://localhost:5173`
 
-### 6. Commit Your Changes
+### 7. Commit Your Changes
 
 ```bash
 git add .
 git commit -m "feat: add your feature description"
 ```
+
+**Pre-commit Hooks:**
+- ESLint will automatically run before each commit
+- Commits will be blocked if there are ESLint errors
+- Warnings will not block commits
+- You can fix errors with `npm run lint:fix`
 
 **Commit Message Format:**
 - `feat:` New feature
@@ -189,7 +211,7 @@ git commit -m "feat: add your feature description"
 - `test:` Test additions or changes
 - `chore:` Build process or tool changes
 
-### 7. Push and Create Pull Request
+### 8. Push and Create Pull Request
 
 ```bash
 git push origin feature/your-feature-name
@@ -255,6 +277,9 @@ flashfusionv2.1/
 ├── public/               # Public static files
 ├── docs/                 # Documentation
 ├── .gitignore           # Git ignore rules
+├── .husky/              # Git hooks (Husky)
+├── .prettierrc          # Prettier configuration
+├── .prettierignore      # Prettier ignore rules
 ├── components.json      # UI component configuration
 ├── eslint.config.js     # ESLint configuration
 ├── index.html           # HTML entry point
@@ -266,6 +291,36 @@ flashfusionv2.1/
 ```
 
 ## Coding Standards
+
+### Code Formatting with Prettier
+
+This project uses **Prettier** for consistent code formatting across the codebase.
+
+**Configuration:**
+- Semi-colons: Yes
+- Quotes: Double quotes
+- Line width: 80 characters
+- Tab width: 2 spaces
+- Trailing commas: ES5 style
+
+**Usage:**
+```bash
+# Format all files
+npm run format
+
+# Check formatting without changes
+npm run format:check
+```
+
+**Editor Integration:**
+- Install the Prettier extension for your editor
+- Enable "Format on Save" for automatic formatting
+- VS Code: `"editor.formatOnSave": true`
+
+**Pre-commit Hooks:**
+- ESLint runs automatically before each commit
+- Commits are blocked if there are errors
+- Run `npm run lint:fix` to auto-fix issues
 
 ### JavaScript/React Guidelines
 

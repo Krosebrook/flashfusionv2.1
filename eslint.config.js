@@ -3,6 +3,8 @@ import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginUnusedImports from "eslint-plugin-unused-imports";
+import pluginPrettier from "eslint-plugin-prettier";
+import configPrettier from "eslint-config-prettier";
 
 export default [
   {
@@ -32,6 +34,7 @@ export default [
       react: pluginReact,
       "react-hooks": pluginReactHooks,
       "unused-imports": pluginUnusedImports,
+      prettier: pluginPrettier,
     },
     rules: {
       "no-unused-vars": "off",
@@ -53,6 +56,8 @@ export default [
         { ignore: ["cmdk-input-wrapper", "toast-close"] },
       ],
       "react-hooks/rules-of-hooks": "error",
+      "prettier/prettier": "error",
+      ...configPrettier.rules,
     },
   },
 ];

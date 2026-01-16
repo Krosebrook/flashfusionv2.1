@@ -27,7 +27,7 @@ export function useMarketplaceTemplates() {
 
   // Memoized derived data to prevent unnecessary recalculations
   const featuredTemplates = useMemo(
-    () => templates.filter(t => t.is_featured),
+    () => templates.filter((t) => t.is_featured),
     [templates]
   );
 
@@ -40,7 +40,7 @@ export function useMarketplaceTemplates() {
     () => ({
       total: templates.length,
       featured: featuredTemplates.length,
-      totalInstalls: templates.reduce((sum, t) => sum + (t.installs || 0), 0)
+      totalInstalls: templates.reduce((sum, t) => sum + (t.installs || 0), 0),
     }),
     [templates, featuredTemplates]
   );
@@ -52,6 +52,6 @@ export function useMarketplaceTemplates() {
     stats,
     isLoading,
     error,
-    refetch: fetchTemplates
+    refetch: fetchTemplates,
   };
 }

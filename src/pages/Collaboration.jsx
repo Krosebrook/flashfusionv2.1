@@ -3,9 +3,12 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Users, Share2, 
-  FileText, Workflow as WorkflowIcon, Activity 
+import {
+  Users,
+  Share2,
+  FileText,
+  Workflow as WorkflowIcon,
+  Activity,
 } from "lucide-react";
 
 import CollaborationCard from "../components/collaboration/CollaborationCard";
@@ -38,14 +41,16 @@ export default function Collaboration() {
     setShowShareDialog(true);
   };
 
-  const myCollaborations = collaborations.filter(c => 
-    c.collaborators?.some(col => col.email === base44.auth.currentUser?.email)
+  const myCollaborations = collaborations.filter((c) =>
+    c.collaborators?.some((col) => col.email === base44.auth.currentUser?.email)
   );
 
   const stats = {
     total: myCollaborations.length,
-    active: myCollaborations.filter(c => c.active_viewers?.length > 0).length,
-    owned: myCollaborations.filter(c => c.created_by === base44.auth.currentUser?.email).length
+    active: myCollaborations.filter((c) => c.active_viewers?.length > 0).length,
+    owned: myCollaborations.filter(
+      (c) => c.created_by === base44.auth.currentUser?.email
+    ).length,
   };
 
   return (
@@ -56,7 +61,8 @@ export default function Collaboration() {
           <span>Real-time Collaboration</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Collaborate with your team on projects, workflows, and content in real-time
+          Collaborate with your team on projects, workflows, and content in
+          real-time
         </p>
       </div>
 
@@ -75,7 +81,9 @@ export default function Collaboration() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Active Now</p>
-              <p className="text-2xl font-bold text-green-400">{stats.active}</p>
+              <p className="text-2xl font-bold text-green-400">
+                {stats.active}
+              </p>
             </div>
             <Activity className="w-8 h-8 text-green-400 opacity-50" />
           </div>
@@ -85,7 +93,9 @@ export default function Collaboration() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Owned by Me</p>
-              <p className="text-2xl font-bold text-purple-400">{stats.owned}</p>
+              <p className="text-2xl font-bold text-purple-400">
+                {stats.owned}
+              </p>
             </div>
             <Share2 className="w-8 h-8 text-purple-400 opacity-50" />
           </div>
@@ -94,7 +104,9 @@ export default function Collaboration() {
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="bg-gray-800">
-          <TabsTrigger value="all">All Shared ({myCollaborations.length})</TabsTrigger>
+          <TabsTrigger value="all">
+            All Shared ({myCollaborations.length})
+          </TabsTrigger>
           <TabsTrigger value="content">
             <FileText className="w-4 h-4 mr-2" />
             Content
@@ -113,9 +125,12 @@ export default function Collaboration() {
           {myCollaborations.length === 0 ? (
             <Card className="bg-gray-800 border-gray-700 p-12 text-center">
               <Users className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No collaborations yet</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                No collaborations yet
+              </h3>
               <p className="text-gray-400 mb-6">
-                Start collaborating by sharing your content or workflows with team members
+                Start collaborating by sharing your content or workflows with
+                team members
               </p>
             </Card>
           ) : (
@@ -134,7 +149,7 @@ export default function Collaboration() {
         <TabsContent value="content" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {myCollaborations
-              .filter(c => c.resource_type === 'content')
+              .filter((c) => c.resource_type === "content")
               .map((collab) => (
                 <CollaborationCard
                   key={collab.id}
@@ -148,7 +163,7 @@ export default function Collaboration() {
         <TabsContent value="workflows" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {myCollaborations
-              .filter(c => c.resource_type === 'workflow')
+              .filter((c) => c.resource_type === "workflow")
               .map((collab) => (
                 <CollaborationCard
                   key={collab.id}

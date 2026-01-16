@@ -4,43 +4,68 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Tags, Code2, MessageSquare, Palette, Database, BookText, 
-  Plug, Search, Filter, ArrowLeft, Sparkles
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tags,
+  Code2,
+  MessageSquare,
+  Palette,
+  Database,
+  BookText,
+  Plug,
+  Search,
+  Filter,
+  ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import PluginRunner from "../components/plugins/PluginRunner";
 
 const icons = {
-  Tags, Code2, MessageSquare, Palette, Database, BookText, Plug,
-  Default: Plug
+  Tags,
+  Code2,
+  MessageSquare,
+  Palette,
+  Database,
+  BookText,
+  Plug,
+  Default: Plug,
 };
 
 const categoryColors = {
-  "marketing": "bg-pink-500/20 text-pink-400 border-pink-500/30",
-  "codegen": "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  "design": "bg-purple-500/20 text-purple-400 border-purple-500/30",
-  "text": "bg-green-500/20 text-green-400 border-green-500/30",
-  "data": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+  marketing: "bg-pink-500/20 text-pink-400 border-pink-500/30",
+  codegen: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  design: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+  text: "bg-green-500/20 text-green-400 border-green-500/30",
+  data: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
 };
 
 const PluginCard = ({ plugin, onRun }) => {
   const Icon = icons[plugin.icon] || icons.Default;
-  const categoryColor = categoryColors[plugin.category] || "bg-gray-500/20 text-gray-400 border-gray-500/30";
-  
+  const categoryColor =
+    categoryColors[plugin.category] ||
+    "bg-gray-500/20 text-gray-400 border-gray-500/30";
+
   return (
     <div className="bg-gray-800 hover:bg-gray-750 transition-all duration-200 p-6 rounded-lg border border-gray-700 hover:border-gray-600 hover:shadow-lg group">
       <div className="flex items-start justify-between mb-4">
-        <div className={`p-3 rounded-full bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors`}>
+        <div
+          className={`p-3 rounded-full bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors`}
+        >
           <Icon className="w-6 h-6 text-blue-400" />
         </div>
         <Badge className={`text-xs ${categoryColor} border`}>
           {plugin.category}
         </Badge>
       </div>
-      
+
       <div className="space-y-3 mb-4">
         <h3 className="font-semibold text-lg text-white group-hover:text-blue-300 transition-colors">
           {plugin.name}
@@ -49,14 +74,14 @@ const PluginCard = ({ plugin, onRun }) => {
           {plugin.description}
         </p>
       </div>
-      
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1 text-xs text-gray-500">
           <Sparkles className="w-3 h-3" />
           25 credits
         </div>
-        <Button 
-          onClick={() => onRun(plugin)} 
+        <Button
+          onClick={() => onRun(plugin)}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
           size="sm"
         >
@@ -96,15 +121,18 @@ export default function PluginsPage() {
 
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter(plugin =>
-        plugin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        plugin.description.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (plugin) =>
+          plugin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          plugin.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Filter by category
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(plugin => plugin.category === selectedCategory);
+      filtered = filtered.filter(
+        (plugin) => plugin.category === selectedCategory
+      );
     }
 
     // Sort
@@ -130,7 +158,7 @@ export default function PluginsPage() {
     setSelectedPlugin(null);
   };
 
-  const categories = [...new Set(plugins.map(p => p.category))];
+  const categories = [...new Set(plugins.map((p) => p.category))];
 
   if (selectedPlugin) {
     return (
@@ -147,15 +175,20 @@ export default function PluginsPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              {React.createElement(icons[selectedPlugin.icon] || icons.Default, { 
-                className: "w-6 h-6 text-blue-400" 
-              })}
+              {React.createElement(
+                icons[selectedPlugin.icon] || icons.Default,
+                {
+                  className: "w-6 h-6 text-blue-400",
+                }
+              )}
               {selectedPlugin.name}
             </h1>
-            <p className="text-gray-400 text-sm">{selectedPlugin.description}</p>
+            <p className="text-gray-400 text-sm">
+              {selectedPlugin.description}
+            </p>
           </div>
         </div>
-        
+
         <PluginRunner plugin={selectedPlugin} onClose={handleBackToPlugins} />
       </div>
     );
@@ -170,7 +203,9 @@ export default function PluginsPage() {
           <span>Plugin Marketplace</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Discover and use specialized AI tools for content creation, code generation, design, and more. Each plugin is optimized for specific tasks.
+          Discover and use specialized AI tools for content creation, code
+          generation, design, and more. Each plugin is optimized for specific
+          tasks.
         </p>
       </div>
 
@@ -193,7 +228,7 @@ export default function PluginsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category.charAt(0).toUpperCase() + category.slice(1)}
                 </SelectItem>
@@ -213,7 +248,10 @@ export default function PluginsPage() {
 
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <Filter className="w-4 h-4" />
-            <span>{filteredPlugins.length} plugin{filteredPlugins.length !== 1 ? 's' : ''} found</span>
+            <span>
+              {filteredPlugins.length} plugin
+              {filteredPlugins.length !== 1 ? "s" : ""} found
+            </span>
           </div>
         </div>
       </div>
@@ -228,21 +266,22 @@ export default function PluginsPage() {
       ) : filteredPlugins.length === 0 ? (
         <div className="text-center py-12">
           <Plug className="w-16 h-16 mx-auto text-gray-600 mb-4" />
-          <h3 className="text-xl font-semibold text-gray-400 mb-2">No plugins found</h3>
+          <h3 className="text-xl font-semibold text-gray-400 mb-2">
+            No plugins found
+          </h3>
           <p className="text-gray-500">
-            {searchTerm || selectedCategory !== "all" 
+            {searchTerm || selectedCategory !== "all"
               ? "Try adjusting your filters or search terms"
-              : "No plugins are available at the moment"
-            }
+              : "No plugins are available at the moment"}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPlugins.map((plugin) => (
-            <PluginCard 
-              key={plugin.id} 
-              plugin={plugin} 
-              onRun={handleRunPlugin} 
+            <PluginCard
+              key={plugin.id}
+              plugin={plugin}
+              onRun={handleRunPlugin}
             />
           ))}
         </div>
@@ -256,7 +295,9 @@ export default function PluginsPage() {
             <p className="text-sm text-gray-400">Total Plugins</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-green-400">{categories.length}</p>
+            <p className="text-2xl font-bold text-green-400">
+              {categories.length}
+            </p>
             <p className="text-sm text-gray-400">Categories</p>
           </div>
           <div>

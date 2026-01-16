@@ -3,7 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Calendar, Clock } from "lucide-react";
 
@@ -17,14 +23,19 @@ export default function ScheduleDialog({ contents, onClose, onScheduled }) {
   const [isScheduling, setIsScheduling] = useState(false);
 
   const handleSchedule = async () => {
-    if (!selectedContent || !scheduledDate || !scheduledTime || selectedPlatforms.length === 0) {
+    if (
+      !selectedContent ||
+      !scheduledDate ||
+      !scheduledTime ||
+      selectedPlatforms.length === 0
+    ) {
       alert("Please fill in all fields");
       return;
     }
 
     setIsScheduling(true);
     try {
-      const content = contents.find(c => c.id === selectedContent);
+      const content = contents.find((c) => c.id === selectedContent);
       const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
 
       await base44.entities.ContentSchedule.create({
@@ -34,7 +45,7 @@ export default function ScheduleDialog({ contents, onClose, onScheduled }) {
         scheduled_date: scheduledDateTime.toISOString(),
         platforms: selectedPlatforms,
         status: "scheduled",
-        auto_publish: true
+        auto_publish: true,
       });
 
       onScheduled?.();
@@ -47,9 +58,9 @@ export default function ScheduleDialog({ contents, onClose, onScheduled }) {
   };
 
   const togglePlatform = (platform) => {
-    setSelectedPlatforms(prev =>
+    setSelectedPlatforms((prev) =>
       prev.includes(platform)
-        ? prev.filter(p => p !== platform)
+        ? prev.filter((p) => p !== platform)
         : [...prev, platform]
     );
   };
@@ -66,7 +77,9 @@ export default function ScheduleDialog({ contents, onClose, onScheduled }) {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Select Content</label>
+            <label className="block text-sm font-medium mb-2">
+              Select Content
+            </label>
             <Select value={selectedContent} onValueChange={setSelectedContent}>
               <SelectTrigger className="bg-gray-900 border-gray-600">
                 <SelectValue placeholder="Choose content to schedule" />

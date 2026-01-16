@@ -4,9 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  ShoppingBag, Store, Package, CheckCircle2, 
-  XCircle, AlertCircle, ExternalLink, Link as LinkIcon, Unlink
+import {
+  ShoppingBag,
+  Store,
+  Package,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  ExternalLink,
+  Link as LinkIcon,
+  Unlink,
 } from "lucide-react";
 
 const PLATFORM_CONFIG = {
@@ -14,87 +21,151 @@ const PLATFORM_CONFIG = {
     icon: ShoppingBag,
     color: "text-green-400",
     fields: [
-      { name: "store_url", label: "Store URL", placeholder: "mystore.myshopify.com" },
-      { name: "api_key", label: "API Key", placeholder: "Enter your API key", type: "password" },
-      { name: "api_secret", label: "API Secret", placeholder: "Enter your API secret", type: "password" }
+      {
+        name: "store_url",
+        label: "Store URL",
+        placeholder: "mystore.myshopify.com",
+      },
+      {
+        name: "api_key",
+        label: "API Key",
+        placeholder: "Enter your API key",
+        type: "password",
+      },
+      {
+        name: "api_secret",
+        label: "API Secret",
+        placeholder: "Enter your API secret",
+        type: "password",
+      },
     ],
-    docs: "https://help.shopify.com/en/manual/apps/app-types/custom-apps"
+    docs: "https://help.shopify.com/en/manual/apps/app-types/custom-apps",
   },
   WooCommerce: {
     icon: Store,
     color: "text-purple-400",
     fields: [
-      { name: "store_url", label: "Store URL", placeholder: "https://yourstore.com" },
-      { name: "api_key", label: "Consumer Key", placeholder: "ck_xxxxx", type: "password" },
-      { name: "api_secret", label: "Consumer Secret", placeholder: "cs_xxxxx", type: "password" }
+      {
+        name: "store_url",
+        label: "Store URL",
+        placeholder: "https://yourstore.com",
+      },
+      {
+        name: "api_key",
+        label: "Consumer Key",
+        placeholder: "ck_xxxxx",
+        type: "password",
+      },
+      {
+        name: "api_secret",
+        label: "Consumer Secret",
+        placeholder: "cs_xxxxx",
+        type: "password",
+      },
     ],
-    docs: "https://woocommerce.com/document/woocommerce-rest-api/"
+    docs: "https://woocommerce.com/document/woocommerce-rest-api/",
   },
   Magento: {
     icon: Store,
     color: "text-red-400",
     fields: [
-      { name: "store_url", label: "Store URL", placeholder: "https://yourstore.com" },
-      { name: "api_key", label: "Access Token", placeholder: "Enter access token", type: "password" }
+      {
+        name: "store_url",
+        label: "Store URL",
+        placeholder: "https://yourstore.com",
+      },
+      {
+        name: "api_key",
+        label: "Access Token",
+        placeholder: "Enter access token",
+        type: "password",
+      },
     ],
-    docs: "https://devdocs.magento.com/guides/v2.4/get-started/authentication/gs-authentication-token.html"
+    docs: "https://devdocs.magento.com/guides/v2.4/get-started/authentication/gs-authentication-token.html",
   },
   Amazon: {
     icon: Package,
     color: "text-orange-400",
     fields: [
       { name: "api_key", label: "Seller ID", placeholder: "Enter seller ID" },
-      { name: "api_secret", label: "MWS Auth Token", placeholder: "Enter auth token", type: "password" }
+      {
+        name: "api_secret",
+        label: "MWS Auth Token",
+        placeholder: "Enter auth token",
+        type: "password",
+      },
     ],
-    docs: "https://developer.amazonservices.com/"
+    docs: "https://developer.amazonservices.com/",
   },
   Etsy: {
     icon: Store,
     color: "text-orange-400",
     fields: [
       { name: "store_url", label: "Shop Name", placeholder: "YourShopName" },
-      { name: "api_key", label: "API Key", placeholder: "Enter API key", type: "password" }
+      {
+        name: "api_key",
+        label: "API Key",
+        placeholder: "Enter API key",
+        type: "password",
+      },
     ],
-    docs: "https://www.etsy.com/developers/documentation"
+    docs: "https://www.etsy.com/developers/documentation",
   },
   eBay: {
     icon: Store,
     color: "text-yellow-400",
     fields: [
       { name: "api_key", label: "App ID", placeholder: "Enter app ID" },
-      { name: "api_secret", label: "OAuth Token", placeholder: "Enter OAuth token", type: "password" }
+      {
+        name: "api_secret",
+        label: "OAuth Token",
+        placeholder: "Enter OAuth token",
+        type: "password",
+      },
     ],
-    docs: "https://developer.ebay.com/api-docs/static/oauth-tokens.html"
+    docs: "https://developer.ebay.com/api-docs/static/oauth-tokens.html",
   },
   Facebook: {
     icon: Store,
     color: "text-blue-400",
     fields: [
-      { name: "api_key", label: "Page Access Token", placeholder: "Enter page access token", type: "password" }
+      {
+        name: "api_key",
+        label: "Page Access Token",
+        placeholder: "Enter page access token",
+        type: "password",
+      },
     ],
-    docs: "https://developers.facebook.com/docs/marketing-api/access/"
+    docs: "https://developers.facebook.com/docs/marketing-api/access/",
   },
   TikTok: {
     icon: Store,
     color: "text-pink-400",
     fields: [
       { name: "api_key", label: "Shop ID", placeholder: "Enter shop ID" },
-      { name: "api_secret", label: "Access Token", placeholder: "Enter access token", type: "password" }
+      {
+        name: "api_secret",
+        label: "Access Token",
+        placeholder: "Enter access token",
+        type: "password",
+      },
     ],
-    docs: "https://seller.tiktok.com/university/essay/article?identity=1&role=1&article_id=6989391094191038465"
-  }
+    docs: "https://seller.tiktok.com/university/essay/article?identity=1&role=1&article_id=6989391094191038465",
+  },
 };
 
 export default function PlatformConnectionCard({ connection, onUpdate }) {
   const [isEditing, setIsEditing] = useState(!connection);
   const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState(connection || {
-    platform: "",
-    store_url: "",
-    api_key: "",
-    api_secret: "",
-    status: "disconnected"
-  });
+  const [formData, setFormData] = useState(
+    connection || {
+      platform: "",
+      store_url: "",
+      api_key: "",
+      api_secret: "",
+      status: "disconnected",
+    }
+  );
 
   const config = PLATFORM_CONFIG[formData.platform] || {};
   const Icon = config.icon || Store;
@@ -105,7 +176,7 @@ export default function PlatformConnectionCard({ connection, onUpdate }) {
       const data = {
         ...formData,
         status: "connected",
-        last_sync: new Date().toISOString()
+        last_sync: new Date().toISOString(),
       };
 
       if (connection?.id) {
@@ -124,10 +195,10 @@ export default function PlatformConnectionCard({ connection, onUpdate }) {
 
   const handleDisconnect = async () => {
     if (!confirm(`Disconnect from ${formData.platform}?`)) return;
-    
+
     try {
       await base44.entities.PlatformConnection.update(connection.id, {
-        status: "disconnected"
+        status: "disconnected",
       });
       onUpdate?.();
     } catch (error) {
@@ -137,7 +208,7 @@ export default function PlatformConnectionCard({ connection, onUpdate }) {
 
   const handleDelete = async () => {
     if (!confirm(`Delete ${formData.platform} connection?`)) return;
-    
+
     try {
       await base44.entities.PlatformConnection.delete(connection.id);
       onUpdate?.();
@@ -190,17 +261,21 @@ export default function PlatformConnectionCard({ connection, onUpdate }) {
       {isEditing ? (
         <div className="space-y-4">
           <div className="space-y-3">
-            {config.fields?.map(field => (
+            {config.fields?.map((field) => (
               <div key={field.name}>
-                <label className="block text-sm font-medium mb-1">{field.label}</label>
+                <label className="block text-sm font-medium mb-1">
+                  {field.label}
+                </label>
                 <Input
                   type={field.type || "text"}
                   placeholder={field.placeholder}
                   value={formData[field.name] || ""}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    [field.name]: e.target.value
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      [field.name]: e.target.value,
+                    }))
+                  }
                   className="bg-gray-900 border-gray-600"
                 />
               </div>

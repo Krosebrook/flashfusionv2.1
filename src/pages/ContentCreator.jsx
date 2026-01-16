@@ -5,9 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  FileText, Video, Smile, Eye, Trash2, 
-  Sparkles, Recycle, GitBranch, Target
+import {
+  FileText,
+  Video,
+  Smile,
+  Eye,
+  Trash2,
+  Sparkles,
+  Recycle,
+  GitBranch,
+  Target,
 } from "lucide-react";
 
 import VideoScriptGenerator from "../components/content/VideoScriptGenerator";
@@ -26,7 +33,7 @@ const platformIcons = {
   YouTube: "▶️",
   Facebook: "👥",
   Twitter: "🐦",
-  LinkedIn: "💼"
+  LinkedIn: "💼",
 };
 
 const ContentCard = ({ content, onPreview, onDelete }) => (
@@ -37,9 +44,11 @@ const ContentCard = ({ content, onPreview, onDelete }) => (
           <h3 className="font-semibold truncate">{content.title}</h3>
           <div className="flex items-center gap-2 mt-2">
             <Badge variant="outline" className="text-xs">
-              {content.type.replace(/_/g, ' ')}
+              {content.type.replace(/_/g, " ")}
             </Badge>
-            <span className="text-xl">{platformIcons[content.platform] || "📱"}</span>
+            <span className="text-xl">
+              {platformIcons[content.platform] || "📱"}
+            </span>
           </div>
         </div>
         <Button
@@ -51,7 +60,7 @@ const ContentCard = ({ content, onPreview, onDelete }) => (
           <Trash2 className="w-4 h-4" />
         </Button>
       </div>
-      
+
       <p className="text-sm text-gray-400 line-clamp-2">
         {content.content.substring(0, 100)}...
       </p>
@@ -96,7 +105,7 @@ export default function ContentCreator() {
     try {
       const [contentData, brandKitData] = await Promise.all([
         base44.entities.ContentPiece.list("-created_date", 50),
-        base44.entities.BrandKit.list()
+        base44.entities.BrandKit.list(),
       ]);
       setContents(contentData);
       setBrandKits(brandKitData);
@@ -113,7 +122,7 @@ export default function ContentCreator() {
     if (!confirm("Are you sure you want to delete this content?")) return;
     try {
       await base44.entities.ContentPiece.delete(content.id);
-      setContents(contents.filter(c => c.id !== content.id));
+      setContents(contents.filter((c) => c.id !== content.id));
     } catch (error) {
       console.error("Failed to delete:", error);
     }
@@ -121,18 +130,19 @@ export default function ContentCreator() {
 
   const handleSuggestionSelect = (suggestion) => {
     // Redirect to appropriate generator based on suggestion type
-    if (suggestion.type === 'video_script') {
+    if (suggestion.type === "video_script") {
       setActiveTab("video");
-    } else if (suggestion.type === 'meme') {
+    } else if (suggestion.type === "meme") {
       setActiveTab("meme");
     }
   };
 
   const stats = {
     total: contents.length,
-    videoScripts: contents.filter(c => c.type === 'video_script').length,
-    memes: contents.filter(c => c.type === 'meme' || c.type === 'graphic').length,
-    social: contents.filter(c => c.type === 'social_post').length
+    videoScripts: contents.filter((c) => c.type === "video_script").length,
+    memes: contents.filter((c) => c.type === "meme" || c.type === "graphic")
+      .length,
+    social: contents.filter((c) => c.type === "social_post").length,
   };
 
   if (isLoading) {
@@ -156,21 +166,28 @@ export default function ContentCreator() {
           <span>Content Creator Studio</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          AI-powered content creation with smart suggestions, repurposing, and A/B testing
+          AI-powered content creation with smart suggestions, repurposing, and
+          A/B testing
         </p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-purple-400">{stats.total}</div>
+          <div className="text-2xl font-bold text-purple-400">
+            {stats.total}
+          </div>
           <div className="text-sm text-gray-400">Total Content</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-red-400">{stats.videoScripts}</div>
+          <div className="text-2xl font-bold text-red-400">
+            {stats.videoScripts}
+          </div>
           <div className="text-sm text-gray-400">Video Scripts</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-          <div className="text-2xl font-bold text-yellow-400">{stats.memes}</div>
+          <div className="text-2xl font-bold text-yellow-400">
+            {stats.memes}
+          </div>
           <div className="text-sm text-gray-400">Memes & Graphics</div>
         </div>
         <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
@@ -297,7 +314,9 @@ export default function ContentCreator() {
             </>
           ) : (
             <Card className="bg-gray-800 border-gray-700 p-6">
-              <h3 className="text-lg font-semibold mb-4">Select Content to Repurpose</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Select Content to Repurpose
+              </h3>
               {contents.length === 0 ? (
                 <p className="text-center text-gray-400 py-8">
                   No content available. Create some content first!
@@ -310,9 +329,11 @@ export default function ContentCreator() {
                       className="bg-gray-900 border-gray-700 p-4 cursor-pointer hover:border-gray-600 transition-all"
                       onClick={() => setSelectedContentForTools(content)}
                     >
-                      <h4 className="font-semibold mb-2 truncate">{content.title}</h4>
+                      <h4 className="font-semibold mb-2 truncate">
+                        {content.title}
+                      </h4>
                       <Badge variant="outline" className="text-xs mb-2">
-                        {content.type.replace(/_/g, ' ')}
+                        {content.type.replace(/_/g, " ")}
                       </Badge>
                       <p className="text-sm text-gray-400 line-clamp-2">
                         {content.content.substring(0, 80)}...
@@ -344,7 +365,9 @@ export default function ContentCreator() {
             </>
           ) : (
             <Card className="bg-gray-800 border-gray-700 p-6">
-              <h3 className="text-lg font-semibold mb-4">Select Content for A/B Testing</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Select Content for A/B Testing
+              </h3>
               {contents.length === 0 ? (
                 <p className="text-center text-gray-400 py-8">
                   No content available. Create some content first!
@@ -357,9 +380,11 @@ export default function ContentCreator() {
                       className="bg-gray-900 border-gray-700 p-4 cursor-pointer hover:border-gray-600 transition-all"
                       onClick={() => setSelectedContentForTools(content)}
                     >
-                      <h4 className="font-semibold mb-2 truncate">{content.title}</h4>
+                      <h4 className="font-semibold mb-2 truncate">
+                        {content.title}
+                      </h4>
                       <Badge variant="outline" className="text-xs mb-2">
-                        {content.type.replace(/_/g, ' ')}
+                        {content.type.replace(/_/g, " ")}
                       </Badge>
                       <p className="text-sm text-gray-400 line-clamp-2">
                         {content.content.substring(0, 80)}...
@@ -398,7 +423,10 @@ export default function ContentCreator() {
                   <p className="text-gray-400 mb-6">
                     Start creating content with our AI-powered tools
                   </p>
-                  <Button onClick={() => setActiveTab("assistant")} className="bg-purple-600 hover:bg-purple-700">
+                  <Button
+                    onClick={() => setActiveTab("assistant")}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
                     <Sparkles className="w-4 h-4 mr-2" />
                     Get AI Suggestions
                   </Button>

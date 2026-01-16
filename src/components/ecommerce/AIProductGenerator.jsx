@@ -5,7 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Tag, Image as ImageIcon, Loader2, TrendingUp } from "lucide-react";
+import {
+  Sparkles,
+  Tag,
+  Image as ImageIcon,
+  Loader2,
+  TrendingUp,
+} from "lucide-react";
 
 export default function AIProductGenerator({ onProductGenerated, brandKitId }) {
   const [productIdea, setProductIdea] = useState("");
@@ -21,9 +27,11 @@ export default function AIProductGenerator({ onProductGenerated, brandKitId }) {
     setIsGenerating(true);
     try {
       const user = await base44.auth.me();
-      
+
       if (user.credits_remaining < 100) {
-        alert("Insufficient credits. You need at least 100 credits to generate a product.");
+        alert(
+          "Insufficient credits. You need at least 100 credits to generate a product."
+        );
         setIsGenerating(false);
         return;
       }
@@ -62,9 +70,9 @@ Consider market trends, competitive pricing, and conversion optimization.`;
             seo_description: { type: "string" },
             seo_keywords: { type: "array", items: { type: "string" } },
             marketing_angles: { type: "array", items: { type: "string" } },
-            image_concepts: { type: "array", items: { type: "string" } }
-          }
-        }
+            image_concepts: { type: "array", items: { type: "string" } },
+          },
+        },
       });
 
       const product = {
@@ -76,22 +84,21 @@ Consider market trends, competitive pricing, and conversion optimization.`;
         platforms: [],
         marketing_copy: {
           angles: result.marketing_angles,
-          pricing_reasoning: result.pricing_reasoning
-        }
+          pricing_reasoning: result.pricing_reasoning,
+        },
       };
 
       setGeneratedProduct(product);
 
       await base44.auth.updateMe({
-        credits_remaining: user.credits_remaining - 100
+        credits_remaining: user.credits_remaining - 100,
       });
 
       await base44.entities.UsageLog.create({
         feature: "AIProductGenerator",
         credits_used: 100,
-        details: `Generated product: ${result.title}`
+        details: `Generated product: ${result.title}`,
       });
-
     } catch (error) {
       console.error("Product generation failed:", error);
       alert("Failed to generate product. Please try again.");
@@ -103,7 +110,8 @@ Consider market trends, competitive pricing, and conversion optimization.`;
     if (!generatedProduct) return;
 
     try {
-      const saved = await base44.entities.EcommerceProduct.create(generatedProduct);
+      const saved =
+        await base44.entities.EcommerceProduct.create(generatedProduct);
       onProductGenerated?.(saved);
       setGeneratedProduct(null);
       setProductIdea("");
@@ -127,7 +135,9 @@ Consider market trends, competitive pricing, and conversion optimization.`;
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Product Idea *</label>
+            <label className="block text-sm font-medium mb-2">
+              Product Idea *
+            </label>
             <Textarea
               placeholder="e.g., Handcrafted ceramic coffee mugs with minimalist designs..."
               value={productIdea}
@@ -148,7 +158,9 @@ Consider market trends, competitive pricing, and conversion optimization.`;
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Target Audience</label>
+              <label className="block text-sm font-medium mb-2">
+                Target Audience
+              </label>
               <Input
                 placeholder="e.g., Coffee enthusiasts, millennials"
                 value={targetAudience}
@@ -159,20 +171,26 @@ Consider market trends, competitive pricing, and conversion optimization.`;
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Price Range (Optional)</label>
+            <label className="block text-sm font-medium mb-2">
+              Price Range (Optional)
+            </label>
             <div className="grid grid-cols-2 gap-4">
               <Input
                 type="number"
                 placeholder="Min price"
                 value={priceRange.min}
-                onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+                onChange={(e) =>
+                  setPriceRange({ ...priceRange, min: e.target.value })
+                }
                 className="bg-gray-900 border-gray-600"
               />
               <Input
                 type="number"
                 placeholder="Max price"
                 value={priceRange.max}
-                onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+                onChange={(e) =>
+                  setPriceRange({ ...priceRange, max: e.target.value })
+                }
                 className="bg-gray-900 border-gray-600"
               />
             </div>
@@ -203,8 +221,12 @@ Consider market trends, competitive pricing, and conversion optimization.`;
           <div className="space-y-6">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-2xl font-bold mb-2">{generatedProduct.title}</h3>
-                <p className="text-gray-400">{generatedProduct.short_description}</p>
+                <h3 className="text-2xl font-bold mb-2">
+                  {generatedProduct.title}
+                </h3>
+                <p className="text-gray-400">
+                  {generatedProduct.short_description}
+                </p>
               </div>
               <div className="text-right">
                 <div className="text-3xl font-bold text-green-400">
@@ -219,7 +241,9 @@ Consider market trends, competitive pricing, and conversion optimization.`;
 
             <div>
               <h4 className="font-semibold mb-2">Description</h4>
-              <p className="text-gray-300 text-sm leading-relaxed">{generatedProduct.description}</p>
+              <p className="text-gray-300 text-sm leading-relaxed">
+                {generatedProduct.description}
+              </p>
             </div>
 
             <div>
@@ -229,7 +253,9 @@ Consider market trends, competitive pricing, and conversion optimization.`;
               </h4>
               <div className="flex flex-wrap gap-2">
                 {generatedProduct.tags?.map((tag, i) => (
-                  <Badge key={i} variant="outline">{tag}</Badge>
+                  <Badge key={i} variant="outline">
+                    {tag}
+                  </Badge>
                 ))}
               </div>
             </div>
@@ -243,13 +269,20 @@ Consider market trends, competitive pricing, and conversion optimization.`;
                 </div>
                 <div>
                   <span className="text-gray-400">Meta Description:</span>
-                  <p className="text-gray-300">{generatedProduct.seo_description}</p>
+                  <p className="text-gray-300">
+                    {generatedProduct.seo_description}
+                  </p>
                 </div>
                 <div>
                   <span className="text-gray-400">Keywords:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {generatedProduct.seo_keywords?.map((keyword, i) => (
-                      <Badge key={i} className="bg-blue-500/20 text-blue-400 text-xs">{keyword}</Badge>
+                      <Badge
+                        key={i}
+                        className="bg-blue-500/20 text-blue-400 text-xs"
+                      >
+                        {keyword}
+                      </Badge>
                     ))}
                   </div>
                 </div>
@@ -284,7 +317,10 @@ Consider market trends, competitive pricing, and conversion optimization.`;
             </div>
 
             <div className="flex gap-3">
-              <Button onClick={handleSaveProduct} className="flex-1 bg-green-600 hover:bg-green-700">
+              <Button
+                onClick={handleSaveProduct}
+                className="flex-1 bg-green-600 hover:bg-green-700"
+              >
                 Save Product
               </Button>
               <Button

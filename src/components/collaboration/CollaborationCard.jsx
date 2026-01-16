@@ -8,7 +8,7 @@ const resourceIcons = {
   content: FileText,
   product: Package,
   workflow: Workflow,
-  project: FileText
+  project: FileText,
 };
 
 export default function CollaborationCard({ collaboration, onRefresh }) {
@@ -22,7 +22,9 @@ export default function CollaborationCard({ collaboration, onRefresh }) {
           <div className="flex items-start gap-3 flex-1">
             <Icon className="w-5 h-5 text-blue-400 mt-1" />
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold truncate">{collaboration.resource_title}</h3>
+              <h3 className="font-semibold truncate">
+                {collaboration.resource_title}
+              </h3>
               <Badge variant="outline" className="text-xs mt-1">
                 {collaboration.resource_type}
               </Badge>
@@ -48,13 +50,18 @@ export default function CollaborationCard({ collaboration, onRefresh }) {
             ))}
           </div>
           <span className="text-sm text-gray-400">
-            {collaboration.collaborators?.length} collaborator{collaboration.collaborators?.length !== 1 ? 's' : ''}
+            {collaboration.collaborators?.length} collaborator
+            {collaboration.collaborators?.length !== 1 ? "s" : ""}
           </span>
         </div>
 
         {collaboration.activity_log?.length > 0 && (
           <div className="bg-gray-900 p-2 rounded text-xs text-gray-400">
-            Latest: {collaboration.activity_log[collaboration.activity_log.length - 1].action}
+            Latest:{" "}
+            {
+              collaboration.activity_log[collaboration.activity_log.length - 1]
+                .action
+            }
           </div>
         )}
 

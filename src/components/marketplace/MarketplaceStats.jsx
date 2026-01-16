@@ -1,4 +1,3 @@
-import React from "react";
 import { Card } from "@/components/ui/card";
 import { Store, Star, Download } from "lucide-react";
 
@@ -9,26 +8,26 @@ export default function MarketplaceStats({ stats }) {
       label: "Total Templates",
       value: stats.total,
       icon: Store,
-      color: "purple"
+      color: "purple",
     },
     {
       label: "Featured",
       value: stats.featured,
       icon: Star,
-      color: "yellow"
+      color: "yellow",
     },
     {
       label: "Total Installs",
       value: stats.totalInstalls,
       icon: Download,
-      color: "green"
-    }
+      color: "green",
+    },
   ];
 
   const colorClasses = {
     purple: "text-purple-400",
     yellow: "text-yellow-400",
-    green: "text-green-400"
+    green: "text-green-400",
   };
 
   return (

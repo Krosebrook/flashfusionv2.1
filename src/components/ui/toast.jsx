@@ -85,11 +85,7 @@ const ToastTitle = React.forwardRef(({ className, ...props }, ref) => (
 ToastTitle.displayName = "ToastTitle";
 
 const ToastDescription = React.forwardRef(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-sm opacity-90", className)}
-    {...props}
-  />
+  <div ref={ref} className={cn("text-sm opacity-90", className)} {...props} />
 ));
 ToastDescription.displayName = "ToastDescription";
 
@@ -101,4 +97,4 @@ export {
   ToastDescription,
   ToastClose,
   ToastAction,
-}; 
+};

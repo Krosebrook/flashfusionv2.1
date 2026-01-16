@@ -5,36 +5,73 @@ import { InvokeLLM } from "@/api/integrations";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { 
-  Code2, Sparkles, Download, Copy, Check, 
-  Loader2, FileCode, Database, Globe
+import {
+  Code2,
+  Sparkles,
+  Download,
+  Copy,
+  Check,
+  Loader2,
+  FileCode,
+  Database,
+  Globe,
 } from "lucide-react";
 
 const featureTemplates = {
   "React Component": {
     icon: Code2,
-    examples: ["Pricing table", "User profile card", "Data visualization chart", "Modal dialog"],
-    prompt: "Create a production-ready React component with TypeScript, TailwindCSS styling, and proper props interface."
+    examples: [
+      "Pricing table",
+      "User profile card",
+      "Data visualization chart",
+      "Modal dialog",
+    ],
+    prompt:
+      "Create a production-ready React component with TypeScript, TailwindCSS styling, and proper props interface.",
   },
   "API Route": {
-    icon: Globe, 
-    examples: ["User authentication", "Data CRUD operations", "File upload handler", "Payment processing"],
-    prompt: "Create a Node.js API route with proper error handling, validation, and documentation."
+    icon: Globe,
+    examples: [
+      "User authentication",
+      "Data CRUD operations",
+      "File upload handler",
+      "Payment processing",
+    ],
+    prompt:
+      "Create a Node.js API route with proper error handling, validation, and documentation.",
   },
   "Database Schema": {
     icon: Database,
-    examples: ["E-commerce tables", "User management system", "Blog platform", "Analytics tracking"],
-    prompt: "Create a complete database schema with proper relationships, indexes, and constraints."
+    examples: [
+      "E-commerce tables",
+      "User management system",
+      "Blog platform",
+      "Analytics tracking",
+    ],
+    prompt:
+      "Create a complete database schema with proper relationships, indexes, and constraints.",
   },
   "Full Stack Feature": {
     icon: Sparkles,
-    examples: ["User dashboard", "Chat system", "File manager", "Analytics panel"],
-    prompt: "Create a complete full-stack feature including frontend component, API routes, and database schema."
-  }
+    examples: [
+      "User dashboard",
+      "Chat system",
+      "File manager",
+      "Analytics panel",
+    ],
+    prompt:
+      "Create a complete full-stack feature including frontend component, API routes, and database schema.",
+  },
 };
 
 export default function AdvancedFeatureGenerator() {
@@ -53,10 +90,10 @@ export default function AdvancedFeatureGenerator() {
     setGeneratedCode(null);
 
     const creditCosts = {
-      "Simple": 25,
-      "Medium": 50, 
-      "Complex": 100,
-      "Enterprise": 200
+      Simple: 25,
+      Medium: 50,
+      Complex: 100,
+      Enterprise: 200,
     };
 
     const creditsToUse = creditCosts[complexity];
@@ -64,7 +101,9 @@ export default function AdvancedFeatureGenerator() {
     try {
       const user = await base44.auth.me();
       if (user.credits_remaining < creditsToUse) {
-        setError(`Insufficient credits. You need ${creditsToUse} credits but only have ${user.credits_remaining}.`);
+        setError(
+          `Insufficient credits. You need ${creditsToUse} credits but only have ${user.credits_remaining}.`
+        );
         setIsLoading(false);
         return;
       }
@@ -86,29 +125,30 @@ export default function AdvancedFeatureGenerator() {
         
         Generate ONLY the code without any explanation or markdown formatting.
       `;
-      
+
       const response = await InvokeLLM({ prompt: enhancedPrompt });
       setGeneratedCode({
         code: response,
         type: featureType,
         complexity,
         framework,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
-      await base44.auth.updateMyUserData({ 
-        credits_remaining: user.credits_remaining - creditsToUse 
+      await base44.auth.updateMyUserData({
+        credits_remaining: user.credits_remaining - creditsToUse,
       });
-      
+
       await base44.entities.UsageLog.create({
         feature: "AdvancedFeatureGenerator",
         credits_used: creditsToUse,
-        details: `Generated ${complexity} ${featureType} with ${framework}`
+        details: `Generated ${complexity} ${featureType} with ${framework}`,
       });
-
     } catch (e) {
       console.error(e);
-      setError("Failed to generate feature. Please try again or contact support.");
+      setError(
+        "Failed to generate feature. Please try again or contact support."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -116,29 +156,29 @@ export default function AdvancedFeatureGenerator() {
 
   const copyToClipboard = async () => {
     if (!generatedCode) return;
-    
+
     try {
       await navigator.clipboard.writeText(generatedCode.code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   const downloadCode = () => {
     if (!generatedCode) return;
-    
+
     const extensions = {
       "React Component": "tsx",
-      "API Route": "js", 
+      "API Route": "js",
       "Database Schema": "sql",
-      "Full Stack Feature": "tsx"
+      "Full Stack Feature": "tsx",
     };
-    
-    const blob = new Blob([generatedCode.code], { type: 'text/plain' });
+
+    const blob = new Blob([generatedCode.code], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `generated-feature.${extensions[generatedCode.type]}`;
     document.body.appendChild(a);
@@ -181,7 +221,9 @@ export default function AdvancedFeatureGenerator() {
                 <SelectItem value="Simple">Simple (25 credits)</SelectItem>
                 <SelectItem value="Medium">Medium (50 credits)</SelectItem>
                 <SelectItem value="Complex">Complex (100 credits)</SelectItem>
-                <SelectItem value="Enterprise">Enterprise (200 credits)</SelectItem>
+                <SelectItem value="Enterprise">
+                  Enterprise (200 credits)
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -206,15 +248,15 @@ export default function AdvancedFeatureGenerator() {
         <div className="space-y-2">
           <Label>Feature Description</Label>
           <Textarea
-            placeholder={`Example: ${featureTemplates[featureType].examples.join(', ')}`}
+            placeholder={`Example: ${featureTemplates[featureType].examples.join(", ")}`}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="bg-gray-900 border-gray-600 min-h-[120px]"
           />
         </div>
 
-        <Button 
-          onClick={generateFeature} 
+        <Button
+          onClick={generateFeature}
           disabled={isLoading || !prompt}
           className="w-full bg-blue-600 hover:bg-blue-700"
           size="lg"
@@ -260,12 +302,13 @@ export default function AdvancedFeatureGenerator() {
               <TabsTrigger value="code">Code</TabsTrigger>
               <TabsTrigger value="preview">Preview</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="code" className="mt-4">
               <div className="bg-gray-900 rounded-lg border border-gray-700 relative">
                 <div className="flex items-center justify-between p-3 border-b border-gray-700">
                   <span className="text-sm text-gray-400">
-                    Generated on {new Date(generatedCode.timestamp).toLocaleString()}
+                    Generated on{" "}
+                    {new Date(generatedCode.timestamp).toLocaleString()}
                   </span>
                   <div className="flex gap-2">
                     <Button
@@ -274,8 +317,12 @@ export default function AdvancedFeatureGenerator() {
                       onClick={copyToClipboard}
                       className="text-xs"
                     >
-                      {copied ? <Check className="w-3 h-3 mr-1" /> : <Copy className="w-3 h-3 mr-1" />}
-                      {copied ? 'Copied' : 'Copy'}
+                      {copied ? (
+                        <Check className="w-3 h-3 mr-1" />
+                      ) : (
+                        <Copy className="w-3 h-3 mr-1" />
+                      )}
+                      {copied ? "Copied" : "Copy"}
                     </Button>
                     <Button
                       variant="outline"
@@ -293,11 +340,12 @@ export default function AdvancedFeatureGenerator() {
                 </pre>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="preview" className="mt-4">
               <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
                 <p className="text-gray-400 text-center">
-                  Code preview functionality would integrate with a sandbox environment
+                  Code preview functionality would integrate with a sandbox
+                  environment
                 </p>
               </div>
             </TabsContent>
@@ -308,9 +356,9 @@ export default function AdvancedFeatureGenerator() {
   );
 
   const creditCosts = {
-    "Simple": 25,
-    "Medium": 50,
-    "Complex": 100, 
-    "Enterprise": 200
+    Simple: 25,
+    Medium: 50,
+    Complex: 100,
+    Enterprise: 200,
   };
 }

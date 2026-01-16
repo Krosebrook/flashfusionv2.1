@@ -1,24 +1,24 @@
-import { Component } from 'react';
-import { Button } from '@/components/ui/button';
-import { AlertTriangle, RefreshCcw, Home } from 'lucide-react';
+import { Component } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, RefreshCcw, Home } from "lucide-react";
 
 /**
  * ErrorBoundary Component
- * 
+ *
  * This component catches React errors in its child component tree and displays
  * a fallback UI instead of crashing the entire app. It's a safety net for
  * production environments.
- * 
+ *
  * Safe: This is an additive change that doesn't modify existing behavior.
  * It only activates when an error occurs, providing graceful degradation.
  */
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
@@ -30,11 +30,11 @@ class ErrorBoundary extends Component {
   componentDidCatch(error, errorInfo) {
     // Log error details for debugging
     // Safe: Console logging doesn't affect app functionality
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
 
     // Placeholder for future error logging service (e.g., Sentry)
@@ -46,16 +46,16 @@ class ErrorBoundary extends Component {
 
   handleReset = () => {
     // Reset error state to try rendering the component again
-    this.setState({ 
-      hasError: false, 
-      error: null, 
-      errorInfo: null 
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
     });
   };
 
   handleGoHome = () => {
     // Navigate to home page and reset error state
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   render() {
@@ -75,12 +75,13 @@ class ErrorBoundary extends Component {
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-gray-900 rounded-lg p-4 mb-6">
               <p className="text-gray-300 text-sm mb-2">
-                The application encountered an unexpected error. This has been logged for investigation.
+                The application encountered an unexpected error. This has been
+                logged for investigation.
               </p>
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {process.env.NODE_ENV === "development" && this.state.error && (
                 <details className="mt-4">
                   <summary className="cursor-pointer text-gray-400 text-xs hover:text-gray-300">
                     View error details (development only)
@@ -92,16 +93,16 @@ class ErrorBoundary extends Component {
                 </details>
               )}
             </div>
-            
+
             <div className="flex gap-3">
-              <Button 
+              <Button
                 onClick={this.handleReset}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
               >
                 <RefreshCcw className="w-4 h-4" />
                 Try Again
               </Button>
-              <Button 
+              <Button
                 onClick={this.handleGoHome}
                 variant="outline"
                 className="flex items-center gap-2 border-gray-600 hover:bg-gray-700"

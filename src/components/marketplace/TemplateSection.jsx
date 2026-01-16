@@ -1,13 +1,12 @@
-import React from "react";
 import MarketplaceCard from "./MarketplaceCard";
 
 // Reusable section component to reduce duplication
-export default function TemplateSection({ 
-  title, 
-  icon: Icon, 
-  iconColor, 
-  templates, 
-  onSelectTemplate 
+export default function TemplateSection({
+  title,
+  icon: Icon,
+  iconColor,
+  templates,
+  onSelectTemplate,
 }) {
   if (templates.length === 0) return null;
 

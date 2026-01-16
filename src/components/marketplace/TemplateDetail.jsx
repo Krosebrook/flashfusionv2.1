@@ -14,8 +14,13 @@ export default function TemplateDetail({ template, onInstall }) {
     try {
       const user = await base44.auth.me();
 
-      if (template.credits_cost > 0 && user.credits_remaining < template.credits_cost) {
-        alert(`Insufficient credits. You need ${template.credits_cost} credits to install this template.`);
+      if (
+        template.credits_cost > 0 &&
+        user.credits_remaining < template.credits_cost
+      ) {
+        alert(
+          `Insufficient credits. You need ${template.credits_cost} credits to install this template.`
+        );
         setIsInstalling(false);
         return;
       }
@@ -26,18 +31,18 @@ export default function TemplateDetail({ template, onInstall }) {
         description: template.description,
         nodes: template.workflow_definition.nodes || [],
         connections: template.workflow_definition.connections || [],
-        status: "draft"
+        status: "draft",
       });
 
       // Update template install count
       await base44.entities.AgentTemplate.update(template.id, {
-        installs: (template.installs || 0) + 1
+        installs: (template.installs || 0) + 1,
       });
 
       // Deduct credits if needed
       if (template.credits_cost > 0) {
         await base44.auth.updateMe({
-          credits_remaining: user.credits_remaining - template.credits_cost
+          credits_remaining: user.credits_remaining - template.credits_cost,
         });
       }
 
@@ -54,8 +59,8 @@ export default function TemplateDetail({ template, onInstall }) {
     <div className="space-y-6">
       <Card className="bg-gray-800 border-gray-700 p-6">
         {template.preview_image && (
-          <img 
-            src={template.preview_image} 
+          <img
+            src={template.preview_image}
             alt={template.name}
             className="w-full h-64 object-cover rounded-lg mb-6"
           />
@@ -76,7 +81,10 @@ export default function TemplateDetail({ template, onInstall }) {
               <div className="flex items-center gap-4 text-sm text-gray-400">
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span>{template.rating?.toFixed(1) || "0.0"} ({template.reviews?.length || 0} reviews)</span>
+                  <span>
+                    {template.rating?.toFixed(1) || "0.0"} (
+                    {template.reviews?.length || 0} reviews)
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Download className="w-4 h-4" />
@@ -100,7 +108,9 @@ export default function TemplateDetail({ template, onInstall }) {
             ) : (
               <>
                 <Download className="w-4 h-4 mr-2" />
-                Install Template {template.credits_cost > 0 && `(${template.credits_cost} credits)`}
+                Install Template{" "}
+                {template.credits_cost > 0 &&
+                  `(${template.credits_cost} credits)`}
               </>
             )}
           </Button>
@@ -117,7 +127,9 @@ export default function TemplateDetail({ template, onInstall }) {
         <TabsContent value="overview" className="space-y-4">
           <Card className="bg-gray-800 border-gray-700 p-6">
             <h3 className="text-lg font-semibold mb-3">Description</h3>
-            <p className="text-gray-300 whitespace-pre-line">{template.description}</p>
+            <p className="text-gray-300 whitespace-pre-line">
+              {template.description}
+            </p>
           </Card>
 
           {template.tags && template.tags.length > 0 && (
@@ -125,7 +137,9 @@ export default function TemplateDetail({ template, onInstall }) {
               <h3 className="text-lg font-semibold mb-3">Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {template.tags.map((tag, i) => (
-                  <Badge key={i} variant="outline">{tag}</Badge>
+                  <Badge key={i} variant="outline">
+                    {tag}
+                  </Badge>
                 ))}
               </div>
             </Card>
@@ -162,18 +176,22 @@ export default function TemplateDetail({ template, onInstall }) {
                         {[...Array(5)].map((_, star) => (
                           <Star
                             key={star}
-                            className={`w-4 h-4 ${star < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
+                            className={`w-4 h-4 ${star < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-600"}`}
                           />
                         ))}
                       </div>
-                      <span className="text-sm text-gray-400">{review.user_email}</span>
+                      <span className="text-sm text-gray-400">
+                        {review.user_email}
+                      </span>
                     </div>
                     <p className="text-gray-300">{review.comment}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-400 text-center py-8">No reviews yet. Be the first to review!</p>
+              <p className="text-gray-400 text-center py-8">
+                No reviews yet. Be the first to review!
+              </p>
             )}
           </Card>
         </TabsContent>

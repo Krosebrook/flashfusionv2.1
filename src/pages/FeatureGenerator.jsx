@@ -11,10 +11,12 @@ export default function FeatureGenerator() {
           <span>Advanced Feature Generator</span>
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Transform your ideas into production-ready code. From simple components to complex full-stack features, our AI generates clean, documented code tailored to your specifications.
+          Transform your ideas into production-ready code. From simple
+          components to complex full-stack features, our AI generates clean,
+          documented code tailored to your specifications.
         </p>
       </div>
-      
+
       <AdvancedFeatureGenerator />
     </div>
   );

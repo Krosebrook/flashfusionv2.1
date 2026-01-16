@@ -6,7 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, RefreshCw, Check, Loader2 } from "lucide-react";
 
-export default function AIDescriptionGenerator({ product, brandKit, onSelect }) {
+export default function AIDescriptionGenerator({
+  product,
+  brandKit,
+  onSelect,
+}) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [descriptions, setDescriptions] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -15,18 +19,20 @@ export default function AIDescriptionGenerator({ product, brandKit, onSelect }) 
     setIsGenerating(true);
     try {
       const user = await base44.auth.me();
-      
+
       if (user.credits_remaining < 50) {
         alert("Insufficient credits. You need at least 50 credits.");
         setIsGenerating(false);
         return;
       }
 
-      const brandContext = brandKit ? `
+      const brandContext = brandKit
+        ? `
 Brand: ${brandKit.name}
 Voice: ${brandKit.voice_guide || "professional and engaging"}
 Colors: ${brandKit.colors?.join(", ") || "N/A"}
-Tagline: ${brandKit.tagline || "N/A"}` : "";
+Tagline: ${brandKit.tagline || "N/A"}`
+        : "";
 
       const prompt = `Generate 3 unique, compelling product descriptions for this e-commerce product:
 
@@ -56,26 +62,25 @@ Make each description distinctly different in approach and style.`;
                 properties: {
                   style: { type: "string" },
                   content: { type: "string" },
-                  tone: { type: "string" }
-                }
-              }
-            }
-          }
-        }
+                  tone: { type: "string" },
+                },
+              },
+            },
+          },
+        },
       });
 
       setDescriptions(result.descriptions || []);
 
       await base44.auth.updateMe({
-        credits_remaining: user.credits_remaining - 50
+        credits_remaining: user.credits_remaining - 50,
       });
 
       await base44.entities.UsageLog.create({
         feature: "AIDescriptionGenerator",
         credits_used: 50,
-        details: `Generated descriptions for: ${product.title}`
+        details: `Generated descriptions for: ${product.title}`,
       });
-
     } catch (error) {
       console.error("Failed to generate descriptions:", error);
       alert("Failed to generate descriptions. Please try again.");
@@ -99,7 +104,9 @@ Make each description distinctly different in approach and style.`;
             <Sparkles className="w-5 h-5 text-purple-400" />
             AI Description Generator
           </h3>
-          <p className="text-sm text-gray-400">Generate multiple description options with AI</p>
+          <p className="text-sm text-gray-400">
+            Generate multiple description options with AI
+          </p>
         </div>
         <Badge>50 credits</Badge>
       </div>
@@ -124,7 +131,10 @@ Make each description distinctly different in approach and style.`;
         </Button>
       ) : (
         <div className="space-y-4">
-          <Tabs value={String(selectedIndex)} onValueChange={(v) => setSelectedIndex(Number(v))}>
+          <Tabs
+            value={String(selectedIndex)}
+            onValueChange={(v) => setSelectedIndex(Number(v))}
+          >
             <TabsList className="bg-gray-900 w-full">
               {descriptions.map((desc, i) => (
                 <TabsTrigger key={i} value={String(i)} className="flex-1">
@@ -140,7 +150,7 @@ Make each description distinctly different in approach and style.`;
                   <Badge variant="outline">{desc.style}</Badge>
                   <Badge variant="outline">{desc.tone}</Badge>
                 </div>
-                
+
                 <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
                   <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
                     {desc.content}

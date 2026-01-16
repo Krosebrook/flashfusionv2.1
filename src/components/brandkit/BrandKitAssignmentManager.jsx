@@ -5,7 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, Trash2, Edit2, CheckCircle2, Palette } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -17,10 +23,18 @@ const CONTENT_TYPES = [
   "video_script",
   "product_description",
   "meme",
-  "graphic"
+  "graphic",
 ];
 
-const PLATFORMS = ["Instagram", "TikTok", "Facebook", "LinkedIn", "Twitter", "YouTube", "Email"];
+const PLATFORMS = [
+  "Instagram",
+  "TikTok",
+  "Facebook",
+  "LinkedIn",
+  "Twitter",
+  "YouTube",
+  "Email",
+];
 
 export default function BrandKitAssignmentManager() {
   const [assignments, setAssignments] = useState([]);
@@ -35,7 +49,7 @@ export default function BrandKitAssignmentManager() {
     platforms: [],
     is_default: false,
     auto_apply: true,
-    description: ""
+    description: "",
   });
 
   useEffect(() => {
@@ -47,7 +61,7 @@ export default function BrandKitAssignmentManager() {
     try {
       const [assignmentsData, brandKitsData] = await Promise.all([
         base44.entities.BrandKitAssignment.list("-created_date", 100),
-        base44.entities.BrandKit.list()
+        base44.entities.BrandKit.list(),
       ]);
       setAssignments(assignmentsData);
       setBrandKits(brandKitsData);
@@ -97,27 +111,27 @@ export default function BrandKitAssignmentManager() {
       platforms: [],
       is_default: false,
       auto_apply: true,
-      description: ""
+      description: "",
     });
     setEditingId(null);
     setShowForm(false);
   };
 
   const toggleContentType = (type) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       content_types: prev.content_types.includes(type)
-        ? prev.content_types.filter(t => t !== type)
-        : [...prev.content_types, type]
+        ? prev.content_types.filter((t) => t !== type)
+        : [...prev.content_types, type],
     }));
   };
 
   const togglePlatform = (platform) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       platforms: prev.platforms.includes(platform)
-        ? prev.platforms.filter(p => p !== platform)
-        : [...prev.platforms, platform]
+        ? prev.platforms.filter((p) => p !== platform)
+        : [...prev.platforms, platform],
     }));
   };
 
@@ -155,20 +169,25 @@ export default function BrandKitAssignmentManager() {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Brand Kit</label>
-              <Select value={formData.brand_kit_id} onValueChange={(value) => {
-                const brand = brandKits.find(b => b.id === value);
-                setFormData(prev => ({
-                  ...prev,
-                  brand_kit_id: value,
-                  brand_kit_name: brand?.name
-                }));
-              }}>
+              <label className="block text-sm font-medium mb-2">
+                Brand Kit
+              </label>
+              <Select
+                value={formData.brand_kit_id}
+                onValueChange={(value) => {
+                  const brand = brandKits.find((b) => b.id === value);
+                  setFormData((prev) => ({
+                    ...prev,
+                    brand_kit_id: value,
+                    brand_kit_name: brand?.name,
+                  }));
+                }}
+              >
                 <SelectTrigger className="bg-gray-900 border-gray-600">
                   <SelectValue placeholder="Select a brand kit" />
                 </SelectTrigger>
                 <SelectContent>
-                  {brandKits.map(kit => (
+                  {brandKits.map((kit) => (
                     <SelectItem key={kit.id} value={kit.id}>
                       {kit.name}
                     </SelectItem>
@@ -178,34 +197,47 @@ export default function BrandKitAssignmentManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Campaign Name</label>
+              <label className="block text-sm font-medium mb-2">
+                Campaign Name
+              </label>
               <Input
                 placeholder="e.g., Summer Sale 2024"
                 value={formData.campaign_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, campaign_name: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    campaign_name: e.target.value,
+                  }))
+                }
                 className="bg-gray-900 border-gray-600"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-3">Content Types</label>
+              <label className="block text-sm font-medium mb-3">
+                Content Types
+              </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {CONTENT_TYPES.map(type => (
+                {CONTENT_TYPES.map((type) => (
                   <div key={type} className="flex items-center gap-2">
                     <Checkbox
                       checked={formData.content_types.includes(type)}
                       onCheckedChange={() => toggleContentType(type)}
                     />
-                    <label className="text-sm cursor-pointer">{type.replace(/_/g, " ")}</label>
+                    <label className="text-sm cursor-pointer">
+                      {type.replace(/_/g, " ")}
+                    </label>
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-3">Platforms</label>
+              <label className="block text-sm font-medium mb-3">
+                Platforms
+              </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {PLATFORMS.map(platform => (
+                {PLATFORMS.map((platform) => (
                   <div key={platform} className="flex items-center gap-2">
                     <Checkbox
                       checked={formData.platforms.includes(platform)}
@@ -218,11 +250,18 @@ export default function BrandKitAssignmentManager() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Description (Optional)</label>
+              <label className="block text-sm font-medium mb-2">
+                Description (Optional)
+              </label>
               <Input
                 placeholder="e.g., Brand guidelines for summer campaign"
                 value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 className="bg-gray-900 border-gray-600"
               />
             </div>
@@ -231,21 +270,30 @@ export default function BrandKitAssignmentManager() {
               <div className="flex items-center gap-2">
                 <Checkbox
                   checked={formData.is_default}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_default: checked }))}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, is_default: checked }))
+                  }
                 />
                 <label className="text-sm">Set as default</label>
               </div>
               <div className="flex items-center gap-2">
                 <Checkbox
                   checked={formData.auto_apply}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, auto_apply: checked }))}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, auto_apply: checked }))
+                  }
                 />
-                <label className="text-sm">Auto-apply to matching content</label>
+                <label className="text-sm">
+                  Auto-apply to matching content
+                </label>
               </div>
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleSave} className="flex-1 bg-purple-600 hover:bg-purple-700">
+              <Button
+                onClick={handleSave}
+                className="flex-1 bg-purple-600 hover:bg-purple-700"
+              >
                 {editingId ? "Update" : "Create"} Assignment
               </Button>
               <Button onClick={resetForm} variant="outline" className="flex-1">
@@ -260,21 +308,31 @@ export default function BrandKitAssignmentManager() {
         <Card className="bg-gray-800 border-gray-700 p-12 text-center">
           <Palette className="w-16 h-16 mx-auto text-gray-600 mb-4" />
           <h3 className="text-xl font-semibold mb-2">No assignments yet</h3>
-          <p className="text-gray-400">Create your first brand kit assignment to ensure consistency across campaigns</p>
+          <p className="text-gray-400">
+            Create your first brand kit assignment to ensure consistency across
+            campaigns
+          </p>
         </Card>
       ) : (
         <div className="space-y-4">
-          {assignments.map(assignment => (
-            <Card key={assignment.id} className="bg-gray-800 border-gray-700 p-6">
+          {assignments.map((assignment) => (
+            <Card
+              key={assignment.id}
+              className="bg-gray-800 border-gray-700 p-6"
+            >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     {assignment.campaign_name}
                     {assignment.is_default && (
-                      <Badge className="bg-green-500/20 text-green-400 text-xs">Default</Badge>
+                      <Badge className="bg-green-500/20 text-green-400 text-xs">
+                        Default
+                      </Badge>
                     )}
                   </h3>
-                  <p className="text-sm text-gray-400 mt-1">{assignment.brand_kit_name}</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    {assignment.brand_kit_name}
+                  </p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -296,7 +354,9 @@ export default function BrandKitAssignmentManager() {
               </div>
 
               {assignment.description && (
-                <p className="text-sm text-gray-400 mb-3">{assignment.description}</p>
+                <p className="text-sm text-gray-400 mb-3">
+                  {assignment.description}
+                </p>
               )}
 
               <div className="space-y-3">
@@ -304,7 +364,7 @@ export default function BrandKitAssignmentManager() {
                   <div>
                     <p className="text-xs text-gray-500 mb-2">Content Types:</p>
                     <div className="flex flex-wrap gap-2">
-                      {assignment.content_types.map(type => (
+                      {assignment.content_types.map((type) => (
                         <Badge key={type} variant="outline" className="text-xs">
                           {type.replace(/_/g, " ")}
                         </Badge>
@@ -317,8 +377,12 @@ export default function BrandKitAssignmentManager() {
                   <div>
                     <p className="text-xs text-gray-500 mb-2">Platforms:</p>
                     <div className="flex flex-wrap gap-2">
-                      {assignment.platforms.map(platform => (
-                        <Badge key={platform} variant="outline" className="text-xs">
+                      {assignment.platforms.map((platform) => (
+                        <Badge
+                          key={platform}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {platform}
                         </Badge>
                       ))}
@@ -328,7 +392,9 @@ export default function BrandKitAssignmentManager() {
 
                 <div className="flex gap-4 text-xs text-gray-400 pt-2 border-t border-gray-700">
                   <div className="flex items-center gap-1">
-                    {assignment.auto_apply && <CheckCircle2 className="w-3 h-3 text-green-400" />}
+                    {assignment.auto_apply && (
+                      <CheckCircle2 className="w-3 h-3 text-green-400" />
+                    )}
                     {assignment.auto_apply ? "Auto-applies" : "Manual apply"}
                   </div>
                 </div>

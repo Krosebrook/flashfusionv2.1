@@ -4,9 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  FolderOpen, Play, Copy, Trash2, Search, 
-  Star, TrendingUp, Loader2 
+import {
+  FolderOpen,
+  Play,
+  Copy,
+  Trash2,
+  Search,
+  Star,
+  TrendingUp,
+  Loader2,
 } from "lucide-react";
 
 export default function WorkflowLibrary({ onLoad, onExecute }) {
@@ -31,10 +37,10 @@ export default function WorkflowLibrary({ onLoad, onExecute }) {
 
   const handleDelete = async (workflowId) => {
     if (!confirm("Are you sure you want to delete this workflow?")) return;
-    
+
     try {
       await base44.entities.Workflow.delete(workflowId);
-      setWorkflows(workflows.filter(w => w.id !== workflowId));
+      setWorkflows(workflows.filter((w) => w.id !== workflowId));
     } catch (error) {
       console.error("Failed to delete workflow:", error);
       alert("Failed to delete workflow. Please try again.");
@@ -48,7 +54,7 @@ export default function WorkflowLibrary({ onLoad, onExecute }) {
         name: `${workflow.name} (Copy)`,
         id: undefined,
         created_date: undefined,
-        execution_count: 0
+        execution_count: 0,
       });
       setWorkflows([duplicate, ...workflows]);
     } catch (error) {
@@ -57,13 +63,14 @@ export default function WorkflowLibrary({ onLoad, onExecute }) {
     }
   };
 
-  const filteredWorkflows = workflows.filter(w =>
-    w.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    w.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredWorkflows = workflows.filter(
+    (w) =>
+      w.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      w.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const templates = filteredWorkflows.filter(w => w.is_template);
-  const myWorkflows = filteredWorkflows.filter(w => !w.is_template);
+  const templates = filteredWorkflows.filter((w) => w.is_template);
+  const myWorkflows = filteredWorkflows.filter((w) => !w.is_template);
 
   return (
     <div className="space-y-6">
@@ -141,7 +148,14 @@ export default function WorkflowLibrary({ onLoad, onExecute }) {
   );
 }
 
-function WorkflowCard({ workflow, onLoad, onExecute, onDuplicate, onDelete, isTemplate }) {
+function WorkflowCard({
+  workflow,
+  onLoad,
+  onExecute,
+  onDuplicate,
+  onDelete,
+  isTemplate,
+}) {
   return (
     <Card className="bg-gray-800 border-gray-700 p-4 hover:border-gray-600 transition-all">
       <div className="space-y-3">
@@ -163,11 +177,15 @@ function WorkflowCard({ workflow, onLoad, onExecute, onDuplicate, onDelete, isTe
           <Badge variant="outline" className="text-xs">
             {workflow.nodes?.length || 0} nodes
           </Badge>
-          <Badge className={
-            workflow.status === 'active' ? 'bg-green-500/20 text-green-400' :
-            workflow.status === 'completed' ? 'bg-blue-500/20 text-blue-400' :
-            'bg-gray-500/20 text-gray-400'
-          }>
+          <Badge
+            className={
+              workflow.status === "active"
+                ? "bg-green-500/20 text-green-400"
+                : workflow.status === "completed"
+                  ? "bg-blue-500/20 text-blue-400"
+                  : "bg-gray-500/20 text-gray-400"
+            }
+          >
             {workflow.status}
           </Badge>
         </div>

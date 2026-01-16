@@ -1,11 +1,27 @@
 import { Card } from "@/components/ui/card";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 import { Users, TrendingUp, Clock } from "lucide-react";
 
 export default function UserActivityChart({ data, timeRange }) {
-  const totalSessions = data.reduce((sum, item) => sum + (item.sessions || 0), 0);
-  const avgSessionsPerDay = data.length > 0 ? Math.round(totalSessions / data.length) : 0;
-  const totalUsers = data.reduce((sum, item) => sum + (item.unique_users || 0), 0);
+  const totalSessions = data.reduce(
+    (sum, item) => sum + (item.sessions || 0),
+    0
+  );
+  const avgSessionsPerDay =
+    data.length > 0 ? Math.round(totalSessions / data.length) : 0;
+  const totalUsers = data.reduce(
+    (sum, item) => sum + (item.unique_users || 0),
+    0
+  );
 
   return (
     <div className="space-y-6">
@@ -14,7 +30,9 @@ export default function UserActivityChart({ data, timeRange }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Total Sessions</p>
-              <p className="text-2xl font-bold text-blue-400">{totalSessions}</p>
+              <p className="text-2xl font-bold text-blue-400">
+                {totalSessions}
+              </p>
             </div>
             <Users className="w-8 h-8 text-blue-400 opacity-50" />
           </div>
@@ -24,7 +42,9 @@ export default function UserActivityChart({ data, timeRange }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-400">Avg Sessions/Day</p>
-              <p className="text-2xl font-bold text-green-400">{avgSessionsPerDay}</p>
+              <p className="text-2xl font-bold text-green-400">
+                {avgSessionsPerDay}
+              </p>
             </div>
             <TrendingUp className="w-8 h-8 text-green-400 opacity-50" />
           </div>
@@ -49,12 +69,30 @@ export default function UserActivityChart({ data, timeRange }) {
             <XAxis dataKey="date" stroke="#9CA3AF" />
             <YAxis stroke="#9CA3AF" />
             <Tooltip
-              contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
-              labelStyle={{ color: '#F3F4F6' }}
+              contentStyle={{
+                backgroundColor: "#1F2937",
+                border: "1px solid #374151",
+                borderRadius: "8px",
+              }}
+              labelStyle={{ color: "#F3F4F6" }}
             />
             <Legend />
-            <Area type="monotone" dataKey="sessions" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.3} name="Sessions" />
-            <Area type="monotone" dataKey="unique_users" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.3} name="Unique Users" />
+            <Area
+              type="monotone"
+              dataKey="sessions"
+              stroke="#3B82F6"
+              fill="#3B82F6"
+              fillOpacity={0.3}
+              name="Sessions"
+            />
+            <Area
+              type="monotone"
+              dataKey="unique_users"
+              stroke="#8B5CF6"
+              fill="#8B5CF6"
+              fillOpacity={0.3}
+              name="Unique Users"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </Card>

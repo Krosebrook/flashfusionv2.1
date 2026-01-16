@@ -12,10 +12,12 @@ export default function BrandKitGenerator() {
           <Sparkles className="w-6 h-6 text-yellow-400" />
         </h1>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Create comprehensive brand identities with multiple logo variations, color palettes, typography, and brand guidelines. Perfect for entrepreneurs, agencies, and creative professionals.
+          Create comprehensive brand identities with multiple logo variations,
+          color palettes, typography, and brand guidelines. Perfect for
+          entrepreneurs, agencies, and creative professionals.
         </p>
       </div>
-      
+
       <SmartBrandKit />
     </div>
   );
