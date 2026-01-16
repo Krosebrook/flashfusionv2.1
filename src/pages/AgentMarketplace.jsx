@@ -1,56 +1,39 @@
 "use client";
-import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Store, Star, TrendingUp, Sparkles, Search, 
-  Download
-} from "lucide-react";
+import { Store, Sparkles, TrendingUp } from "lucide-react";
 
-import MarketplaceCard from "../components/marketplace/MarketplaceCard";
+// Refactored imports - using new modular components and custom hooks
+import MarketplaceStats from "../components/marketplace/MarketplaceStats";
+import MarketplaceSearch from "../components/marketplace/MarketplaceSearch";
+import TemplateSection from "../components/marketplace/TemplateSection";
 import TemplateDetail from "../components/marketplace/TemplateDetail";
+import { useMarketplaceTemplates } from "../hooks/useMarketplaceTemplates";
+import { useTemplateFilters } from "../hooks/useTemplateFilters";
 
+// Main component - now much cleaner with extracted logic and components
 export default function AgentMarketplace() {
-  const [templates, setTemplates] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("all");
+  
+  // Custom hooks handle data fetching and filtering logic
+  const { 
+    templates, 
+    featuredTemplates, 
+    popularTemplates, 
+    stats, 
+    refetch 
+  } = useMarketplaceTemplates();
+  
+  const {
+    searchQuery,
+    setSearchQuery,
+    activeCategory,
+    setActiveCategory,
+    filteredTemplates
+  } = useTemplateFilters(templates);
 
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-
-  const fetchTemplates = async () => {
-    setIsLoading(true);
-    try {
-      const data = await base44.entities.AgentTemplate.list("-rating");
-      setTemplates(data);
-    } catch (error) {
-      console.error("Failed to fetch templates:", error);
-    }
-    setIsLoading(false);
-  };
-
-  const filteredTemplates = templates.filter(t => {
-    const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === "all" || t.category === activeCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const featuredTemplates = templates.filter(t => t.is_featured);
-  const popularTemplates = [...templates].sort((a, b) => b.installs - a.installs).slice(0, 6);
-
-  const stats = {
-    total: templates.length,
-    featured: featuredTemplates.length,
-    totalInstalls: templates.reduce((sum, t) => sum + (t.installs || 0), 0)
-  };
-
+  // Early return for detail view - improves readability
   if (selectedTemplate) {
     return (
       <div className="space-y-6">
@@ -59,8 +42,8 @@ export default function AgentMarketplace() {
         </Button>
         <TemplateDetail
           template={selectedTemplate}
-          onInstall={async (template) => {
-            await fetchTemplates();
+          onInstall={async () => {
+            await refetch();
             setSelectedTemplate(null);
           }}
         />
@@ -68,8 +51,12 @@ export default function AgentMarketplace() {
     );
   }
 
+  const showFeaturedSection = featuredTemplates.length > 0 && activeCategory === "all";
+  const showPopularSection = popularTemplates.length > 0 && activeCategory === "all";
+
   return (
     <div className="space-y-8">
+      {/* Header section */}
       <div className="text-center">
         <h1 className="text-3xl font-bold flex items-center justify-center gap-3 mb-2">
           <Store className="w-8 h-8 text-purple-400" />
@@ -80,50 +67,16 @@ export default function AgentMarketplace() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gray-800 border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Total Templates</p>
-              <p className="text-2xl font-bold text-purple-400">{stats.total}</p>
-            </div>
-            <Store className="w-8 h-8 text-purple-400 opacity-50" />
-          </div>
-        </Card>
+      {/* Stats cards - now a separate component */}
+      <MarketplaceStats stats={stats} />
 
-        <Card className="bg-gray-800 border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Featured</p>
-              <p className="text-2xl font-bold text-yellow-400">{stats.featured}</p>
-            </div>
-            <Star className="w-8 h-8 text-yellow-400 opacity-50" />
-          </div>
-        </Card>
+      {/* Search bar - extracted for clarity */}
+      <MarketplaceSearch 
+        searchQuery={searchQuery} 
+        onSearchChange={setSearchQuery} 
+      />
 
-        <Card className="bg-gray-800 border-gray-700 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Total Installs</p>
-              <p className="text-2xl font-bold text-green-400">{stats.totalInstalls}</p>
-            </div>
-            <Download className="w-8 h-8 text-green-400 opacity-50" />
-          </div>
-        </Card>
-      </div>
-
-      <div className="flex gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            placeholder="Search templates..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-gray-800 border-gray-600"
-          />
-        </div>
-      </div>
-
+      {/* Category tabs with template sections */}
       <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
         <TabsList className="bg-gray-800">
           <TabsTrigger value="all">All Templates</TabsTrigger>
@@ -134,56 +87,34 @@ export default function AgentMarketplace() {
         </TabsList>
 
         <TabsContent value={activeCategory} className="space-y-6">
-          {featuredTemplates.length > 0 && activeCategory === "all" && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-yellow-400" />
-                <h3 className="text-xl font-semibold">Featured Templates</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredTemplates.map((template) => (
-                  <MarketplaceCard
-                    key={template.id}
-                    template={template}
-                    onSelect={setSelectedTemplate}
-                  />
-                ))}
-              </div>
-            </div>
+          {/* Featured section - conditional rendering improved */}
+          {showFeaturedSection && (
+            <TemplateSection
+              title="Featured Templates"
+              icon={Sparkles}
+              iconColor="text-yellow-400"
+              templates={featuredTemplates}
+              onSelectTemplate={setSelectedTemplate}
+            />
           )}
 
-          {popularTemplates.length > 0 && activeCategory === "all" && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
-                <h3 className="text-xl font-semibold">Most Popular</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {popularTemplates.map((template) => (
-                  <MarketplaceCard
-                    key={template.id}
-                    template={template}
-                    onSelect={setSelectedTemplate}
-                  />
-                ))}
-              </div>
-            </div>
+          {/* Popular section - using reusable component */}
+          {showPopularSection && (
+            <TemplateSection
+              title="Most Popular"
+              icon={TrendingUp}
+              iconColor="text-green-400"
+              templates={popularTemplates}
+              onSelectTemplate={setSelectedTemplate}
+            />
           )}
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">
-              {activeCategory === "all" ? "All Templates" : `${activeCategory} Templates`}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTemplates.map((template) => (
-                <MarketplaceCard
-                  key={template.id}
-                  template={template}
-                  onSelect={setSelectedTemplate}
-                />
-              ))}
-            </div>
-          </div>
+          {/* All/filtered templates section */}
+          <TemplateSection
+            title={activeCategory === "all" ? "All Templates" : `${activeCategory} Templates`}
+            templates={filteredTemplates}
+            onSelectTemplate={setSelectedTemplate}
+          />
         </TabsContent>
       </Tabs>
     </div>
