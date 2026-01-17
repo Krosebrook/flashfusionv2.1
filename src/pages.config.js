@@ -29,6 +29,7 @@ import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
 import ActivationDashboard from './pages/ActivationDashboard';
 import RetentionDashboard from './pages/RetentionDashboard';
+import PowerUserExpansion from './pages/PowerUserExpansion';
 import __Layout from './Layout.jsx';
 
 
@@ -64,6 +65,7 @@ export const PAGES = {
     "WSJFPrioritization": WSJFPrioritization,
     "ActivationDashboard": ActivationDashboard,
     "RetentionDashboard": RetentionDashboard,
+    "PowerUserExpansion": PowerUserExpansion,
 }
 
 export const pagesConfig = {
