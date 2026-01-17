@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -246,7 +245,11 @@ export default function Analytics() {
             <Download className="w-4 h-4 mr-2" />
             Reports
           </TabsTrigger>
-        </TabsList>
+          <TabsTrigger value="advanced">
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Advanced
+          </TabsTrigger>
+          </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -385,7 +388,13 @@ export default function Analytics() {
         <TabsContent value="reports" className="space-y-6">
           <CustomReport data={reportData} />
         </TabsContent>
+
+        <TabsContent value="advanced" className="space-y-6">
+          <AdvancedAnalyticsDashboard />
+        </TabsContent>
       </Tabs>
     </div>
   );
 }
+
+import AdvancedAnalyticsDashboard from "../components/analytics/AdvancedAnalyticsDashboard";
