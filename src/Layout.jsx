@@ -91,6 +91,8 @@ const navigationItems = [
     icon: Users,
   },
   { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug },
+  { name: "Integration Hub", href: createPageUrl("IntegrationHub"), icon: Plug },
+  { name: "Agent Collaboration", href: createPageUrl("AgentCollaboration"), icon: Users },
   { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
   { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
 ];

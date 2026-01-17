@@ -18,6 +18,7 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import WSJFPrioritization from './pages/WSJFPrioritization';
 import IntegrationHub from './pages/IntegrationHub';
+import AgentCollaboration from './pages/AgentCollaboration';
 import __Layout from './Layout.jsx';
 
 
@@ -42,6 +43,7 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "WSJFPrioritization": WSJFPrioritization,
     "IntegrationHub": IntegrationHub,
+    "AgentCollaboration": AgentCollaboration,
 }
 
 export const pagesConfig = {
