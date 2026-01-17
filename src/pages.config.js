@@ -28,6 +28,7 @@ import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
 import ActivationDashboard from './pages/ActivationDashboard';
+import RetentionDashboard from './pages/RetentionDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -62,6 +63,7 @@ export const PAGES = {
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
     "ActivationDashboard": ActivationDashboard,
+    "RetentionDashboard": RetentionDashboard,
 }
 
 export const pagesConfig = {
