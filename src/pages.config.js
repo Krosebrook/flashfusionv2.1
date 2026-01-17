@@ -15,6 +15,8 @@ import Home from './pages/Home';
 import IntegrationHub from './pages/IntegrationHub';
 import Integrations from './pages/Integrations';
 import IntegrationsAdmin from './pages/IntegrationsAdmin';
+import Onboarding from './pages/Onboarding';
+import OnboardingComplete from './pages/OnboardingComplete';
 import PRDGenerator from './pages/PRDGenerator';
 import PersonalizedAnalytics from './pages/PersonalizedAnalytics';
 import Plugins from './pages/Plugins';
@@ -22,10 +24,9 @@ import Projects from './pages/Projects';
 import SyncConfiguration from './pages/SyncConfiguration';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
-import WSJFPrioritization from './pages/WSJFPrioritization';
-import Onboarding from './pages/Onboarding';
-import OnboardingComplete from './pages/OnboardingComplete';
 import UserSettings from './pages/UserSettings';
+import WSJFPrioritization from './pages/WSJFPrioritization';
+import DealSourcer from './pages/DealSourcer';
 import __Layout from './Layout.jsx';
 
 
@@ -47,6 +48,8 @@ export const PAGES = {
     "IntegrationHub": IntegrationHub,
     "Integrations": Integrations,
     "IntegrationsAdmin": IntegrationsAdmin,
+    "Onboarding": Onboarding,
+    "OnboardingComplete": OnboardingComplete,
     "PRDGenerator": PRDGenerator,
     "PersonalizedAnalytics": PersonalizedAnalytics,
     "Plugins": Plugins,
@@ -54,10 +57,9 @@ export const PAGES = {
     "SyncConfiguration": SyncConfiguration,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
-    "WSJFPrioritization": WSJFPrioritization,
-    "Onboarding": Onboarding,
-    "OnboardingComplete": OnboardingComplete,
     "UserSettings": UserSettings,
+    "WSJFPrioritization": WSJFPrioritization,
+    "DealSourcer": DealSourcer,
 }
 
 export const pagesConfig = {
