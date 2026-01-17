@@ -85,6 +85,9 @@ const navigationItems = [
     icon: ArrowUpDown,
   },
   { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
+  { name: "Personalized Analytics", href: createPageUrl("PersonalizedAnalytics"), icon: BarChart3 },
+  { name: "Advanced Workflows", href: createPageUrl("AdvancedWorkflows"), icon: Workflow },
+  { name: "Sync Configuration", href: createPageUrl("SyncConfiguration"), icon: Plug },
   {
     name: "Team Management",
     href: createPageUrl("TeamManagement"),
