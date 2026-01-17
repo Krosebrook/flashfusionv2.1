@@ -9,6 +9,7 @@ import Collaboration from './pages/Collaboration';
 import ContentCreator from './pages/ContentCreator';
 import ContentScheduling from './pages/ContentScheduling';
 import Dashboard from './pages/Dashboard';
+import DealSourcer from './pages/DealSourcer';
 import EcommerceSuite from './pages/EcommerceSuite';
 import FeatureGenerator from './pages/FeatureGenerator';
 import Home from './pages/Home';
@@ -26,7 +27,6 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import DealSourcer from './pages/DealSourcer';
 import __Layout from './Layout.jsx';
 
 
@@ -42,6 +42,7 @@ export const PAGES = {
     "ContentCreator": ContentCreator,
     "ContentScheduling": ContentScheduling,
     "Dashboard": Dashboard,
+    "DealSourcer": DealSourcer,
     "EcommerceSuite": EcommerceSuite,
     "FeatureGenerator": FeatureGenerator,
     "Home": Home,
@@ -59,7 +60,6 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "DealSourcer": DealSourcer,
 }
 
 export const pagesConfig = {
