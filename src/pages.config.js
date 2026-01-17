@@ -1,3 +1,5 @@
+import AdvancedWorkflows from './pages/AdvancedWorkflows';
+import AgentCollaboration from './pages/AgentCollaboration';
 import AgentMarketplace from './pages/AgentMarketplace';
 import AgentOrchestration from './pages/AgentOrchestration';
 import Analytics from './pages/Analytics';
@@ -10,22 +12,23 @@ import Dashboard from './pages/Dashboard';
 import EcommerceSuite from './pages/EcommerceSuite';
 import FeatureGenerator from './pages/FeatureGenerator';
 import Home from './pages/Home';
+import IntegrationHub from './pages/IntegrationHub';
 import Integrations from './pages/Integrations';
 import PRDGenerator from './pages/PRDGenerator';
+import PersonalizedAnalytics from './pages/PersonalizedAnalytics';
 import Plugins from './pages/Plugins';
 import Projects from './pages/Projects';
+import SyncConfiguration from './pages/SyncConfiguration';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import IntegrationHub from './pages/IntegrationHub';
-import AgentCollaboration from './pages/AgentCollaboration';
-import PersonalizedAnalytics from './pages/PersonalizedAnalytics';
-import AdvancedWorkflows from './pages/AdvancedWorkflows';
-import SyncConfiguration from './pages/SyncConfiguration';
+import IntegrationsAdmin from './pages/IntegrationsAdmin';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AdvancedWorkflows": AdvancedWorkflows,
+    "AgentCollaboration": AgentCollaboration,
     "AgentMarketplace": AgentMarketplace,
     "AgentOrchestration": AgentOrchestration,
     "Analytics": Analytics,
@@ -38,18 +41,17 @@ export const PAGES = {
     "EcommerceSuite": EcommerceSuite,
     "FeatureGenerator": FeatureGenerator,
     "Home": Home,
+    "IntegrationHub": IntegrationHub,
     "Integrations": Integrations,
     "PRDGenerator": PRDGenerator,
+    "PersonalizedAnalytics": PersonalizedAnalytics,
     "Plugins": Plugins,
     "Projects": Projects,
+    "SyncConfiguration": SyncConfiguration,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "WSJFPrioritization": WSJFPrioritization,
-    "IntegrationHub": IntegrationHub,
-    "AgentCollaboration": AgentCollaboration,
-    "PersonalizedAnalytics": PersonalizedAnalytics,
-    "AdvancedWorkflows": AdvancedWorkflows,
-    "SyncConfiguration": SyncConfiguration,
+    "IntegrationsAdmin": IntegrationsAdmin,
 }
 
 export const pagesConfig = {
