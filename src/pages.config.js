@@ -1,3 +1,4 @@
+import ActivationDashboard from './pages/ActivationDashboard';
 import AdvancedWorkflows from './pages/AdvancedWorkflows';
 import AgentCollaboration from './pages/AgentCollaboration';
 import AgentMarketplace from './pages/AgentMarketplace';
@@ -21,19 +22,20 @@ import OnboardingComplete from './pages/OnboardingComplete';
 import PRDGenerator from './pages/PRDGenerator';
 import PersonalizedAnalytics from './pages/PersonalizedAnalytics';
 import Plugins from './pages/Plugins';
+import PowerUserExpansion from './pages/PowerUserExpansion';
 import Projects from './pages/Projects';
+import RetentionDashboard from './pages/RetentionDashboard';
 import SyncConfiguration from './pages/SyncConfiguration';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import ActivationDashboard from './pages/ActivationDashboard';
-import RetentionDashboard from './pages/RetentionDashboard';
-import PowerUserExpansion from './pages/PowerUserExpansion';
+import LifecycleIntelligence from './pages/LifecycleIntelligence';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "ActivationDashboard": ActivationDashboard,
     "AdvancedWorkflows": AdvancedWorkflows,
     "AgentCollaboration": AgentCollaboration,
     "AgentMarketplace": AgentMarketplace,
@@ -57,15 +59,15 @@ export const PAGES = {
     "PRDGenerator": PRDGenerator,
     "PersonalizedAnalytics": PersonalizedAnalytics,
     "Plugins": Plugins,
+    "PowerUserExpansion": PowerUserExpansion,
     "Projects": Projects,
+    "RetentionDashboard": RetentionDashboard,
     "SyncConfiguration": SyncConfiguration,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "ActivationDashboard": ActivationDashboard,
-    "RetentionDashboard": RetentionDashboard,
-    "PowerUserExpansion": PowerUserExpansion,
+    "LifecycleIntelligence": LifecycleIntelligence,
 }
 
 export const pagesConfig = {
