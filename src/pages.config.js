@@ -11,12 +11,13 @@ import EcommerceSuite from './pages/EcommerceSuite';
 import FeatureGenerator from './pages/FeatureGenerator';
 import Home from './pages/Home';
 import Integrations from './pages/Integrations';
-import Plugins from './pages/Plugins';
 import PRDGenerator from './pages/PRDGenerator';
+import Plugins from './pages/Plugins';
 import Projects from './pages/Projects';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import WSJFPrioritization from './pages/WSJFPrioritization';
+import IntegrationHub from './pages/IntegrationHub';
 import __Layout from './Layout.jsx';
 
 
@@ -34,12 +35,13 @@ export const PAGES = {
     "FeatureGenerator": FeatureGenerator,
     "Home": Home,
     "Integrations": Integrations,
-    "Plugins": Plugins,
     "PRDGenerator": PRDGenerator,
+    "Plugins": Plugins,
     "Projects": Projects,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "WSJFPrioritization": WSJFPrioritization,
+    "IntegrationHub": IntegrationHub,
 }
 
 export const pagesConfig = {
