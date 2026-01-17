@@ -19,6 +19,9 @@ import UniversalGenerator from './pages/UniversalGenerator';
 import WSJFPrioritization from './pages/WSJFPrioritization';
 import IntegrationHub from './pages/IntegrationHub';
 import AgentCollaboration from './pages/AgentCollaboration';
+import PersonalizedAnalytics from './pages/PersonalizedAnalytics';
+import AdvancedWorkflows from './pages/AdvancedWorkflows';
+import SyncConfiguration from './pages/SyncConfiguration';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +47,9 @@ export const PAGES = {
     "WSJFPrioritization": WSJFPrioritization,
     "IntegrationHub": IntegrationHub,
     "AgentCollaboration": AgentCollaboration,
+    "PersonalizedAnalytics": PersonalizedAnalytics,
+    "AdvancedWorkflows": AdvancedWorkflows,
+    "SyncConfiguration": SyncConfiguration,
 }
 
 export const pagesConfig = {
