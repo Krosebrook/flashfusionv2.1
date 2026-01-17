@@ -14,6 +14,7 @@ import FeatureGenerator from './pages/FeatureGenerator';
 import Home from './pages/Home';
 import IntegrationHub from './pages/IntegrationHub';
 import Integrations from './pages/Integrations';
+import IntegrationsAdmin from './pages/IntegrationsAdmin';
 import PRDGenerator from './pages/PRDGenerator';
 import PersonalizedAnalytics from './pages/PersonalizedAnalytics';
 import Plugins from './pages/Plugins';
@@ -22,7 +23,9 @@ import SyncConfiguration from './pages/SyncConfiguration';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import IntegrationsAdmin from './pages/IntegrationsAdmin';
+import Onboarding from './pages/Onboarding';
+import OnboardingComplete from './pages/OnboardingComplete';
+import UserSettings from './pages/UserSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -43,6 +46,7 @@ export const PAGES = {
     "Home": Home,
     "IntegrationHub": IntegrationHub,
     "Integrations": Integrations,
+    "IntegrationsAdmin": IntegrationsAdmin,
     "PRDGenerator": PRDGenerator,
     "PersonalizedAnalytics": PersonalizedAnalytics,
     "Plugins": Plugins,
@@ -51,7 +55,9 @@ export const PAGES = {
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "WSJFPrioritization": WSJFPrioritization,
-    "IntegrationsAdmin": IntegrationsAdmin,
+    "Onboarding": Onboarding,
+    "OnboardingComplete": OnboardingComplete,
+    "UserSettings": UserSettings,
 }
 
 export const pagesConfig = {
