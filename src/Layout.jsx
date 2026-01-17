@@ -24,6 +24,7 @@ import {
   Store,
   ArrowUpDown,
   ClipboardList,
+  Settings,
 } from "lucide-react";
 
 const navigationItems = [
