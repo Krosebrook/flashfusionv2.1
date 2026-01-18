@@ -74,3 +74,9 @@ yarn-error.log*
 # Misc
 .cache
 .parcel-cache
+
+# Replit specific
+.replit.local
+.config/
+.upm/
+replit.nix.backup

@@ -201,13 +201,34 @@ See [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) for detailed instructions.
 
 FlashFusion can be deployed to various platforms:
 
-- **Vercel** (Recommended)
+- **Replit** (Mobile App) - See [REPLIT_DEPLOYMENT.md](REPLIT_DEPLOYMENT.md)
+- **Vercel** (Recommended for web)
 - **Netlify**
 - **AWS S3 + CloudFront**
 - **Docker**
 - **Traditional web servers**
 
 See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed deployment instructions.
+
+### 📱 Replit Mobile Deployment
+
+Deploy FlashFusion as a mobile-optimized web app on Replit:
+
+```bash
+# Quick Start
+1. Import from GitHub: https://github.com/Krosebrook/flashfusionv2.1
+2. Configure Replit Secrets (Base44 credentials)
+3. Click "Run" button
+4. Access via Replit mobile app or browser
+```
+
+**Mobile Optimization:**
+- ✅ Responsive design (Tailwind CSS)
+- ✅ Dynamic port support
+- ✅ Touch-friendly UI (Radix UI)
+- ✅ Code splitting (~500KB gzipped)
+
+See [REPLIT_DEPLOYMENT.md](REPLIT_DEPLOYMENT.md) for complete guide and [MOBILE_OPTIMIZATION_AUDIT.md](MOBILE_OPTIMIZATION_AUDIT.md) for mobile readiness assessment.
 
 ## 🤝 Contributing
 

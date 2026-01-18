@@ -11,5 +11,18 @@ export default defineConfig({
       legacySDKImports: process.env.BASE44_LEGACY_SDK_IMPORTS === 'true'
     }),
     react(),
-  ]
+  ],
+  server: {
+    // Support dynamic port assignment for Replit and other cloud platforms
+    // Replit automatically sets PORT environment variable
+    port: process.env.PORT ? parseInt(process.env.PORT) : 5173,
+    host: true, // Listen on all addresses (0.0.0.0) for Replit
+    strictPort: false, // Allow fallback to another port if specified port is in use
+  },
+  preview: {
+    // Same port configuration for production preview
+    port: process.env.PORT ? parseInt(process.env.PORT) : 4173,
+    host: true,
+    strictPort: false,
+  }
 });

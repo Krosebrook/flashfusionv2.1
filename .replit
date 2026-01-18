@@ -1,0 +1,45 @@
+# Replit Configuration for FlashFusion v2.1
+# This file configures how the app runs on Replit
+
+# The command to run when the "Run" button is clicked
+run = "npm run dev"
+
+# Hidden files and directories
+hidden = [".config", ".git", ".gitignore", "node_modules", "dist"]
+
+# Entry point for the application
+entrypoint = "index.html"
+
+# Language configuration
+[languages.javascript]
+pattern = "**/{*.js,*.jsx,*.ts,*.tsx}"
+
+[languages.javascript.languageServer]
+start = "typescript-language-server --stdio"
+
+# Nix configuration
+[nix]
+channel = "stable-23_11"
+
+# Deployment configuration
+[deployment]
+run = ["sh", "-c", "npm run build && npx serve dist -l $PORT"]
+deploymentTarget = "cloudrun"
+
+# Environment variables
+[env]
+# Replit automatically provides the PORT environment variable
+# Base44 credentials should be configured in Replit Secrets:
+# - VITE_BASE44_APP_ID
+# - VITE_BASE44_SERVER_URL
+# - VITE_BASE44_TOKEN
+# - VITE_BASE44_FUNCTIONS_VERSION
+
+# Port mapping for web preview
+[[ports]]
+localPort = 5173
+externalPort = 80
+
+[[ports]]
+localPort = 3000
+externalPort = 3000
