@@ -119,6 +119,10 @@ async function dispatchResend(base44, payload) {
     body: JSON.stringify(payload)
   });
 
+  if (response.status === 429) {
+    throw new Error('Rate limited by Resend');
+  }
+
   if (response.ok) {
     return { success: true, data: await response.json() };
   }
@@ -140,6 +144,10 @@ async function dispatchTwilio(base44, payload) {
     body: new URLSearchParams(payload).toString()
   });
 
+  if (response.status === 429) {
+    throw new Error('Rate limited by Twilio');
+  }
+
   if (response.ok) {
     return { success: true, data: await response.json() };
   }
@@ -160,6 +168,11 @@ async function dispatchSlack(base44, payload) {
   });
 
   const data = await response.json();
+  
+  if (data.error === 'rate_limited') {
+    throw new Error('Rate limited by Slack');
+  }
+  
   if (data.ok) {
     return { success: true, data };
   }
@@ -182,6 +195,10 @@ async function dispatchGoogleSheets(base44, payload) {
       body: JSON.stringify({ values })
     }
   );
+
+  if (response.status === 429) {
+    throw new Error('Rate limited by Google Sheets API');
+  }
 
   if (response.ok) {
     return { success: true, data: await response.json() };
