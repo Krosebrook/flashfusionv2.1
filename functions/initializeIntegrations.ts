@@ -1,85 +1,59 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
-const INTEGRATIONS_CATALOG = [
-  // AI & Research
-  { id: 'perplexity', name: 'Perplexity', category: 'ai_research', type: 'api', use_cases: ['deal_research', 'market_analysis', 'competitor_intel'] },
-  { id: 'firecrawl', name: 'Firecrawl', category: 'ai_research', type: 'api', use_cases: ['web_scraping', 'data_extraction', 'deal_discovery'] },
-  { id: 'openai', name: 'OpenAI', category: 'ai_research', type: 'api', use_cases: ['analysis', 'summarization', 'recommendations'] },
-  { id: 'anthropic', name: 'Claude (Anthropic)', category: 'ai_research', type: 'api', use_cases: ['deep_analysis', 'document_review', 'due_diligence'] },
-  { id: 'openrouter', name: 'OpenRouter', category: 'ai_research', type: 'api', use_cases: ['llm_selection', 'cost_optimization'] },
-
-  // Financial Data
-  { id: 'crunchbase', name: 'Crunchbase', category: 'financial_data', type: 'api', use_cases: ['startup_data', 'funding_info', 'investor_tracking'] },
-  { id: 'pitchbook', name: 'PitchBook', category: 'financial_data', type: 'api', use_cases: ['deal_data', 'market_insights', 'valuation'] },
-  { id: 'alpha_vantage', name: 'Alpha Vantage', category: 'financial_data', type: 'api', use_cases: ['stock_data', 'technical_analysis'] },
-  { id: 'yahoo_finance', name: 'Yahoo Finance API', category: 'financial_data', type: 'api', use_cases: ['market_prices', 'financial_statements'] },
-  { id: 'bloomberg', name: 'Bloomberg', category: 'financial_data', type: 'api', use_cases: ['market_data', 'news', 'analysis'] },
-
-  // Communication
-  { id: 'slack', name: 'Slack', category: 'communication', type: 'oauth', use_cases: ['notifications', 'deal_alerts', 'team_collaboration'] },
-  { id: 'resend', name: 'Resend', category: 'communication', type: 'api', use_cases: ['email_notifications', 'deal_alerts', 'reports'] },
-  { id: 'twilio', name: 'Twilio', category: 'communication', type: 'api', use_cases: ['sms_alerts', 'urgent_notifications'] },
-  { id: 'elevenlabs', name: 'ElevenLabs', category: 'communication', type: 'api', use_cases: ['voice_notifications', 'audio_alerts'] },
-
-  // Productivity & Organization
-  { id: 'notion', name: 'Notion', category: 'productivity', type: 'oauth', use_cases: ['deal_notes', 'due_diligence_docs', 'portfolio_tracking'] },
-  { id: 'google_sheets', name: 'Google Sheets', category: 'productivity', type: 'oauth', use_cases: ['portfolio_tracking', 'exit_tracking', 'financial_models'] },
-  { id: 'google_docs', name: 'Google Docs', category: 'productivity', type: 'oauth', use_cases: ['investment_memos', 'documentation'] },
-
-  // Deal Sourcing
-  { id: 'linkedin', name: 'LinkedIn', category: 'deal_sourcing', type: 'oauth', use_cases: ['founder_research', 'investor_outreach', 'market_intelligence'] },
-  { id: 'angellist', name: 'AngelList', category: 'deal_sourcing', type: 'api', use_cases: ['deal_sourcing', 'founder_discovery', 'co_invest_opportunities'] },
-  { id: 'dealroom', name: 'Dealroom', category: 'deal_sourcing', type: 'api', use_cases: ['european_deals', 'startup_database', 'investment_tracking'] },
-
-  // Portfolio Management
-  { id: 'carta', name: 'Carta', category: 'portfolio_mgmt', type: 'api', use_cases: ['cap_table_mgmt', 'valuation_tracking', 'liquidity_events'] },
-  { id: 'stripe', name: 'Stripe', category: 'portfolio_mgmt', type: 'oauth', use_cases: ['payments', 'subscriptions', 'fund_operations'] },
-
-  // Automation
-  { id: 'zapier', name: 'Zapier', category: 'automation', type: 'api', use_cases: ['workflow_automation', 'data_syncing', 'cross_platform_integration'] }
-];
-
+/**
+ * Initialize IntegrationConfig for all integrations
+ * Run this once to seed the database
+ */
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
+
+  const integrations = [
+    { id: 'google_sheets', name: 'Google Sheets', category: 'oauth_connector', rps: 2 },
+    { id: 'google_drive', name: 'Google Drive', category: 'oauth_connector', rps: 2 },
+    { id: 'google_docs', name: 'Google Docs', category: 'oauth_connector', rps: 2 },
+    { id: 'google_slides', name: 'Google Slides', category: 'oauth_connector', rps: 2 },
+    { id: 'google_calendar', name: 'Google Calendar', category: 'oauth_connector', rps: 2 },
+    { id: 'slack', name: 'Slack', category: 'oauth_connector', rps: 1 },
+    { id: 'notion', name: 'Notion', category: 'oauth_connector', rps: 3 },
+    { id: 'linkedin', name: 'LinkedIn', category: 'oauth_connector', rps: 1 },
+    { id: 'tiktok', name: 'TikTok', category: 'oauth_connector', rps: 1 },
+    { id: 'resend', name: 'Resend (Email)', category: 'manual_api', rps: 2 },
+    { id: 'twilio', name: 'Twilio (SMS)', category: 'manual_api', rps: 1 },
+    { id: 'openai_tts', name: 'OpenAI TTS', category: 'manual_api', rps: 5 },
+    { id: 'elevenlabs', name: 'ElevenLabs', category: 'manual_api', rps: 2 },
+    { id: 'fal_ai', name: 'Fal AI', category: 'manual_api', rps: 1 },
+    { id: 'brightdata', name: 'BrightData', category: 'manual_api', rps: 1 },
+    { id: 'x', name: 'X (Twitter)', category: 'manual_api', rps: 1 },
+    { id: 'hubspot', name: 'HubSpot', category: 'manual_api', rps: 10 },
+    { id: 'monday', name: 'Monday.com', category: 'manual_api', rps: 2 },
+    { id: 'zapier', name: 'Zapier Webhooks', category: 'manual_api', rps: 5 },
+    { id: 'custom_api', name: 'Custom API', category: 'custom', rps: 1 }
+  ];
+
   try {
-    const user = await base44.auth.me();
-    if (user?.role !== 'admin') {
-      return Response.json({ error: 'Admin only' }, { status: 403 });
-    }
+    for (const int of integrations) {
+      const existing = await base44.asServiceRole.entities.IntegrationConfig.filter({
+        integration_id: int.id
+      });
 
-    let created = 0;
-    let skipped = 0;
-
-    for (const integ of INTEGRATIONS_CATALOG) {
-      try {
-        const existing = await base44.entities.IntegrationRegistry.filter({
-          integration_id: integ.id
+      if (existing.length === 0) {
+        await base44.asServiceRole.entities.IntegrationConfig.create({
+          integration_id: int.id,
+          name: int.name,
+          category: int.category,
+          enabled: false,
+          settings_json: JSON.stringify({
+            rate_limit_rps: int.rps,
+            max_retries: 5,
+            backoff_base_sec: 2,
+            batch_size: 50
+          }),
+          connector_status: int.category === 'oauth_connector' ? 'not_authorized' : null
         });
-
-        if (existing.length === 0) {
-          await base44.entities.IntegrationRegistry.create({
-            ...integ,
-            config_json: JSON.stringify({
-              enabled: false,
-              rate_limit: 'default',
-              retry_policy: 'exponential'
-            })
-          });
-          created++;
-        } else {
-          skipped++;
-        }
-      } catch (e) {
-        console.error(`Failed to create ${integ.id}:`, e);
       }
     }
 
-    return Response.json({
-      success: true,
-      created,
-      skipped,
-      total: INTEGRATIONS_CATALOG.length
-    });
+    return Response.json({ success: true, initialized: integrations.length });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
