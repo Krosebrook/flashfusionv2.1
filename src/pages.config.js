@@ -17,6 +17,7 @@ import Home from './pages/Home';
 import IntegrationHub from './pages/IntegrationHub';
 import Integrations from './pages/Integrations';
 import IntegrationsAdmin from './pages/IntegrationsAdmin';
+import LifecycleIntelligence from './pages/LifecycleIntelligence';
 import Onboarding from './pages/Onboarding';
 import OnboardingComplete from './pages/OnboardingComplete';
 import PRDGenerator from './pages/PRDGenerator';
@@ -30,7 +31,7 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import LifecycleIntelligence from './pages/LifecycleIntelligence';
+import MyDeals from './pages/MyDeals';
 import __Layout from './Layout.jsx';
 
 
@@ -54,6 +55,7 @@ export const PAGES = {
     "IntegrationHub": IntegrationHub,
     "Integrations": Integrations,
     "IntegrationsAdmin": IntegrationsAdmin,
+    "LifecycleIntelligence": LifecycleIntelligence,
     "Onboarding": Onboarding,
     "OnboardingComplete": OnboardingComplete,
     "PRDGenerator": PRDGenerator,
@@ -67,7 +69,7 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "LifecycleIntelligence": LifecycleIntelligence,
+    "MyDeals": MyDeals,
 }
 
 export const pagesConfig = {
