@@ -1,50 +1,59 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
-  try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (user?.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
+  const base44 = createClientFromRequest(req);
+  const runId = await createReconcileRun(base44, 'twilio');
 
-    const run = await base44.entities.ReconcileRun.create({
+  try {
+    const config = await getIntegrationConfig(base44, 'twilio');
+    if (!config?.enabled) {
+      await finishRun(base44, runId, 'success', { message: 'Integration disabled' });
+      return Response.json({ success: true, message: 'Disabled' });
+    }
+
+    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
+    const stuck = await base44.asServiceRole.entities.IntegrationOutbox.filter({
       integration_id: 'twilio',
-      started_at: new Date().toISOString(),
-      status: 'in_progress'
+      status: 'queued'
     });
 
-    // Check SmsLog against Outbox for drift
-    const smsLogs = await base44.entities.SmsLog.filter({}, null, 1000);
-    const outboxItems = await base44.entities.IntegrationOutbox.filter({
-      integration_id: 'twilio'
-    }, null, 1000);
-
-    let drift_fixed = 0;
-    for (const log of smsLogs) {
-      const hasOutbox = outboxItems.some(item => 
-        item.stable_resource_id === log.stable_resource_id && 
-        item.status === 'sent'
-      );
-      if (!hasOutbox && log.status === 'pending') {
-        await base44.functions.invoke('enqueueOutbox', {
-          integration_id: 'twilio',
-          operation: 'send_sms',
-          stable_resource_id: log.id,
-          payload_json: JSON.parse(log.payload_json)
+    let fixed = 0;
+    for (const item of stuck) {
+      if (new Date(item.created_date) < sixHoursAgo) {
+        await base44.asServiceRole.entities.IntegrationOutbox.update(item.id, {
+          next_attempt_at: new Date().toISOString()
         });
-        drift_fixed += 1;
+        fixed++;
       }
     }
 
-    await base44.entities.ReconcileRun.update(run.id, {
-      finished_at: new Date().toISOString(),
-      status: 'success',
-      checked: smsLogs.length,
-      drift_fixed,
-      notes_json: JSON.stringify({ checked_sms_logs: smsLogs.length })
-    });
-
-    return Response.json({ success: true, run_id: run.id, drift_fixed });
+    await finishRun(base44, runId, 'success', { checked: stuck.length, drift_fixed: fixed });
+    return Response.json({ success: true, fixed });
   } catch (error) {
+    await finishRun(base44, runId, 'failed', { error: error.message });
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
+
+async function createReconcileRun(base44, integration_id) {
+  const run = await base44.asServiceRole.entities.ReconcileRun.create({
+    integration_id,
+    started_at: new Date().toISOString(),
+    status: 'in_progress'
+  });
+  return run.id;
+}
+
+async function finishRun(base44, runId, status, notes) {
+  await base44.asServiceRole.entities.ReconcileRun.update(runId, {
+    finished_at: new Date().toISOString(),
+    status,
+    notes_json: JSON.stringify(notes),
+    ...notes
+  });
+}
+
+async function getIntegrationConfig(base44, integration_id) {
+  const configs = await base44.asServiceRole.entities.IntegrationConfig.filter({ integration_id });
+  return configs[0] || null;
+}

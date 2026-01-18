@@ -2,82 +2,59 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
-  const runStartTime = Date.now();
-  let runId = null;
+  const runId = await createReconcileRun(base44, 'google_sheets');
 
   try {
-    const user = await base44.auth.me();
-    if (user?.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
+    const config = await getIntegrationConfig(base44, 'google_sheets');
+    if (!config?.enabled) {
+      await finishRun(base44, runId, 'success', { message: 'Integration disabled' });
+      return Response.json({ success: true, message: 'Disabled' });
+    }
 
-    const run = await base44.entities.ReconcileRun.create({
+    // Re-enqueue stuck items (queued > 6 hours)
+    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
+    const stuck = await base44.asServiceRole.entities.IntegrationOutbox.filter({
       integration_id: 'google_sheets',
-      started_at: new Date().toISOString(),
-      status: 'in_progress'
+      status: 'queued'
     });
-    runId = run.id;
 
-    // Re-enqueue stuck items > 6 hours
-    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
-    const stuck = await base44.entities.IntegrationOutbox.filter({
-      integration_id: 'google_sheets',
-      status: 'queued',
-      created_at: { $lt: sixHoursAgo }
-    }, null, 3000);
-
-    let driftFixed = 0;
-    let failures = 0;
-
+    let fixed = 0;
     for (const item of stuck) {
-      try {
-        await base44.entities.IntegrationOutbox.update(item.id, {
+      if (new Date(item.created_date) < sixHoursAgo) {
+        await base44.asServiceRole.entities.IntegrationOutbox.update(item.id, {
           next_attempt_at: new Date().toISOString()
         });
-        driftFixed += 1;
-      } catch (itemErr) {
-        failures += 1;
-        console.error(`Failed to re-enqueue item ${item.id}:`, itemErr);
+        fixed++;
       }
     }
 
-    const duration = Date.now() - runStartTime;
-    await base44.entities.ReconcileRun.update(runId, {
-      finished_at: new Date().toISOString(),
-      status: failures === 0 ? 'success' : 'partial',
-      checked: stuck.length,
-      drift_fixed: driftFixed,
-      failures,
-      api_calls: stuck.length,
-      notes_json: JSON.stringify({
-        reconciled_stuck_items: true,
-        duration_ms: duration,
-        batch_size: stuck.length
-      })
-    });
-
-    return Response.json({
-      success: true,
-      run_id: runId,
-      drift_fixed: driftFixed,
-      failures,
-      duration_ms: duration
-    });
+    await finishRun(base44, runId, 'success', { checked: stuck.length, drift_fixed: fixed });
+    return Response.json({ success: true, fixed });
   } catch (error) {
-    console.error('reconcileGoogleSheets error:', error);
-    if (runId) {
-      try {
-        await base44.entities.ReconcileRun.update(runId, {
-          finished_at: new Date().toISOString(),
-          status: 'failed',
-          failures: 1,
-          notes_json: JSON.stringify({
-            error: error.message,
-            duration_ms: Date.now() - runStartTime
-          })
-        });
-      } catch (updateErr) {
-        console.error('Failed to update run status:', updateErr);
-      }
-    }
+    await finishRun(base44, runId, 'failed', { error: error.message });
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
+
+async function createReconcileRun(base44, integration_id) {
+  const run = await base44.asServiceRole.entities.ReconcileRun.create({
+    integration_id,
+    started_at: new Date().toISOString(),
+    status: 'in_progress'
+  });
+  return run.id;
+}
+
+async function finishRun(base44, runId, status, notes) {
+  await base44.asServiceRole.entities.ReconcileRun.update(runId, {
+    finished_at: new Date().toISOString(),
+    status,
+    notes_json: JSON.stringify(notes),
+    ...notes
+  });
+}
+
+async function getIntegrationConfig(base44, integration_id) {
+  const configs = await base44.asServiceRole.entities.IntegrationConfig.filter({ integration_id });
+  return configs[0] || null;
+}
