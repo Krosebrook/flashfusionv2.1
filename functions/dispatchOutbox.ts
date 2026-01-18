@@ -89,6 +89,18 @@ Deno.serve(async (req) => {
     return Response.json({ success: true, results });
   } catch (error) {
     console.error('dispatchOutbox error:', error);
+    // Notify on critical failure
+    try {
+      await base44.functions.invoke('notifyIntegrationFailure', {
+        integration_id: 'outbox_dispatcher',
+        error_type: 'dispatch_failed',
+        error_message: error.message,
+        context: { batch_size }
+      });
+    } catch (notifyError) {
+      console.error('Failed to send failure notification:', notifyError);
+    }
+    
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

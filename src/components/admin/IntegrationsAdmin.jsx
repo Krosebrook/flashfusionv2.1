@@ -69,10 +69,7 @@ export default function IntegrationsAdmin() {
 
   const runReconcile = async (integration_id) => {
     try {
-      const functionName = `reconcile${integration_id.split('_').map(w => 
-        w.charAt(0).toUpperCase() + w.slice(1)
-      ).join('')}`;
-      await base44.functions.invoke(functionName, {});
+      await base44.functions.invoke('reconcileIntegration', { integration_id });
       alert('Reconcile complete');
       fetchData();
     } catch (error) {
