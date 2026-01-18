@@ -23,7 +23,7 @@ channel = "stable-23_11"
 
 # Deployment configuration
 [deployment]
-run = ["sh", "-c", "npm run build && npx serve dist -l $PORT"]
+run = ["sh", "-c", "npm run build && npm run serve"]
 deploymentTarget = "cloudrun"
 
 # Environment variables

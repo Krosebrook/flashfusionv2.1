@@ -18,9 +18,7 @@
     "test:coverage": "vitest run --coverage",
     "prepare": "husky",
     "start": "npm run dev",
-    "replit:dev": "vite --host 0.0.0.0 --port ${PORT:-5173}",
-    "replit:build": "npm run build && npx serve dist -l ${PORT:-3000}",
-    "serve": "serve dist -l ${PORT:-3000}"
+    "serve": "serve dist -l 3000"
   },
   "dependencies": {
     "@base44/sdk": "^0.8.3",
