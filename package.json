@@ -18,7 +18,7 @@
     "test:coverage": "vitest run --coverage",
     "prepare": "husky",
     "start": "npm run dev",
-    "serve": "serve dist -l 3000"
+    "serve": "serve dist"
   },
   "dependencies": {
     "@base44/sdk": "^0.8.3",
