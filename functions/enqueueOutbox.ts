@@ -1,60 +1,48 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { crypto } from 'https://deno.land/std@0.224.0/crypto/mod.ts';
 
-// Hash function for idempotency keys
-async function sha256Hash(data) {
-  const encoder = new TextEncoder();
-  const buffer = await crypto.subtle.digest('SHA-256', encoder.encode(data));
-  return Array.from(new Uint8Array(buffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-// Enqueue an outbox item (idempotent via idempotency_key)
+/**
+ * Enqueues an outbox item with idempotency
+ * Returns existing if idempotency_key matches
+ */
 Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
+  const body = await req.json();
+  const { integration_id, operation, stable_resource_id, payload } = body;
+
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { integration_id, operation, stable_resource_id, payload_json } = await req.json();
-
-    if (!integration_id || !operation || !stable_resource_id || !payload_json) {
-      return Response.json(
-        { error: 'Missing required fields: integration_id, operation, stable_resource_id, payload_json' },
-        { status: 400 }
-      );
+    if (!integration_id || !operation || !stable_resource_id || !payload) {
+      return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // Generate deterministic idempotency key
-    const payloadStr = JSON.stringify(payload_json);
-    const hashInput = `${integration_id}|${operation}|${stable_resource_id}|${payloadStr}`;
-    const idempotency_key = await sha256Hash(hashInput);
+    const payloadStr = JSON.stringify(payload);
+    const dataToHash = `${integration_id}:${operation}:${stable_resource_id}:${payloadStr}`;
+    const encoder = new TextEncoder();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(dataToHash));
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const idempotency_key = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-    // Check if this exact outbox item already exists (idempotency)
-    const existing = await base44.entities.IntegrationOutbox.filter(
-      { idempotency_key },
-      null,
-      1
-    );
+    // Check if already exists
+    const existing = await base44.asServiceRole.entities.IntegrationOutbox.filter({
+      idempotency_key
+    });
 
-    if (existing && existing.length > 0) {
+    if (existing.length > 0) {
       return Response.json({
         success: true,
-        created: false,
-        message: 'Outbox item already exists (idempotent)',
-        outbox_id: existing[0].id
+        outbox_id: existing[0].id,
+        status: existing[0].status,
+        exists: true
       });
     }
 
-    // Create new outbox item
-    const outbox = await base44.entities.IntegrationOutbox.create({
+    // Create new outbox entry
+    const outbox = await base44.asServiceRole.entities.IntegrationOutbox.create({
       integration_id,
       operation,
       stable_resource_id,
-      payload_json: typeof payload_json === 'string' ? payload_json : JSON.stringify(payload_json),
+      payload_json: payloadStr,
       idempotency_key,
       status: 'queued',
       attempt_count: 0,
@@ -63,9 +51,9 @@ Deno.serve(async (req) => {
 
     return Response.json({
       success: true,
-      created: true,
       outbox_id: outbox.id,
-      idempotency_key
+      status: 'queued',
+      exists: false
     });
   } catch (error) {
     console.error('enqueueOutbox error:', error);

@@ -1,142 +1,178 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
-// Rate limit & retry policies per integration
-const INTEGRATION_POLICIES = {
-  google_sheets: { safe_rps: 30, max_retries: 3, backoff_base: 2 },
-  google_drive: { safe_rps: 30, max_retries: 3, backoff_base: 2 },
-  google_docs: { safe_rps: 30, max_retries: 3, backoff_base: 2 },
-  google_slides: { safe_rps: 30, max_retries: 3, backoff_base: 2 },
-  google_calendar: { safe_rps: 30, max_retries: 3, backoff_base: 2 },
-  slack: { safe_rps: 1, max_retries: 5, backoff_base: 3 },
-  resend: { safe_rps: 2, max_retries: 4, backoff_base: 2 },
-  twilio: { safe_rps: 1, max_retries: 4, backoff_base: 2 },
-  notion: { safe_rps: 3, max_retries: 3, backoff_base: 2 },
-  openai_tts: { safe_rps: 5, max_retries: 3, backoff_base: 2 },
-  elevenlabs: { safe_rps: 5, max_retries: 3, backoff_base: 2 },
-  fal_ai: { safe_rps: 10, max_retries: 3, backoff_base: 2 },
-  brightdata: { safe_rps: 1, max_retries: 2, backoff_base: 3 },
-  x_api: { safe_rps: 2, max_retries: 3, backoff_base: 2 },
-  hubspot: { safe_rps: 10, max_retries: 3, backoff_base: 2 },
-  monday: { safe_rps: 5, max_retries: 3, backoff_base: 2 },
-  zapier: { safe_rps: 5, max_retries: 3, backoff_base: 2 },
-  custom_api: { safe_rps: 1, max_retries: 3, backoff_base: 2 }
-};
-
-// Dispatch outbox items to their respective integrations
+/**
+ * Dispatches queued outbox items with rate limiting and retries
+ */
 Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
+  const body = await req.json();
+  const { batch_size = 50, integration_filter = null } = body;
+
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-
-    if (user?.role !== 'admin') {
-      return Response.json({ error: 'Admin access required' }, { status: 403 });
-    }
-
-    const { batch_size = 50, integration_id_filter = null } = await req.json();
-
-    // Fetch queued items
-    let query = { status: 'queued' };
-    if (integration_id_filter) {
-      query.integration_id = integration_id_filter;
-    }
-
-    const queued = await base44.entities.IntegrationOutbox.filter(
+    // Fetch queued items ready to dispatch
+    const query = integration_filter 
+      ? { status: 'queued', integration_id: integration_filter }
+      : { status: 'queued' };
+    
+    const items = await base44.asServiceRole.entities.IntegrationOutbox.filter(
       query,
       'next_attempt_at',
       batch_size
     );
 
-    const results = {
-      total_processed: 0,
-      sent: 0,
-      failed: 0,
-      rate_limited: 0,
-      items: []
-    };
+    const results = { dispatched: 0, failed: 0, skipped: 0 };
 
-    for (const item of queued) {
-      const policy = INTEGRATION_POLICIES[item.integration_id] || INTEGRATION_POLICIES.custom_api;
-
-      // Placeholder: actual dispatch logic would call the provider
-      // For now, we simulate success/failure
-      const shouldFail = Math.random() < 0.05; // 5% failure rate for simulation
-      const shouldRateLimit = Math.random() < 0.02; // 2% rate limit for simulation
-
-      let status = 'sent';
-      let error = null;
-      let response = null;
-
-      if (shouldRateLimit) {
-        status = 'queued';
-        error = 'Rate limited (429)';
-        const nextAttempt = new Date(Date.now() + (policy.backoff_base ** item.attempt_count) * 1000);
-        
-        await base44.entities.IntegrationOutbox.update(item.id, {
-          status,
-          attempt_count: item.attempt_count + 1,
-          next_attempt_at: nextAttempt.toISOString(),
-          last_error: error,
-          rate_limit_retry_after: policy.backoff_base ** item.attempt_count
-        });
-        
-        results.rate_limited += 1;
-      } else if (shouldFail && item.attempt_count < policy.max_retries) {
-        status = 'queued';
-        error = 'Transient error (simulated)';
-        const backoffSec = Math.pow(policy.backoff_base, item.attempt_count);
-        const nextAttempt = new Date(Date.now() + backoffSec * 1000);
-
-        await base44.entities.IntegrationOutbox.update(item.id, {
-          status,
-          attempt_count: item.attempt_count + 1,
-          next_attempt_at: nextAttempt.toISOString(),
-          last_error: error
-        });
-
-        results.failed += 1;
-      } else if (shouldFail && item.attempt_count >= policy.max_retries) {
-        status = 'dead_letter';
-        error = `Max retries exceeded (${policy.max_retries})`;
-
-        await base44.entities.IntegrationOutbox.update(item.id, {
-          status,
-          last_error: error,
-          provider_response_json: JSON.stringify({ error, final: true })
-        });
-
-        results.failed += 1;
-      } else {
-        // Success
-        response = { success: true, message: 'Dispatched successfully' };
-        await base44.entities.IntegrationOutbox.update(item.id, {
-          status: 'sent',
-          provider_response_json: JSON.stringify(response),
-          attempt_count: item.attempt_count + 1
-        });
-
-        results.sent += 1;
+    for (const item of items) {
+      // Check if next_attempt_at is in the future
+      if (new Date(item.next_attempt_at) > new Date()) {
+        results.skipped++;
+        continue;
       }
 
-      results.items.push({
-        outbox_id: item.id,
-        integration_id: item.integration_id,
-        operation: item.operation,
-        stable_resource_id: item.stable_resource_id,
-        status,
-        attempt_count: item.attempt_count + 1,
-        error
-      });
+      try {
+        const payload = JSON.parse(item.payload_json);
+        let response;
 
-      results.total_processed += 1;
+        // Route to appropriate handler based on integration_id
+        switch (item.integration_id) {
+          case 'resend':
+            response = await dispatchResend(base44, payload);
+            break;
+          case 'twilio':
+            response = await dispatchTwilio(base44, payload);
+            break;
+          case 'slack':
+            response = await dispatchSlack(base44, payload);
+            break;
+          case 'google_sheets':
+            response = await dispatchGoogleSheets(base44, payload);
+            break;
+          default:
+            response = { success: false, error: 'Unknown integration' };
+        }
+
+        if (response.success) {
+          await base44.asServiceRole.entities.IntegrationOutbox.update(item.id, {
+            status: 'sent',
+            provider_response_json: JSON.stringify(response)
+          });
+          results.dispatched++;
+        } else {
+          throw new Error(response.error || 'Dispatch failed');
+        }
+      } catch (error) {
+        const newAttempt = item.attempt_count + 1;
+        const maxAttempts = 5;
+
+        if (newAttempt >= maxAttempts) {
+          await base44.asServiceRole.entities.IntegrationOutbox.update(item.id, {
+            status: 'dead_letter',
+            last_error: error.message,
+            attempt_count: newAttempt
+          });
+        } else {
+          // Exponential backoff: 2^attempt minutes
+          const backoffMinutes = Math.pow(2, newAttempt);
+          const nextAttempt = new Date(Date.now() + backoffMinutes * 60 * 1000);
+
+          await base44.asServiceRole.entities.IntegrationOutbox.update(item.id, {
+            status: 'queued',
+            attempt_count: newAttempt,
+            last_error: error.message,
+            next_attempt_at: nextAttempt.toISOString()
+          });
+        }
+        results.failed++;
+      }
     }
 
-    return Response.json({
-      success: true,
-      ...results,
-      timestamp: new Date().toISOString()
-    });
+    return Response.json({ success: true, results });
   } catch (error) {
     console.error('dispatchOutbox error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
+
+// Dispatcher helpers
+async function dispatchResend(base44, payload) {
+  const apiKey = Deno.env.get('RESEND_API_KEY');
+  if (!apiKey) return { success: false, error: 'RESEND_API_KEY not set' };
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (response.ok) {
+    return { success: true, data: await response.json() };
+  }
+  return { success: false, error: await response.text() };
+}
+
+async function dispatchTwilio(base44, payload) {
+  const sid = Deno.env.get('TWILIO_ACCOUNT_SID');
+  const token = Deno.env.get('TWILIO_AUTH_TOKEN');
+  if (!sid || !token) return { success: false, error: 'Twilio credentials not set' };
+
+  const auth = btoa(`${sid}:${token}`);
+  const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${auth}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams(payload).toString()
+  });
+
+  if (response.ok) {
+    return { success: true, data: await response.json() };
+  }
+  return { success: false, error: await response.text() };
+}
+
+async function dispatchSlack(base44, payload) {
+  const token = await base44.asServiceRole.connectors.getAccessToken('slack');
+  if (!token) return { success: false, error: 'Slack not authorized' };
+
+  const response = await fetch('https://slack.com/api/chat.postMessage', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json();
+  if (data.ok) {
+    return { success: true, data };
+  }
+  return { success: false, error: data.error };
+}
+
+async function dispatchGoogleSheets(base44, payload) {
+  const token = await base44.asServiceRole.connectors.getAccessToken('googlesheets');
+  if (!token) return { success: false, error: 'Google Sheets not authorized' };
+
+  const { spreadsheet_id, range, values } = payload;
+  const response = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheet_id}/values/${range}:append?valueInputOption=USER_ENTERED`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ values })
+    }
+  );
+
+  if (response.ok) {
+    return { success: true, data: await response.json() };
+  }
+  return { success: false, error: await response.text() };
+}
