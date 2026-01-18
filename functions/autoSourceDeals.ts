@@ -27,8 +27,15 @@ Deno.serve(async (req) => {
       const criteria = profile.deal_sourcing_criteria || {};
       const goals = profile.portfolio_goals || {};
 
-      // Skip if no criteria set
+      // Skip if no criteria set or user is dormant
       if (!criteria.target_industries?.length) {
+        console.log(`Skipping ${profile.created_by}: No criteria set`);
+        continue;
+      }
+
+      const lifecycle = profile.lifecycle_state || {};
+      if (lifecycle.current_state === 'dormant') {
+        console.log(`Skipping ${profile.created_by}: Dormant state`);
         continue;
       }
 
@@ -73,6 +80,12 @@ Focus on deals announced or updated in the last 30 days. Include company name, i
       // Insert deals and score them
       const scoredDeals = [];
       for (const dealData of newDeals) {
+        // Validate deal data
+        if (!dealData.company_name || !dealData.industry) {
+          console.log('Skipping invalid deal:', dealData);
+          continue;
+        }
+
         // Check if deal already exists
         const existing = await base44.asServiceRole.entities.DealData.filter({
           company_name: dealData.company_name
@@ -80,31 +93,51 @@ Focus on deals announced or updated in the last 30 days. Include company name, i
 
         let dealId;
         if (existing.length === 0) {
-          // Create new deal
-          const created = await base44.asServiceRole.entities.DealData.create({
-            ...dealData,
-            source_integration: 'ai_auto_sourcing',
-            status: 'new',
-            created_by: 'system'
-          });
-          dealId = created.id;
+          // Create new deal with defaults
+          try {
+            const created = await base44.asServiceRole.entities.DealData.create({
+              company_name: dealData.company_name,
+              industry: dealData.industry || 'Unknown',
+              stage: dealData.stage || 'seed',
+              funding_raised: dealData.funding_raised || 0,
+              valuation: dealData.valuation || 0,
+              headquarters: dealData.headquarters || 'Unknown',
+              description: dealData.description || '',
+              source_url: dealData.source_url || '',
+              source_integration: 'ai_auto_sourcing',
+              status: 'new',
+              created_by: 'system'
+            });
+            dealId = created.id;
+          } catch (createError) {
+            console.error('Failed to create deal:', createError);
+            continue;
+          }
         } else {
           dealId = existing[0].id;
         }
 
-        // Score the deal
-        try {
-          const scoreResponse = await base44.functions.invoke('scoreDeal', {
-            deal_id: dealId,
-            user_email: profile.created_by
-          });
-          scoredDeals.push({
-            deal_id: dealId,
-            company: dealData.company_name,
-            score: scoreResponse.scoring?.overall_score || 0
-          });
-        } catch (e) {
-          console.error('Scoring failed:', e);
+        // Score the deal with retry logic
+        let retries = 0;
+        while (retries < 3) {
+          try {
+            const scoreResponse = await base44.functions.invoke('scoreDeal', {
+              deal_id: dealId,
+              user_email: profile.created_by
+            });
+            scoredDeals.push({
+              deal_id: dealId,
+              company: dealData.company_name,
+              score: scoreResponse.scoring?.overall_score || 0
+            });
+            break;
+          } catch (e) {
+            retries++;
+            console.error(`Scoring attempt ${retries} failed:`, e);
+            if (retries >= 3) {
+              console.error('Scoring failed after 3 attempts');
+            }
+          }
         }
       }
 

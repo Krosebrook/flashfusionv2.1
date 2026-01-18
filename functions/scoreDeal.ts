@@ -32,6 +32,14 @@ Deno.serve(async (req) => {
     const criteria = profile.deal_sourcing_criteria || {};
     const goals = profile.portfolio_goals || {};
 
+    // Edge case: No criteria set, use defaults
+    if (!criteria.target_industries?.length) {
+      criteria.target_industries = ['technology', 'healthcare', 'fintech'];
+      criteria.investment_size_min = 1;
+      criteria.investment_size_max = 50;
+      criteria.risk_tolerance = 'moderate';
+    }
+
     // Build scoring prompt
     const prompt = `Analyze this investment opportunity against the user's criteria and provide a detailed scoring.
 

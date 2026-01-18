@@ -245,7 +245,12 @@ function determineActiveInterventions(state, churnRisk) {
 }
 
 function calculateDaysSinceActivity(engagement) {
-  const lastVisit = engagement.weekly_engagement?.last_visit_at;
-  if (!lastVisit) return 0;
-  return Math.floor((new Date() - new Date(lastVisit)) / (1000 * 60 * 60 * 24));
+  try {
+    const lastVisit = engagement.weekly_engagement?.last_visit_at;
+    if (!lastVisit) return 0;
+    const days = Math.floor((new Date() - new Date(lastVisit)) / (1000 * 60 * 60 * 24));
+    return isNaN(days) ? 0 : Math.max(0, days);
+  } catch {
+    return 0;
+  }
 }

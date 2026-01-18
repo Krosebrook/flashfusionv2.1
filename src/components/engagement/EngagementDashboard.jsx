@@ -54,21 +54,34 @@ export default function EngagementDashboard() {
   };
 
   const checkMonetizationEligibility = (profile) => {
-    const powerUser = profile.power_user_state || {};
-    const lifecycle = profile.lifecycle_state || {};
-    
-    // Don't show monetization for at-risk or dormant users
-    if (lifecycle.current_state === 'at_risk' || lifecycle.current_state === 'dormant') {
-      return;
-    }
+    try {
+      const powerUser = profile.power_user_state || {};
+      const lifecycle = profile.lifecycle_state || {};
+      
+      // Don't show monetization for at-risk or dormant users
+      if (lifecycle.current_state === 'at_risk' || lifecycle.current_state === 'dormant') {
+        return;
+      }
 
-    const eligible = powerUser.monetization?.eligible_moments || [];
-    if (eligible.length > 0 && !powerUser.monetization?.converted_tiers?.length) {
+      // Don't show if already converted
+      if (powerUser.monetization?.converted_tiers?.length > 0) {
+        return;
+      }
+
+      const eligible = powerUser.monetization?.eligible_moments || [];
+      if (eligible.length === 0) {
+        return;
+      }
+
       // Check if we should show (not recently dismissed)
       const shown = powerUser.monetization?.shown_moments || [];
-      const recentlyShown = shown.some(m => 
-        new Date() - new Date(m.shown_at) < 14 * 24 * 60 * 60 * 1000 && m.dismissed_at
-      );
+      const recentlyShown = shown.some(m => {
+        try {
+          return m.dismissed_at && (new Date() - new Date(m.shown_at) < 14 * 24 * 60 * 60 * 1000);
+        } catch {
+          return false;
+        }
+      });
       
       if (!recentlyShown) {
         setEligibleMoment({
@@ -82,6 +95,8 @@ export default function EngagementDashboard() {
         });
         setShowMonetization(true);
       }
+    } catch (error) {
+      console.error('Monetization check error:', error);
     }
   };
 

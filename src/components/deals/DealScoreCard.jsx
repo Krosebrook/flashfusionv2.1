@@ -35,13 +35,30 @@ export default function DealScoreCard({ deal, onSave, compact = false }) {
     if (scoring) return;
     setLoading(true);
     try {
+      const user = await base44.auth.me();
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
       const response = await base44.functions.invoke('scoreDeal', {
         deal_id: deal.id,
-        user_email: (await base44.auth.me()).email
+        user_email: user.email
       });
-      setScoring(response.scoring);
+      if (response?.scoring) {
+        setScoring(response.scoring);
+      } else {
+        throw new Error('Invalid scoring response');
+      }
     } catch (err) {
       console.error('Failed to score deal:', err);
+      // Set error state instead of just logging
+      setScoring({
+        overall_score: 0,
+        confidence: 'low',
+        recommendation: 'weak_match',
+        reasoning: 'Unable to score deal at this time. Please try again later.',
+        key_strengths: [],
+        potential_concerns: ['Scoring temporarily unavailable']
+      });
     }
     setLoading(false);
   };

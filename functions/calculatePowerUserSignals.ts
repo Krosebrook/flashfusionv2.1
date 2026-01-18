@@ -75,40 +75,46 @@ Deno.serve(async (req) => {
 });
 
 function calculateSignalScores(profile, engagement) {
-  const habit_loops = engagement.active_habit_loops || {};
+  try {
+    const habit_loops = engagement.active_habit_loops || {};
+    const weeklyEngagement = engagement.weekly_engagement || {};
 
-  // Deal Momentum: Saves + comparisons
-  const dealMomentum = Math.min(100,
-    (habit_loops.discovery?.actions_taken || 0) * 12 +
-    (habit_loops.discovery?.triggered_count || 0) * 5
-  );
+    // Deal Momentum: Saves + comparisons (capped at 100)
+    const discoveryActions = Math.max(0, habit_loops.discovery?.actions_taken || 0);
+    const discoveryTriggers = Math.max(0, habit_loops.discovery?.triggered_count || 0);
+    const dealMomentum = Math.min(100, Math.round(discoveryActions * 12 + discoveryTriggers * 5));
 
-  // Portfolio Engagement: Goals, analytics, scenarios
-  const portfolioEngagement = Math.min(100,
-    (habit_loops.insight?.triggered_count || 0) * 15 +
-    (habit_loops.insight?.insights_generated || 0) * 10
-  );
+    // Portfolio Engagement: Goals, analytics, scenarios (capped at 100)
+    const insightTriggers = Math.max(0, habit_loops.insight?.triggered_count || 0);
+    const insightsGenerated = Math.max(0, habit_loops.insight?.insights_generated || 0);
+    const portfolioEngagement = Math.min(100, Math.round(insightTriggers * 15 + insightsGenerated * 10));
 
-  // Social Presence: Joins, follows, engagement
-  const socialPresence = Math.min(100,
-    (habit_loops.social?.joins || 0) * 20 +
-    (habit_loops.social?.follows || 0) * 15 +
-    (habit_loops.social?.triggered_count || 0) * 5
-  );
+    // Social Presence: Joins, follows, engagement (capped at 100)
+    const joins = Math.max(0, habit_loops.social?.joins || 0);
+    const follows = Math.max(0, habit_loops.social?.follows || 0);
+    const socialTriggers = Math.max(0, habit_loops.social?.triggered_count || 0);
+    const socialPresence = Math.min(100, Math.round(joins * 20 + follows * 15 + socialTriggers * 5));
 
-  // Retention Consistency: Weekly streak + activity consistency
-  const weeklyEngagement = engagement.weekly_engagement || {};
-  const retentionConsistency = Math.min(100,
-    (weeklyEngagement.streak_weeks || 0) * 12 +
-    (weeklyEngagement.visits_this_week || 0) * 25
-  );
+    // Retention Consistency: Weekly streak + activity (capped at 100)
+    const streakWeeks = Math.max(0, weeklyEngagement.streak_weeks || 0);
+    const visitsThisWeek = Math.max(0, weeklyEngagement.visits_this_week || 0);
+    const retentionConsistency = Math.min(100, Math.round(streakWeeks * 12 + visitsThisWeek * 25));
 
-  return {
-    deal_momentum: Math.round(dealMomentum),
-    portfolio_engagement: Math.round(portfolioEngagement),
-    social_presence: Math.round(socialPresence),
-    retention_consistency: Math.round(retentionConsistency)
-  };
+    return {
+      deal_momentum: dealMomentum,
+      portfolio_engagement: portfolioEngagement,
+      social_presence: socialPresence,
+      retention_consistency: retentionConsistency
+    };
+  } catch (error) {
+    console.error('Signal calculation error:', error);
+    return {
+      deal_momentum: 0,
+      portfolio_engagement: 0,
+      social_presence: 0,
+      retention_consistency: 0
+    };
+  }
 }
 
 function checkTierUnlocks(scores, currentTiers) {
