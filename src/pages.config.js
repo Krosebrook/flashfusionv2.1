@@ -1,3 +1,52 @@
+/**
+ * pages.config.js - Page routing configuration
+ * 
+ * This file is AUTO-GENERATED. Do not add imports or modify PAGES manually.
+ * Pages are auto-registered when you create files in the ./pages/ folder.
+ * 
+ * THE ONLY EDITABLE VALUE: mainPage
+ * This controls which page is the landing page (shown when users visit the app).
+ * 
+ * Example file structure:
+ * 
+ *   import HomePage from './pages/HomePage';
+ *   import Dashboard from './pages/Dashboard';
+ *   import Settings from './pages/Settings';
+ *   
+ *   export const PAGES = {
+ *       "HomePage": HomePage,
+ *       "Dashboard": Dashboard,
+ *       "Settings": Settings,
+ *   }
+ *   
+ *   export const pagesConfig = {
+ *       mainPage: "HomePage",
+ *       Pages: PAGES,
+ *   };
+ * 
+ * Example with Layout (wraps all pages):
+ *
+ *   import Home from './pages/Home';
+ *   import Settings from './pages/Settings';
+ *   import __Layout from './Layout.jsx';
+ *
+ *   export const PAGES = {
+ *       "Home": Home,
+ *       "Settings": Settings,
+ *   }
+ *
+ *   export const pagesConfig = {
+ *       mainPage: "Home",
+ *       Pages: PAGES,
+ *       Layout: __Layout,
+ *   };
+ *
+ * To change the main page from HomePage to Dashboard, use find_replace:
+ *   Old: mainPage: "HomePage",
+ *   New: mainPage: "Dashboard",
+ *
+ * The mainPage value must match a key in the PAGES object exactly.
+ */
 import ActivationDashboard from './pages/ActivationDashboard';
 import AdvancedWorkflows from './pages/AdvancedWorkflows';
 import AgentCollaboration from './pages/AgentCollaboration';
@@ -18,6 +67,7 @@ import IntegrationHub from './pages/IntegrationHub';
 import Integrations from './pages/Integrations';
 import IntegrationsAdmin from './pages/IntegrationsAdmin';
 import LifecycleIntelligence from './pages/LifecycleIntelligence';
+import MyDeals from './pages/MyDeals';
 import Onboarding from './pages/Onboarding';
 import OnboardingComplete from './pages/OnboardingComplete';
 import PRDGenerator from './pages/PRDGenerator';
@@ -31,7 +81,6 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import MyDeals from './pages/MyDeals';
 import __Layout from './Layout.jsx';
 
 
@@ -56,6 +105,7 @@ export const PAGES = {
     "Integrations": Integrations,
     "IntegrationsAdmin": IntegrationsAdmin,
     "LifecycleIntelligence": LifecycleIntelligence,
+    "MyDeals": MyDeals,
     "Onboarding": Onboarding,
     "OnboardingComplete": OnboardingComplete,
     "PRDGenerator": PRDGenerator,
@@ -69,11 +119,10 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "MyDeals": MyDeals,
 }
 
 export const pagesConfig = {
-    mainPage: "Dashboard",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };
