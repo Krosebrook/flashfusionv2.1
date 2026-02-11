@@ -26,6 +26,7 @@ import {
   ClipboardList,
   Settings,
   Zap,
+  Book,
 } from "lucide-react";
 
 const navigationItems = [
@@ -97,9 +98,10 @@ const navigationItems = [
   { name: "Integrations Admin", href: createPageUrl("IntegrationsAdmin"), icon: Settings },
   { name: "Deal Sourcer", href: createPageUrl("DealSourcer"), icon: Zap, dataTour: "deal-sourcer" },
   { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
+  { name: "Documentation", href: createPageUrl("Documentation"), icon: Book },
   { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard, dataTour: "billing" },
   { name: "User Settings", href: createPageUrl("UserSettings"), icon: Settings },
-];
+  ];
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();

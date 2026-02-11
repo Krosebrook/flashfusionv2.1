@@ -79,6 +79,7 @@ import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
 import PromptGenerator from './pages/PromptGenerator';
+import Documentation from './pages/Documentation';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +116,7 @@ export const PAGES = {
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
     "PromptGenerator": PromptGenerator,
+    "Documentation": Documentation,
 }
 
 export const pagesConfig = {
