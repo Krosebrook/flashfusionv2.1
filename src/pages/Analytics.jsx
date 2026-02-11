@@ -16,7 +16,6 @@ import {
   ShoppingCart,
   Download,
   Workflow,
-  Bot,
   TrendingUp,
   Mail,
 } from "lucide-react";
@@ -29,10 +28,10 @@ import AIUsageStats from "../components/analytics/AIUsageStats";
 import EcommerceOverview from "../components/analytics/EcommerceOverview";
 import CustomReport from "../components/analytics/CustomReport";
 import WorkflowPerformance from "../components/analytics/WorkflowPerformance";
-import AgentTaskPerformance from "../components/analytics/AgentTaskPerformance";
 import SocialMediaPerformance from "../components/analytics/SocialMediaPerformance";
 import EmailCampaignAnalytics from "../components/analytics/EmailCampaignAnalytics";
 import AdPerformanceMetrics from "../components/analytics/AdPerformanceMetrics";
+import AdvancedAnalyticsDashboard from "../components/analytics/AdvancedAnalyticsDashboard";
 
 export default function Analytics() {
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +40,6 @@ export default function Analytics() {
   const [contents, setContents] = useState([]);
   const [products, setProducts] = useState([]);
   const [workflows, setWorkflows] = useState([]);
-  const [agentTasks, setAgentTasks] = useState([]);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -57,14 +55,12 @@ export default function Analytics() {
         contentData,
         productData,
         workflowData,
-        taskData,
       ] = await Promise.all([
         base44.auth.me(),
         base44.entities.UsageLog.list("-created_date", 200),
         base44.entities.ContentPiece.list("-created_date", 100),
         base44.entities.EcommerceProduct.list("-created_date", 100),
         base44.entities.Workflow.list("-created_date", 50),
-        base44.entities.AgentTask.list("-created_date", 200),
       ]);
 
       setUser(currentUser);
@@ -81,7 +77,6 @@ export default function Analytics() {
       setContents(contentData);
       setProducts(productData);
       setWorkflows(workflowData);
-      setAgentTasks(taskData);
     } catch (error) {
       console.error("Failed to fetch analytics data:", error);
     }
@@ -157,11 +152,6 @@ export default function Analytics() {
         0
       ),
     },
-    agentTasks: {
-      total: agentTasks.length,
-      completed: agentTasks.filter((t) => t.status === "completed").length,
-      failed: agentTasks.filter((t) => t.status === "failed").length,
-    },
   };
 
   if (isLoading) {
@@ -221,10 +211,6 @@ export default function Analytics() {
             <Workflow className="w-4 h-4 mr-2" />
             Workflows
           </TabsTrigger>
-          <TabsTrigger value="agents">
-            <Bot className="w-4 h-4 mr-2" />
-            Agent Tasks
-          </TabsTrigger>
           <TabsTrigger value="users">
             <Users className="w-4 h-4 mr-2" />
             User Activity
@@ -275,13 +261,13 @@ export default function Analytics() {
 
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
               <div className="flex items-center justify-between mb-2">
-                <Bot className="w-8 h-8 text-green-400" />
+                <FileText className="w-8 h-8 text-green-400" />
                 <span className="text-xs text-green-400">
-                  {reportData.agentTasks.completed} done
+                  {contents.length} pieces
                 </span>
               </div>
-              <div className="text-2xl font-bold">{agentTasks.length}</div>
-              <div className="text-sm text-gray-400">Agent Tasks</div>
+              <div className="text-2xl font-bold">{reportData.content.total}</div>
+              <div className="text-sm text-gray-400">Content Created</div>
             </div>
 
             <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
@@ -309,9 +295,9 @@ export default function Analytics() {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Completed Tasks</span>
+                  <span className="text-gray-400">Content Pieces</span>
                   <span className="font-semibold">
-                    {reportData.agentTasks.completed}
+                    {reportData.content.total}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -362,11 +348,7 @@ export default function Analytics() {
         </TabsContent>
 
         <TabsContent value="workflows" className="space-y-6">
-          <WorkflowPerformance workflows={workflows} tasks={agentTasks} />
-        </TabsContent>
-
-        <TabsContent value="agents" className="space-y-6">
-          <AgentTaskPerformance tasks={agentTasks} />
+          <WorkflowPerformance workflows={workflows} />
         </TabsContent>
 
         <TabsContent value="users" className="space-y-6">
@@ -396,5 +378,3 @@ export default function Analytics() {
     </div>
   );
 }
-
-import AdvancedAnalyticsDashboard from "../components/analytics/AdvancedAnalyticsDashboard";
