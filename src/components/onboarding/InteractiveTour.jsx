@@ -14,8 +14,8 @@ const goalBasedSteps = {
       content: 'Generate complete applications from simple descriptions. Your MVP starts here.',
     },
     {
-      target: '[data-tour="agent-orchestration"]',
-      content: 'Build complex workflows by orchestrating multiple AI agents to automate your business processes.',
+      target: '[data-tour="feature-generator"]',
+      content: 'Convert feature ideas into production-ready code instantly.',
     },
     {
       target: '[data-tour="analytics"]',
@@ -63,8 +63,8 @@ const goalBasedSteps = {
       disableBeacon: true,
     },
     {
-      target: '[data-tour="agent-marketplace"]',
-      content: 'Browse and install pre-built workflows to speed up common client projects.',
+      target: '[data-tour="content-creator"]',
+      content: 'Generate content for clients across multiple platforms and formats.',
     },
     {
       target: '[data-tour="team-management"]',
@@ -82,8 +82,8 @@ const goalBasedSteps = {
       content: 'Generate comprehensive PRDs and technical specifications.',
     },
     {
-      target: '[data-tour="agent-orchestration"]',
-      content: 'Build custom AI workflows and integrate them into your applications.',
+      target: '[data-tour="universal-generator"]',
+      content: 'Build complete applications from natural language descriptions.',
     },
     {
       target: '[data-tour="integrations"]',
@@ -97,8 +97,8 @@ const goalBasedSteps = {
       disableBeacon: true,
     },
     {
-      target: '[data-tour="agent-marketplace"]',
-      content: 'Explore pre-built templates and workflows created by the community.',
+      target: '[data-tour="universal-generator"]',
+      content: 'Generate complete applications and features from natural language.',
     },
     {
       target: '[data-tour="integrations"]',

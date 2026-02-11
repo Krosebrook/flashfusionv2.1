@@ -13,8 +13,9 @@ import {
   BarChart3,
   Workflow,
   Clock,
-  Store,
   FileText,
+  Rocket,
+  Plug,
 } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -100,7 +101,7 @@ export default function Dashboard() {
   const [collaborationCount, setCollaborationCount] = useState(0);
   const [scheduleCount, setScheduleCount] = useState(0);
   const [workflowCount, setWorkflowCount] = useState(0);
-  const [templateCount, setTemplateCount] = useState(0);
+
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [timeRange, setTimeRange] = useState("7days");
@@ -121,7 +122,6 @@ export default function Dashboard() {
           collaborations,
           schedules,
           workflows,
-          templates,
         ] = await Promise.all([
           base44.auth.me(),
           base44.entities.UsageLog.list("-created_date", 100),
@@ -130,7 +130,6 @@ export default function Dashboard() {
           base44.entities.Collaboration.list(),
           base44.entities.ContentSchedule.list(),
           base44.entities.Workflow.list(),
-          base44.entities.AgentTemplate.list(),
         ]);
 
         setUser(currentUser);
@@ -185,7 +184,6 @@ export default function Dashboard() {
           schedules.filter((s) => s.status === "scheduled").length
         );
         setWorkflowCount(workflows.length);
-        setTemplateCount(templates.length);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
       }
@@ -354,13 +352,7 @@ export default function Dashboard() {
               </div>
               <p className="text-2xl font-bold">{scheduleCount}</p>
             </div>
-            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-              <div className="flex items-center gap-3 mb-2">
-                <Store className="w-5 h-5 text-purple-400" />
-                <p className="font-semibold">Templates</p>
-              </div>
-              <p className="text-2xl font-bold">{templateCount}</p>
-            </div>
+
             <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
               <div className="flex items-center gap-3 mb-2">
                 <Palette className="w-5 h-5 text-pink-400" />
@@ -388,12 +380,12 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <FeatureCard
-                title="Agent Orchestration"
-                description="Build multi-agent workflows with visual designer"
-                icon={Workflow}
-                href={createPageUrl("AgentOrchestration")}
+                title="Universal Generator"
+                description="Generate complete applications from descriptions"
+                icon={Rocket}
+                href={createPageUrl("UniversalGenerator")}
                 creditCost="Varies"
-                category="Automation"
+                category="Generation"
                 isPopular={true}
               />
               <FeatureCard
@@ -405,12 +397,12 @@ export default function Dashboard() {
                 category="Content"
               />
               <FeatureCard
-                title="Agent Marketplace"
-                description="Browse and install pre-built workflow templates"
-                icon={Store}
-                href={createPageUrl("AgentMarketplace")}
-                creditCost="Free"
-                category="Marketplace"
+                title="Deal Sourcer"
+                description="AI-powered deal sourcing and analysis"
+                icon={Zap}
+                href={createPageUrl("DealSourcer")}
+                creditCost="Varies"
+                category="Intelligence"
               />
             </div>
           </div>
@@ -476,10 +468,10 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold mb-4">All Features</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <FeatureCard
-                title="Agent Orchestration"
-                description="Multi-agent workflow builder with real-time monitoring"
+                title="Workflows"
+                description="Advanced workflow automation and management"
                 icon={Workflow}
-                href={createPageUrl("AgentOrchestration")}
+                href={createPageUrl("AdvancedWorkflows")}
                 creditCost="Variable"
                 category="Automation"
                 isPopular={true}
@@ -501,12 +493,12 @@ export default function Dashboard() {
                 category="Management"
               />
               <FeatureCard
-                title="Agent Marketplace"
-                description="Install pre-built workflows from the community"
-                icon={Store}
-                href={createPageUrl("AgentMarketplace")}
-                creditCost="Varies"
-                category="Marketplace"
+                title="Integrations"
+                description="Connect your tools and automate workflows"
+                icon={Plug}
+                href={createPageUrl("Integrations")}
+                creditCost="Free"
+                category="Connectivity"
               />
               <FeatureCard
                 title="Feature Generator"

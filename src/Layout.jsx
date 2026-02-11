@@ -36,12 +36,6 @@ const navigationItems = [
   },
   { name: "Projects", href: createPageUrl("Projects"), icon: FolderOpen },
   {
-    name: "Agent Orchestration",
-    href: createPageUrl("AgentOrchestration"),
-    icon: Workflow,
-    dataTour: "agent-orchestration",
-  },
-  {
     name: "Universal Generator",
     href: createPageUrl("UniversalGenerator"),
     icon: Rocket,
@@ -84,34 +78,27 @@ const navigationItems = [
     dataTour: "content-scheduling",
   },
   {
-    name: "Agent Marketplace",
-    href: createPageUrl("AgentMarketplace"),
-    icon: Store,
-    dataTour: "agent-marketplace",
-  },
-  {
     name: "WSJF Prioritization",
     href: createPageUrl("WSJFPrioritization"),
     icon: ArrowUpDown,
   },
   { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3, dataTour: "analytics" },
   { name: "Personalized Analytics", href: createPageUrl("PersonalizedAnalytics"), icon: BarChart3 },
-  { name: "Advanced Workflows", href: createPageUrl("AdvancedWorkflows"), icon: Workflow },
+  { name: "Workflows", href: createPageUrl("AdvancedWorkflows"), icon: Workflow },
   { name: "Sync Configuration", href: createPageUrl("SyncConfiguration"), icon: Plug },
   {
     name: "Team Management",
     href: createPageUrl("TeamManagement"),
     icon: Users,
+    dataTour: "team-management",
   },
   { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug, dataTour: "integrations" },
   { name: "Integration Hub", href: createPageUrl("IntegrationHub"), icon: Plug },
   { name: "Integrations Admin", href: createPageUrl("IntegrationsAdmin"), icon: Settings },
   { name: "Deal Sourcer", href: createPageUrl("DealSourcer"), icon: Zap, dataTour: "deal-sourcer" },
-  { name: "Agent Collaboration", href: createPageUrl("AgentCollaboration"), icon: Users, dataTour: "collaboration" },
   { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
   { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard, dataTour: "billing" },
   { name: "User Settings", href: createPageUrl("UserSettings"), icon: Settings },
-  { name: "Team Management", href: createPageUrl("TeamManagement"), icon: Users, dataTour: "team-management" },
 ];
 
 export default function Layout({ children, currentPageName }) {

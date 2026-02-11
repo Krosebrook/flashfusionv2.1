@@ -49,9 +49,6 @@
  */
 import ActivationDashboard from './pages/ActivationDashboard';
 import AdvancedWorkflows from './pages/AdvancedWorkflows';
-import AgentCollaboration from './pages/AgentCollaboration';
-import AgentMarketplace from './pages/AgentMarketplace';
-import AgentOrchestration from './pages/AgentOrchestration';
 import Analytics from './pages/Analytics';
 import Billing from './pages/Billing';
 import BrandKitGenerator from './pages/BrandKitGenerator';
@@ -88,9 +85,6 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "ActivationDashboard": ActivationDashboard,
     "AdvancedWorkflows": AdvancedWorkflows,
-    "AgentCollaboration": AgentCollaboration,
-    "AgentMarketplace": AgentMarketplace,
-    "AgentOrchestration": AgentOrchestration,
     "Analytics": Analytics,
     "Billing": Billing,
     "BrandKitGenerator": BrandKitGenerator,

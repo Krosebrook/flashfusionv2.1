@@ -21,7 +21,7 @@ const goalOptions = [
     label: 'Launch a Startup',
     icon: Rocket,
     description: 'Build your MVP in days, not months',
-    features: ['Universal Generator', 'Agent Orchestration', 'Analytics'],
+    features: ['Universal Generator', 'Feature Generator', 'Analytics'],
   },
   {
     id: 'marketer',
@@ -42,21 +42,21 @@ const goalOptions = [
     label: 'Deliver Projects',
     icon: Users,
     description: 'Ship client work faster',
-    features: ['Collaboration', 'Workflows', 'Templates'],
+    features: ['Collaboration', 'Content Creator', 'Workflows'],
   },
   {
     id: 'developer',
     label: 'Build Apps',
     icon: Code,
     description: 'Code generation & automation',
-    features: ['Feature Generator', 'PRD Generator', 'Agent Tools'],
+    features: ['Feature Generator', 'PRD Generator', 'Universal Gen'],
   },
   {
     id: 'other',
     label: 'Explore',
     icon: Zap,
     description: 'Discover all capabilities',
-    features: ['All Features', 'Marketplace', 'Integrations'],
+    features: ['All Features', 'Workflows', 'Integrations'],
   },
 ];
 
