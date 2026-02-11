@@ -25,6 +25,8 @@ import { Button } from "@/components/ui/button";
 import UsageChart from "../components/dashboard/UsageChart";
 import CreditMeter from "../components/shared/CreditMeter";
 import FeatureCard from "../components/shared/FeatureCard";
+import WelcomeScreen from "../components/onboarding/WelcomeScreen";
+import InteractiveTour from "../components/onboarding/InteractiveTour";
 
 const StatCard = ({ title, value, icon: Icon, color, trend, subtitle }) => (
   <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
@@ -102,6 +104,10 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [timeRange, setTimeRange] = useState("7days");
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+  const [userGoal, setUserGoal] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,6 +134,26 @@ export default function Dashboard() {
         ]);
 
         setUser(currentUser);
+
+        // Check onboarding status
+        const profiles = await base44.entities.UserProfile.filter({
+          created_by: currentUser.email,
+        });
+
+        if (profiles.length > 0) {
+          const profile = profiles[0];
+          setUserProfile(profile);
+          if (!profile.tour_completed) {
+            if (profile.onboarding_goal) {
+              setUserGoal(profile.onboarding_goal);
+              setShowTour(true);
+            } else {
+              setShowWelcome(true);
+            }
+          }
+        } else {
+          setShowWelcome(true);
+        }
         setRecentActivity(usageLogs.slice(0, 10));
 
         const days =
@@ -205,8 +231,34 @@ export default function Dashboard() {
     );
   }
 
+  const handleWelcomeComplete = (goal) => {
+    setUserGoal(goal);
+    setShowWelcome(false);
+    setShowTour(true);
+  };
+
+  const handleTourComplete = () => {
+    setShowTour(false);
+  };
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" data-tour="dashboard">
+      {showWelcome && user && (
+        <WelcomeScreen
+          user={user}
+          onComplete={handleWelcomeComplete}
+          onStartTour={() => setShowTour(true)}
+        />
+      )}
+
+      {showTour && userGoal && user && (
+        <InteractiveTour
+          goal={userGoal}
+          userEmail={user.email}
+          onComplete={handleTourComplete}
+        />
+      )}
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">

@@ -39,26 +39,31 @@ const navigationItems = [
     name: "Agent Orchestration",
     href: createPageUrl("AgentOrchestration"),
     icon: Workflow,
+    dataTour: "agent-orchestration",
   },
   {
     name: "Universal Generator",
     href: createPageUrl("UniversalGenerator"),
     icon: Rocket,
+    dataTour: "universal-generator",
   },
   {
     name: "Feature Generator",
     href: createPageUrl("FeatureGenerator"),
     icon: Atom,
+    dataTour: "feature-generator",
   },
   {
     name: "PRD Generator",
     href: createPageUrl("PRDGenerator"),
     icon: ClipboardList,
+    dataTour: "prd-generator",
   },
   {
     name: "BrandKit Generator",
     href: createPageUrl("BrandKitGenerator"),
     icon: Palette,
+    dataTour: "brand-kit",
   },
   {
     name: "E-commerce Suite",
@@ -69,24 +74,27 @@ const navigationItems = [
     name: "Content Creator",
     href: createPageUrl("ContentCreator"),
     icon: FileText,
+    dataTour: "content-creator",
   },
-  { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users },
+  { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users, dataTour: "collaboration" },
   {
     name: "Content Scheduling",
     href: createPageUrl("ContentScheduling"),
     icon: Clock,
+    dataTour: "content-scheduling",
   },
   {
     name: "Agent Marketplace",
     href: createPageUrl("AgentMarketplace"),
     icon: Store,
+    dataTour: "agent-marketplace",
   },
   {
     name: "WSJF Prioritization",
     href: createPageUrl("WSJFPrioritization"),
     icon: ArrowUpDown,
   },
-  { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3 },
+  { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3, dataTour: "analytics" },
   { name: "Personalized Analytics", href: createPageUrl("PersonalizedAnalytics"), icon: BarChart3 },
   { name: "Advanced Workflows", href: createPageUrl("AdvancedWorkflows"), icon: Workflow },
   { name: "Sync Configuration", href: createPageUrl("SyncConfiguration"), icon: Plug },
@@ -95,14 +103,15 @@ const navigationItems = [
     href: createPageUrl("TeamManagement"),
     icon: Users,
   },
-  { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug },
+  { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug, dataTour: "integrations" },
   { name: "Integration Hub", href: createPageUrl("IntegrationHub"), icon: Plug },
   { name: "Integrations Admin", href: createPageUrl("IntegrationsAdmin"), icon: Settings },
-  { name: "Deal Sourcer", href: createPageUrl("DealSourcer"), icon: Zap },
-  { name: "Agent Collaboration", href: createPageUrl("AgentCollaboration"), icon: Users },
+  { name: "Deal Sourcer", href: createPageUrl("DealSourcer"), icon: Zap, dataTour: "deal-sourcer" },
+  { name: "Agent Collaboration", href: createPageUrl("AgentCollaboration"), icon: Users, dataTour: "collaboration" },
   { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
-  { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard },
+  { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard, dataTour: "billing" },
   { name: "User Settings", href: createPageUrl("UserSettings"), icon: Settings },
+  { name: "Team Management", href: createPageUrl("TeamManagement"), icon: Users, dataTour: "team-management" },
 ];
 
 export default function Layout({ children, currentPageName }) {
@@ -142,6 +151,7 @@ export default function Layout({ children, currentPageName }) {
               key={item.name}
               to={item.href}
               onClick={() => setIsSidebarOpen(false)}
+              data-tour={item.dataTour}
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors group ${
                 location.pathname === item.href
                   ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
