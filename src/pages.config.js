@@ -72,14 +72,15 @@ import PersonalizedAnalytics from './pages/PersonalizedAnalytics';
 import Plugins from './pages/Plugins';
 import PowerUserExpansion from './pages/PowerUserExpansion';
 import Projects from './pages/Projects';
+import PromptGenerator from './pages/PromptGenerator';
 import RetentionDashboard from './pages/RetentionDashboard';
 import SyncConfiguration from './pages/SyncConfiguration';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import PromptGenerator from './pages/PromptGenerator';
 import Documentation from './pages/Documentation';
+import RolesAndPermissions from './pages/RolesAndPermissions';
 import __Layout from './Layout.jsx';
 
 
@@ -109,14 +110,15 @@ export const PAGES = {
     "Plugins": Plugins,
     "PowerUserExpansion": PowerUserExpansion,
     "Projects": Projects,
+    "PromptGenerator": PromptGenerator,
     "RetentionDashboard": RetentionDashboard,
     "SyncConfiguration": SyncConfiguration,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "PromptGenerator": PromptGenerator,
     "Documentation": Documentation,
+    "RolesAndPermissions": RolesAndPermissions,
 }
 
 export const pagesConfig = {

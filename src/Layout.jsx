@@ -27,6 +27,7 @@ import {
   Settings,
   Zap,
   Book,
+  Shield,
 } from "lucide-react";
 
 const navigationItems = [
