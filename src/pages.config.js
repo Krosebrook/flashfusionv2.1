@@ -57,6 +57,7 @@ import ContentCreator from './pages/ContentCreator';
 import ContentScheduling from './pages/ContentScheduling';
 import Dashboard from './pages/Dashboard';
 import DealSourcer from './pages/DealSourcer';
+import Documentation from './pages/Documentation';
 import EcommerceSuite from './pages/EcommerceSuite';
 import FeatureGenerator from './pages/FeatureGenerator';
 import Home from './pages/Home';
@@ -74,13 +75,13 @@ import PowerUserExpansion from './pages/PowerUserExpansion';
 import Projects from './pages/Projects';
 import PromptGenerator from './pages/PromptGenerator';
 import RetentionDashboard from './pages/RetentionDashboard';
+import RolesAndPermissions from './pages/RolesAndPermissions';
 import SyncConfiguration from './pages/SyncConfiguration';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import Documentation from './pages/Documentation';
-import RolesAndPermissions from './pages/RolesAndPermissions';
+import APIWebhooks from './pages/APIWebhooks';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +96,7 @@ export const PAGES = {
     "ContentScheduling": ContentScheduling,
     "Dashboard": Dashboard,
     "DealSourcer": DealSourcer,
+    "Documentation": Documentation,
     "EcommerceSuite": EcommerceSuite,
     "FeatureGenerator": FeatureGenerator,
     "Home": Home,
@@ -112,13 +114,13 @@ export const PAGES = {
     "Projects": Projects,
     "PromptGenerator": PromptGenerator,
     "RetentionDashboard": RetentionDashboard,
+    "RolesAndPermissions": RolesAndPermissions,
     "SyncConfiguration": SyncConfiguration,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "Documentation": Documentation,
-    "RolesAndPermissions": RolesAndPermissions,
+    "APIWebhooks": APIWebhooks,
 }
 
 export const pagesConfig = {

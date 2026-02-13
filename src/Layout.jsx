@@ -95,6 +95,7 @@ const navigationItems = [
     dataTour: "team-management",
   },
   { name: "Roles & Permissions", href: createPageUrl("RolesAndPermissions"), icon: Shield },
+  { name: "API & Webhooks", href: createPageUrl("APIWebhooks"), icon: Zap },
   { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug, dataTour: "integrations" },
   { name: "Integration Hub", href: createPageUrl("IntegrationHub"), icon: Plug },
   { name: "Integrations Admin", href: createPageUrl("IntegrationsAdmin"), icon: Settings },
