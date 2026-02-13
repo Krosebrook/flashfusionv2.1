@@ -186,28 +186,46 @@ export default function VisualWorkflowBuilder() {
         ))}
       </div>
 
-      {/* Create New Workflow */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Create New Workflow</CardTitle>
-        </CardHeader>
-        <CardContent className="flex gap-2">
-          <Input
-            placeholder="Workflow name"
-            value={newWorkflowName}
-            onChange={e => setNewWorkflowName(e.target.value)}
-          />
-          <Button onClick={createWorkflow} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Create
-          </Button>
-        </CardContent>
-      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-gray-800">
+          <TabsTrigger value="builder">
+            <Settings className="w-4 h-4 mr-2" />
+            Workflow Builder
+          </TabsTrigger>
+          <TabsTrigger value="ai-assistant">
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI Assistant
+          </TabsTrigger>
+          <TabsTrigger value="performance">
+            <Activity className="w-4 h-4 mr-2" />
+            Performance Insights
+          </TabsTrigger>
+        </TabsList>
 
-      {selectedWorkflow && (
-        <div className="space-y-4">
-          {/* Workflow Controls */}
+        <TabsContent value="builder" className="space-y-6 mt-6">
+          {/* Create New Workflow */}
           <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle>Create New Workflow</CardTitle>
+            </CardHeader>
+            <CardContent className="flex gap-2">
+              <Input
+                placeholder="Workflow name"
+                value={newWorkflowName}
+                onChange={e => setNewWorkflowName(e.target.value)}
+                className="bg-gray-700 border-gray-600"
+              />
+              <Button onClick={createWorkflow} className="gap-2 bg-blue-600 hover:bg-blue-700">
+                <Plus className="w-4 h-4" />
+                Create
+              </Button>
+            </CardContent>
+          </Card>
+
+          {selectedWorkflow && (
+            <div className="space-y-4">
+              {/* Workflow Controls */}
+              <Card className="bg-gray-800 border-gray-700">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <div>
                 <CardTitle>{selectedWorkflow.name}</CardTitle>
@@ -356,24 +374,24 @@ export default function VisualWorkflowBuilder() {
               </CardContent>
             </Card>
           )}
-          </div>
-        )}
-        </TabsContent>
+        </div>
+      )}
+      </TabsContent>
 
-        <TabsContent value="ai-assistant" className="space-y-6 mt-6">
-          <AIWorkflowAssistant 
-            onWorkflowGenerated={handleWorkflowGenerated}
-            currentWorkflow={selectedWorkflow}
-          />
-        </TabsContent>
+      <TabsContent value="ai-assistant" className="space-y-6 mt-6">
+        <AIWorkflowAssistant 
+          onWorkflowGenerated={handleWorkflowGenerated}
+          currentWorkflow={selectedWorkflow}
+        />
+      </TabsContent>
 
-        <TabsContent value="performance" className="space-y-6 mt-6">
-          <WorkflowPerformanceInsights 
-            workflow={selectedWorkflow}
-            executionHistory={selectedWorkflow?.execution_history}
-          />
-        </TabsContent>
-      </Tabs>
+      <TabsContent value="performance" className="space-y-6 mt-6">
+        <WorkflowPerformanceInsights 
+          workflow={selectedWorkflow}
+          executionHistory={selectedWorkflow?.execution_history}
+        />
+      </TabsContent>
+    </Tabs>
     </div>
   );
 }
