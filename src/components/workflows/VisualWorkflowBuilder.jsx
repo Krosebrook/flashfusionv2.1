@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -11,7 +12,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Plus, Trash2, Play, Pause, ChevronRight, Settings } from 'lucide-react';
+import { Plus, Trash2, Play, Pause, ChevronRight, Settings, Sparkles, Activity } from 'lucide-react';
+import AIWorkflowAssistant from './AIWorkflowAssistant';
+import WorkflowPerformanceInsights from './WorkflowPerformanceInsights';
 
 export default function VisualWorkflowBuilder() {
   const [workflows, setWorkflows] = useState([]);
@@ -20,6 +23,7 @@ export default function VisualWorkflowBuilder() {
   const [loading, setLoading] = useState(true);
   const [newWorkflowName, setNewWorkflowName] = useState('');
   const [agents, setAgents] = useState([]);
+  const [activeTab, setActiveTab] = useState('builder');
 
   useEffect(() => {
     fetchWorkflows();
@@ -126,6 +130,28 @@ export default function VisualWorkflowBuilder() {
     }
   };
 
+  const handleWorkflowGenerated = async (generatedWorkflow) => {
+    try {
+      const workflow = await base44.entities.AdvancedWorkflow.create({
+        name: generatedWorkflow.name,
+        description: generatedWorkflow.description,
+        steps: generatedWorkflow.steps || [],
+        triggers: [generatedWorkflow.trigger],
+        integrations: [],
+        status: 'draft',
+        config: generatedWorkflow,
+        execution_history: []
+      });
+
+      setWorkflows([...workflows, workflow]);
+      setSelectedWorkflow(workflow);
+      setSteps(workflow.steps || []);
+      setActiveTab('builder');
+    } catch (err) {
+      console.error('Failed to create generated workflow:', err);
+    }
+  };
+
   if (loading) {
     return <div className="p-4 text-center">Loading workflows...</div>;
   }
@@ -133,8 +159,11 @@ export default function VisualWorkflowBuilder() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Visual Workflow Builder</h1>
-        <p className="text-gray-600">Create multi-step agent workflows with conditional logic</p>
+        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
+          Visual Workflow Builder
+          <Sparkles className="w-6 h-6 text-purple-400" />
+        </h1>
+        <p className="text-gray-400">Create and optimize workflows with AI-powered assistance</p>
       </div>
 
       {/* Workflow Selector */}
@@ -178,11 +207,11 @@ export default function VisualWorkflowBuilder() {
       {selectedWorkflow && (
         <div className="space-y-4">
           {/* Workflow Controls */}
-          <Card>
+          <Card className="bg-gray-800 border-gray-700">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <div>
                 <CardTitle>{selectedWorkflow.name}</CardTitle>
-                <p className="text-sm text-gray-600 mt-1">{selectedWorkflow.description}</p>
+                <p className="text-sm text-gray-400 mt-1">{selectedWorkflow.description}</p>
               </div>
               <Button
                 onClick={() => toggleWorkflowStatus(selectedWorkflow)}
@@ -205,21 +234,21 @@ export default function VisualWorkflowBuilder() {
           </Card>
 
           {/* Steps */}
-          <Card>
+          <Card className="bg-gray-800 border-gray-700">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle>Workflow Steps</CardTitle>
-              <Button size="sm" onClick={addStep} className="gap-2">
+              <Button size="sm" onClick={addStep} className="gap-2 bg-blue-600 hover:bg-blue-700">
                 <Plus className="w-4 h-4" />
                 Add Step
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               {steps.length === 0 ? (
-                <p className="text-gray-600 text-center py-4">No steps added yet. Click "Add Step" to get started.</p>
+                <p className="text-gray-400 text-center py-4">No steps added yet. Click "Add Step" to get started.</p>
               ) : (
                 <div className="space-y-3">
                   {steps.map((step, idx) => (
-                    <div key={step.id} className="border rounded-lg p-4 space-y-3">
+                    <div key={step.id} className="border border-gray-600 rounded-lg p-4 space-y-3 bg-gray-700">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline">Step {step.order + 1}</Badge>
@@ -239,52 +268,52 @@ export default function VisualWorkflowBuilder() {
                         <div>
                           <label className="text-sm font-medium">Select Agent</label>
                           <Select
-                            value={step.agent_id}
-                            onValueChange={agentId => {
-                              const agent = agents.find(a => a.id === agentId);
-                              updateStep(step.id, {
-                                agent_id: agentId,
-                                agent_name: agent?.name || ''
-                              });
-                            }}
+                           value={step.agent_id}
+                           onValueChange={agentId => {
+                             const agent = agents.find(a => a.id === agentId);
+                             updateStep(step.id, {
+                               agent_id: agentId,
+                               agent_name: agent?.name || ''
+                             });
+                           }}
                           >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue placeholder="Choose agent" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {agents.map(agent => (
-                                <SelectItem key={agent.id} value={agent.id}>
-                                  {agent.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
+                           <SelectTrigger className="mt-1 bg-gray-600 border-gray-500">
+                             <SelectValue placeholder="Choose agent" />
+                           </SelectTrigger>
+                           <SelectContent>
+                             {agents.map(agent => (
+                               <SelectItem key={agent.id} value={agent.id}>
+                                 {agent.name}
+                               </SelectItem>
+                             ))}
+                           </SelectContent>
                           </Select>
                         </div>
 
                         <div>
                           <label className="text-sm font-medium">Condition Type</label>
                           <Select
-                            value={step.condition?.type || 'none'}
-                            onValueChange={type => {
-                              updateStep(step.id, {
-                                condition: { ...step.condition, type }
-                              });
-                            }}
+                           value={step.condition?.type || 'none'}
+                           onValueChange={type => {
+                             updateStep(step.id, {
+                               condition: { ...step.condition, type }
+                             });
+                           }}
                           >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="none">No Condition</SelectItem>
-                              <SelectItem value="if">If/Else</SelectItem>
-                              <SelectItem value="switch">Switch</SelectItem>
-                            </SelectContent>
+                           <SelectTrigger className="mt-1 bg-gray-600 border-gray-500">
+                             <SelectValue />
+                           </SelectTrigger>
+                           <SelectContent>
+                             <SelectItem value="none">No Condition</SelectItem>
+                             <SelectItem value="if">If/Else</SelectItem>
+                             <SelectItem value="switch">Switch</SelectItem>
+                           </SelectContent>
                           </Select>
                         </div>
                       </div>
 
                       {step.condition?.type !== 'none' && (
-                        <div className="p-3 bg-blue-50 rounded border border-blue-200">
+                        <div className="p-3 bg-blue-900/30 rounded border border-blue-700">
                           <Input
                             placeholder="Enter condition (e.g., status === 'success')"
                             value={step.condition?.condition || ''}
@@ -293,7 +322,7 @@ export default function VisualWorkflowBuilder() {
                                 condition: { ...step.condition, condition: e.target.value }
                               });
                             }}
-                            className="text-sm"
+                            className="text-sm bg-gray-600 border-gray-500"
                           />
                         </div>
                       )}
@@ -306,17 +335,17 @@ export default function VisualWorkflowBuilder() {
 
           {/* Execution History */}
           {selectedWorkflow.execution_history && selectedWorkflow.execution_history.length > 0 && (
-            <Card>
+            <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle>Recent Executions</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   {selectedWorkflow.execution_history.slice(-5).map((execution, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 border rounded">
+                    <div key={idx} className="flex items-center justify-between p-2 border border-gray-600 rounded bg-gray-700">
                       <div>
                         <p className="text-sm font-medium">{new Date(execution.executed_at).toLocaleString()}</p>
-                        <p className="text-xs text-gray-600">{execution.duration_ms}ms</p>
+                        <p className="text-xs text-gray-400">{execution.duration_ms}ms</p>
                       </div>
                       <Badge variant={execution.status === 'success' ? 'default' : 'destructive'}>
                         {execution.status}
@@ -327,8 +356,24 @@ export default function VisualWorkflowBuilder() {
               </CardContent>
             </Card>
           )}
-        </div>
-      )}
+          </div>
+        )}
+        </TabsContent>
+
+        <TabsContent value="ai-assistant" className="space-y-6 mt-6">
+          <AIWorkflowAssistant 
+            onWorkflowGenerated={handleWorkflowGenerated}
+            currentWorkflow={selectedWorkflow}
+          />
+        </TabsContent>
+
+        <TabsContent value="performance" className="space-y-6 mt-6">
+          <WorkflowPerformanceInsights 
+            workflow={selectedWorkflow}
+            executionHistory={selectedWorkflow?.execution_history}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
