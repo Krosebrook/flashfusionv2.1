@@ -30,81 +30,46 @@ import {
   Shield,
 } from "lucide-react";
 
-const navigationItems = [
+const navigationGroups = [
   {
-    name: "Dashboard",
-    href: createPageUrl("Dashboard"),
-    icon: LayoutDashboard,
-  },
-  { name: "Projects", href: createPageUrl("Projects"), icon: FolderOpen },
-  {
-    name: "Universal Generator",
-    href: createPageUrl("UniversalGenerator"),
-    icon: Rocket,
-    dataTour: "universal-generator",
+    name: "CREATE",
+    items: [
+      { name: "Universal Generator", href: createPageUrl("UniversalGenerator"), icon: Rocket, dataTour: "universal-generator", featured: true },
+      { name: "Content Studio", href: createPageUrl("ContentCreator"), icon: FileText, dataTour: "content-creator" },
+      { name: "Feature Generator", href: createPageUrl("FeatureGenerator"), icon: Atom, dataTour: "feature-generator" },
+      { name: "Brand Kit", href: createPageUrl("BrandKitGenerator"), icon: Palette, dataTour: "brand-kit" },
+      { name: "PRD Generator", href: createPageUrl("PRDGenerator"), icon: ClipboardList },
+    ]
   },
   {
-    name: "Feature Generator",
-    href: createPageUrl("FeatureGenerator"),
-    icon: Atom,
-    dataTour: "feature-generator",
+    name: "MANAGE",
+    items: [
+      { name: "Projects", href: createPageUrl("Projects"), icon: FolderOpen },
+      { name: "Workflows", href: createPageUrl("AdvancedWorkflows"), icon: Workflow },
+      { name: "Scheduling", href: createPageUrl("ContentScheduling"), icon: Clock },
+      { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users },
+      { name: "E-commerce", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
+      { name: "WSJF", href: createPageUrl("WSJFPrioritization"), icon: ArrowUpDown },
+    ]
   },
   {
-    name: "PRD Generator",
-    href: createPageUrl("PRDGenerator"),
-    icon: ClipboardList,
-    dataTour: "prd-generator",
+    name: "ANALYZE",
+    items: [
+      { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3, dataTour: "analytics" },
+      { name: "Deal Sourcer", href: createPageUrl("DealSourcer"), icon: Zap, dataTour: "deal-sourcer" },
+      { name: "Insights", href: createPageUrl("PersonalizedAnalytics"), icon: BarChart3 },
+    ]
   },
   {
-    name: "BrandKit Generator",
-    href: createPageUrl("BrandKitGenerator"),
-    icon: Palette,
-    dataTour: "brand-kit",
+    name: "CONNECT",
+    items: [
+      { name: "API & Webhooks", href: createPageUrl("APIWebhooks"), icon: Zap },
+      { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug, dataTour: "integrations" },
+      { name: "Sync Config", href: createPageUrl("SyncConfiguration"), icon: Settings },
+      { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
+    ]
   },
-  {
-    name: "E-commerce Suite",
-    href: createPageUrl("EcommerceSuite"),
-    icon: ShoppingCart,
-  },
-  {
-    name: "Content Creator",
-    href: createPageUrl("ContentCreator"),
-    icon: FileText,
-    dataTour: "content-creator",
-  },
-  { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users, dataTour: "collaboration" },
-  {
-    name: "Content Scheduling",
-    href: createPageUrl("ContentScheduling"),
-    icon: Clock,
-    dataTour: "content-scheduling",
-  },
-  {
-    name: "WSJF Prioritization",
-    href: createPageUrl("WSJFPrioritization"),
-    icon: ArrowUpDown,
-  },
-  { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3, dataTour: "analytics" },
-  { name: "Personalized Analytics", href: createPageUrl("PersonalizedAnalytics"), icon: BarChart3 },
-  { name: "Workflows", href: createPageUrl("AdvancedWorkflows"), icon: Workflow },
-  { name: "Sync Configuration", href: createPageUrl("SyncConfiguration"), icon: Plug },
-  {
-    name: "Team Management",
-    href: createPageUrl("TeamManagement"),
-    icon: Users,
-    dataTour: "team-management",
-  },
-  { name: "Roles & Permissions", href: createPageUrl("RolesAndPermissions"), icon: Shield },
-  { name: "API & Webhooks", href: createPageUrl("APIWebhooks"), icon: Zap },
-  { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug, dataTour: "integrations" },
-  { name: "Integration Hub", href: createPageUrl("IntegrationHub"), icon: Plug },
-  { name: "Integrations Admin", href: createPageUrl("IntegrationsAdmin"), icon: Settings },
-  { name: "Deal Sourcer", href: createPageUrl("DealSourcer"), icon: Zap, dataTour: "deal-sourcer" },
-  { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
-  { name: "Documentation", href: createPageUrl("Documentation"), icon: Book },
-  { name: "Billing", href: createPageUrl("Billing"), icon: CreditCard, dataTour: "billing" },
-  { name: "User Settings", href: createPageUrl("UserSettings"), icon: Settings },
-  ];
+];
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -137,30 +102,69 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </div>
       <div className="flex-grow p-4 overflow-y-auto">
-        <nav className="space-y-1">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              onClick={() => setIsSidebarOpen(false)}
-              data-tour={item.dataTour}
-              className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors group ${
-                location.pathname === item.href
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
-              }`}
-            >
-              <item.icon
-                className={`mr-3 h-4 w-4 ${
-                  location.pathname === item.href
-                    ? "text-white"
-                    : "text-gray-400 group-hover:text-white"
-                }`}
-              />
-              {item.name}
-            </Link>
+        <nav className="space-y-6">
+          {navigationGroups.map((group) => (
+            <div key={group.name}>
+              <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                {group.name}
+              </h3>
+              <div className="space-y-1">
+                {group.items.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setIsSidebarOpen(false)}
+                    data-tour={item.dataTour}
+                    className={`flex items-center px-3 py-2 text-sm rounded-lg transition-all group ${
+                      location.pathname === item.href
+                        ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
+                        : item.featured
+                          ? "text-purple-300 hover:bg-gray-700/50 hover:text-white font-medium"
+                          : "text-gray-400 hover:bg-gray-700/50 hover:text-gray-200"
+                    }`}
+                  >
+                    <item.icon
+                      className={`mr-3 h-4 w-4 ${
+                        location.pathname === item.href
+                          ? "text-white"
+                          : item.featured
+                            ? "text-purple-400"
+                            : "text-gray-500 group-hover:text-gray-300"
+                      }`}
+                    />
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
+
+        {/* Utility Nav */}
+        <div className="mt-6 pt-6 border-t border-gray-700">
+          <div className="space-y-1">
+            <Link to={createPageUrl("TeamManagement")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
+              <Users className="mr-3 h-4 w-4" />
+              Team
+            </Link>
+            <Link to={createPageUrl("RolesAndPermissions")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
+              <Shield className="mr-3 h-4 w-4" />
+              Roles
+            </Link>
+            <Link to={createPageUrl("Documentation")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
+              <Book className="mr-3 h-4 w-4" />
+              Docs
+            </Link>
+            <Link to={createPageUrl("Billing")} data-tour="billing" className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
+              <CreditCard className="mr-3 h-4 w-4" />
+              Billing
+            </Link>
+            <Link to={createPageUrl("UserSettings")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
+              <Settings className="mr-3 h-4 w-4" />
+              Settings
+            </Link>
+          </div>
+        </div>
       </div>
       <div className="p-4 border-t border-gray-700">
         {user ? (

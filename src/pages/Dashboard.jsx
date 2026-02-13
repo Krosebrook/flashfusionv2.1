@@ -4,247 +4,140 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  Atom,
-  Palette,
+  Sparkles,
   Zap,
   TrendingUp,
-  Activity,
-  Users,
-  BarChart3,
-  Workflow,
+  ArrowRight,
   Clock,
-  FileText,
+  CheckCircle2,
   Rocket,
-  Plug,
+  FileText,
+  Workflow,
 } from "lucide-react";
-import { format, subDays } from "date-fns";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-import UsageChart from "../components/dashboard/UsageChart";
-import CreditMeter from "../components/shared/CreditMeter";
-import FeatureCard from "../components/shared/FeatureCard";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import WelcomeScreen from "../components/onboarding/WelcomeScreen";
 import InteractiveTour from "../components/onboarding/InteractiveTour";
 
-const StatCard = ({ title, value, icon: Icon, color, trend, subtitle }) => (
-  <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
-    <div className="flex items-start justify-between mb-4">
-      <div className={`p-3 rounded-full bg-${color}-500 bg-opacity-20`}>
-        <Icon className={`w-6 h-6 text-${color}-400`} />
-      </div>
-      {trend && (
-        <div className="flex items-center gap-1 text-sm">
-          <TrendingUp className="w-3 h-3 text-green-400" />
-          <span className="text-green-400 font-medium">{trend}</span>
-        </div>
-      )}
-    </div>
-    <div>
-      <p className="text-sm font-medium text-gray-400">{title}</p>
-      <p className="text-3xl font-bold mt-1">{value}</p>
-      {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
-    </div>
-  </div>
-);
-
-const RecentActivity = ({ activities, isLoading }) => {
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <Skeleton className="w-8 h-8 rounded-full" />
-            <div className="flex-1 space-y-1">
-              <Skeleton className="h-3 w-3/4" />
-              <Skeleton className="h-2 w-1/2" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-3">
-      {activities.map((activity, index) => (
-        <div
-          key={index}
-          className="flex items-center gap-3 p-3 bg-gray-700 rounded-md"
-        >
-          <div className="w-8 h-8 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center">
-            <Activity className="w-4 h-4 text-blue-400" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium">{activity.details}</p>
-            <p className="text-xs text-gray-400">
-              {format(new Date(activity.created_date), "MMM d, h:mm a")}
-            </p>
-          </div>
-          <Badge variant="outline" className="text-xs">
-            {activity.credits_used} credits
-          </Badge>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [usage, setUsage] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [intent, setIntent] = useState("");
   const [recentActivity, setRecentActivity] = useState([]);
-  const [pluginCount, setPluginCount] = useState(0);
-  const [brandKitCount, setBrandKitCount] = useState(0);
-  const [collaborationCount, setCollaborationCount] = useState(0);
-  const [scheduleCount, setScheduleCount] = useState(0);
-  const [workflowCount, setWorkflowCount] = useState(0);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("overview");
-  const [timeRange, setTimeRange] = useState("7days");
+  const [suggestions, setSuggestions] = useState([]);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [userGoal, setUserGoal] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const [
-          currentUser,
-          usageLogs,
-          plugins,
-          brandKits,
-          collaborations,
-          schedules,
-          workflows,
-        ] = await Promise.all([
-          base44.auth.me(),
-          base44.entities.UsageLog.list("-created_date", 100),
-          base44.entities.Plugin.list(),
-          base44.entities.BrandKit.list(),
-          base44.entities.Collaboration.list(),
-          base44.entities.ContentSchedule.list(),
-          base44.entities.Workflow.list(),
-        ]);
-
-        setUser(currentUser);
-
-        // Check onboarding status
-        const profiles = await base44.entities.UserProfile.filter({
-          created_by: currentUser.email,
-        });
-
-        if (profiles.length > 0) {
-          const profile = profiles[0];
-          setUserProfile(profile);
-          if (!profile.tour_completed) {
-            if (profile.onboarding_goal) {
-              setUserGoal(profile.onboarding_goal);
-              setShowTour(true);
-            } else {
-              setShowWelcome(true);
-            }
-          }
-        } else {
-          setShowWelcome(true);
-        }
-        setRecentActivity(usageLogs.slice(0, 10));
-
-        const days =
-          timeRange === "7days" ? 7 : timeRange === "30days" ? 30 : 90;
-        const startDate = subDays(new Date(), days);
-
-        const filteredLogs = usageLogs.filter(
-          (log) => new Date(log.created_date) >= startDate
-        );
-
-        const formattedUsage = filteredLogs.reduce((acc, log) => {
-          const date = format(
-            new Date(log.created_date),
-            days <= 7 ? "MMM d" : "MMM d"
-          );
-          if (!acc[date]) {
-            acc[date] = { date, credits_used: 0, sessions: 0 };
-          }
-          acc[date].credits_used += log.credits_used;
-          acc[date].sessions += 1;
-          return acc;
-        }, {});
-
-        setUsage(Object.values(formattedUsage).reverse());
-        setPluginCount(plugins.length);
-        setBrandKitCount(brandKits.length);
-        setCollaborationCount(collaborations.length);
-        setScheduleCount(
-          schedules.filter((s) => s.status === "scheduled").length
-        );
-        setWorkflowCount(workflows.length);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      }
-      setIsLoading(false);
-    };
     fetchData();
-  }, [timeRange]);
+  }, []);
 
-  const calculateStats = () => {
-    const totalCreditsUsed = usage.reduce(
-      (sum, item) => sum + item.credits_used,
-      0
-    );
-    const totalSessions = usage.reduce((sum, item) => sum + item.sessions, 0);
-    const avgCreditsPerDay =
-      usage.length > 0 ? Math.round(totalCreditsUsed / usage.length) : 0;
+  const fetchData = async () => {
+    try {
+      const [currentUser, usageLogs, workflows, schedules] = await Promise.all([
+        base44.auth.me(),
+        base44.entities.UsageLog.list("-created_date", 5),
+        base44.entities.Workflow.list(),
+        base44.entities.ContentSchedule.filter({ status: "scheduled" }),
+      ]);
 
-    return {
-      totalCreditsUsed,
-      totalSessions,
-      avgCreditsPerDay,
-      creditsRemaining: user?.credits_remaining || 0,
-      currentPlan: user?.plan || "Free",
-    };
+      setUser(currentUser);
+      setRecentActivity(usageLogs);
+
+      // Check onboarding
+      const profiles = await base44.entities.UserProfile.filter({
+        created_by: currentUser.email,
+      });
+      if (profiles.length > 0) {
+        const profile = profiles[0];
+        if (!profile.tour_completed) {
+          if (profile.onboarding_goal) {
+            setUserGoal(profile.onboarding_goal);
+            setShowTour(true);
+          } else {
+            setShowWelcome(true);
+          }
+        }
+      } else {
+        setShowWelcome(true);
+      }
+
+      // Generate contextual suggestions
+      const suggestionsData = [];
+      if (usageLogs.length === 0) {
+        suggestionsData.push({
+          action: "Try Universal Generator",
+          description: "Generate your first AI-powered application",
+          href: createPageUrl("UniversalGenerator"),
+          icon: Rocket,
+          color: "purple",
+        });
+      }
+      if (workflows.length === 0) {
+        suggestionsData.push({
+          action: "Create a workflow",
+          description: "Automate repetitive tasks",
+          href: createPageUrl("AdvancedWorkflows"),
+          icon: Workflow,
+          color: "blue",
+        });
+      }
+      if (schedules.length > 0) {
+        suggestionsData.push({
+          action: "Review scheduled content",
+          description: `${schedules.length} posts scheduled`,
+          href: createPageUrl("ContentScheduling"),
+          icon: Clock,
+          color: "green",
+        });
+      }
+      setSuggestions(suggestionsData);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    }
+    setLoading(false);
   };
 
-  const stats = calculateStats();
+  const handleIntentSubmit = (e) => {
+    e.preventDefault();
+    if (!intent.trim()) return;
+    
+    // Route to appropriate tool based on intent
+    if (intent.toLowerCase().includes("content") || intent.toLowerCase().includes("post")) {
+      window.location.href = createPageUrl("ContentCreator");
+    } else if (intent.toLowerCase().includes("workflow") || intent.toLowerCase().includes("automat")) {
+      window.location.href = createPageUrl("AdvancedWorkflows");
+    } else if (intent.toLowerCase().includes("deal") || intent.toLowerCase().includes("invest")) {
+      window.location.href = createPageUrl("DealSourcer");
+    } else {
+      window.location.href = createPageUrl("UniversalGenerator");
+    }
+  };
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="space-y-8">
-        <div>
-          <Skeleton className="h-8 w-64 mb-2" />
-          <Skeleton className="h-4 w-96" />
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading workspace...</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-32" />
-          ))}
-        </div>
-        <Skeleton className="h-96 w-full" />
       </div>
     );
   }
 
-  const handleWelcomeComplete = (goal) => {
-    setUserGoal(goal);
-    setShowWelcome(false);
-    setShowTour(true);
-  };
-
-  const handleTourComplete = () => {
-    setShowTour(false);
-  };
-
   return (
-    <div className="space-y-8" data-tour="dashboard">
+    <div className="spacing-section max-w-5xl mx-auto" data-tour="dashboard">
       {showWelcome && user && (
         <WelcomeScreen
           user={user}
-          onComplete={handleWelcomeComplete}
+          onComplete={(goal) => {
+            setUserGoal(goal);
+            setShowWelcome(false);
+            setShowTour(true);
+          }}
           onStartTour={() => setShowTour(true)}
         />
       )}
@@ -253,273 +146,182 @@ export default function Dashboard() {
         <InteractiveTour
           goal={userGoal}
           userEmail={user.email}
-          onComplete={handleTourComplete}
+          onComplete={() => setShowTour(false)}
         />
       )}
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Welcome back, {user?.full_name?.split(" ")[0] || "User"}
-          </h1>
-          <p className="text-gray-400 mt-1">
-            Here's what's happening with your AI-powered workspace today.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <select
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value)}
-            className="bg-gray-800 border border-gray-600 rounded-md px-3 py-2 text-sm"
-          >
-            <option value="7days">Last 7 days</option>
-            <option value="30days">Last 30 days</option>
-            <option value="90days">Last 90 days</option>
-          </select>
+      {/* Hero Action Zone */}
+      <div className="surface-elevated p-8 text-center">
+        <h1 className="text-hero mb-3">
+          What do you want to create today?
+        </h1>
+        <p className="text-body mb-6">
+          Describe your idea and we'll orchestrate the right AI agents
+        </p>
+        <form onSubmit={handleIntentSubmit} className="max-w-2xl mx-auto">
+          <div className="relative">
+            <Input
+              value={intent}
+              onChange={(e) => setIntent(e.target.value)}
+              placeholder="e.g., Build a CRM for real estate agents with lead tracking..."
+              className="h-14 pl-5 pr-32 text-base bg-[hsl(var(--surface-primary))] border-[hsl(var(--border-interactive))] focus:border-[hsl(var(--action-primary))]"
+            />
+            <Button
+              type="submit"
+              disabled={!intent.trim()}
+              className="absolute right-2 top-2 btn-action-primary h-10"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generate
+            </Button>
+          </div>
+        </form>
+        <div className="flex justify-center gap-3 mt-4 text-sm text-gray-400">
+          <span>Try:</span>
+          <button onClick={() => setIntent("Create a landing page")} className="text-purple-400 hover:text-purple-300">
+            Landing page
+          </button>
+          <span>•</span>
+          <button onClick={() => setIntent("Write social media content")} className="text-purple-400 hover:text-purple-300">
+            Social content
+          </button>
+          <span>•</span>
+          <button onClick={() => setIntent("Automate workflow")} className="text-purple-400 hover:text-purple-300">
+            Workflow
+          </button>
         </div>
       </div>
 
-      {stats.creditsRemaining < 100 && (
-        <div className="bg-yellow-900/20 border border-yellow-700 text-yellow-300 p-4 rounded-lg">
+      {/* Context Bar */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="surface-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium">Running Low on Credits</p>
-              <p className="text-sm">
-                You have {stats.creditsRemaining} credits remaining.
+              <p className="text-caption">Available Credits</p>
+              <p className="text-2xl font-bold text-[hsl(var(--text-primary))]">
+                {user?.credits_remaining?.toLocaleString() || 0}
               </p>
             </div>
-            <Link to={createPageUrl("Billing")}>
-              <Button variant="outline" size="sm">
-                Upgrade Plan
-              </Button>
+            <Zap className="w-8 h-8 text-yellow-400" />
+          </div>
+          {user?.credits_remaining < 100 && (
+            <Link to={createPageUrl("Billing")} className="text-xs text-yellow-400 hover:text-yellow-300 mt-2 inline-block">
+              Add more →
             </Link>
+          )}
+        </div>
+
+        <div className="surface-card p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-caption">Active Workflows</p>
+              <p className="text-2xl font-bold text-[hsl(var(--text-primary))]">
+                {suggestions.find(s => s.icon === Workflow) ? "0" : "3"}
+              </p>
+            </div>
+            <Workflow className="w-8 h-8 text-blue-400" />
+          </div>
+        </div>
+
+        <div className="surface-card p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-caption">This Week</p>
+              <p className="text-2xl font-bold text-[hsl(var(--text-primary))]">
+                {recentActivity.length}
+              </p>
+              <p className="text-xs text-gray-500">generations</p>
+            </div>
+            <TrendingUp className="w-8 h-8 text-green-400" />
+          </div>
+        </div>
+      </div>
+
+      {/* Smart Suggestions */}
+      {suggestions.length > 0 && (
+        <div>
+          <h2 className="text-heading mb-4">Suggested Next Actions</h2>
+          <div className="grid gap-3">
+            {suggestions.map((suggestion, idx) => (
+              <Link key={idx} to={suggestion.href}>
+                <div className="surface-card-interactive p-4 group">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-lg bg-${suggestion.color}-500/20 flex items-center justify-center`}>
+                        <suggestion.icon className={`w-5 h-5 text-${suggestion.color}-400`} />
+                      </div>
+                      <div>
+                        <p className="font-medium text-[hsl(var(--text-primary))]">{suggestion.action}</p>
+                        <p className="text-caption">{suggestion.description}</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-gray-300 group-hover:translate-x-1 transition-all" />
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       )}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-gray-800 mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="usage">Usage Analytics</TabsTrigger>
-          <TabsTrigger value="features">Features</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard
-              title="Credits Remaining"
-              value={stats.creditsRemaining.toLocaleString()}
-              icon={Zap}
-              color="yellow"
-              subtitle={`${stats.currentPlan} plan`}
-            />
-            <StatCard
-              title="Credits Used"
-              value={stats.totalCreditsUsed.toLocaleString()}
-              icon={BarChart3}
-              color="blue"
-              trend={`${timeRange.replace("days", "d")}`}
-              subtitle={`${stats.avgCreditsPerDay}/day avg`}
-            />
-            <StatCard
-              title="AI Sessions"
-              value={stats.totalSessions}
-              icon={Activity}
-              color="green"
-              subtitle="AI generations"
-            />
-            <StatCard
-              title="Active Workflows"
-              value={workflowCount}
-              icon={Workflow}
-              color="purple"
-              subtitle="Orchestrations"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-              <div className="flex items-center gap-3 mb-2">
-                <Users className="w-5 h-5 text-blue-400" />
-                <p className="font-semibold">Collaborations</p>
-              </div>
-              <p className="text-2xl font-bold">{collaborationCount}</p>
-            </div>
-            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-              <div className="flex items-center gap-3 mb-2">
-                <Clock className="w-5 h-5 text-green-400" />
-                <p className="font-semibold">Scheduled Posts</p>
-              </div>
-              <p className="text-2xl font-bold">{scheduleCount}</p>
-            </div>
-
-            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-              <div className="flex items-center gap-3 mb-2">
-                <Palette className="w-5 h-5 text-pink-400" />
-                <p className="font-semibold">Brand Kits</p>
-              </div>
-              <p className="text-2xl font-bold">{brandKitCount}</p>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-            <h2 className="text-xl font-semibold mb-4">Credit Usage</h2>
-            <CreditMeter
-              current={stats.creditsRemaining}
-              max={
-                stats.currentPlan === "Free"
-                  ? 1000
-                  : stats.currentPlan === "Creator"
-                    ? 50000
-                    : 250000
-              }
-            />
-          </div>
-
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <FeatureCard
-                title="Universal Generator"
-                description="Generate complete applications from descriptions"
-                icon={Rocket}
-                href={createPageUrl("UniversalGenerator")}
-                creditCost="Varies"
-                category="Generation"
-                isPopular={true}
-              />
-              <FeatureCard
-                title="Content Creator"
-                description="AI-powered content with scheduling and collaboration"
-                icon={FileText}
-                href={createPageUrl("ContentCreator")}
-                creditCost={50}
-                category="Content"
-              />
-              <FeatureCard
-                title="Deal Sourcer"
-                description="AI-powered deal sourcing and analysis"
-                icon={Zap}
-                href={createPageUrl("DealSourcer")}
-                creditCost="Varies"
-                category="Intelligence"
-              />
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="usage" className="space-y-8">
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Usage Analytics</h2>
-            <UsageChart data={usage} type="area" />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-              <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-              <RecentActivity activities={recentActivity} isLoading={false} />
-            </div>
-
-            <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
-              <h3 className="text-lg font-semibold mb-4">Usage Breakdown</h3>
-              <div className="space-y-4">
-                {[
-                  "FeatureGenerator",
-                  "BrandKitGenerator",
-                  "ContentCreator",
-                  "AgentOrchestration",
-                ].map((feature) => {
-                  const featureUsage = recentActivity.filter(
-                    (a) => a.feature === feature
-                  );
-                  const totalCredits = featureUsage.reduce(
-                    (sum, a) => sum + a.credits_used,
-                    0
-                  );
-                  const percentage =
-                    stats.totalCreditsUsed > 0
-                      ? (totalCredits / stats.totalCreditsUsed) * 100
-                      : 0;
-
-                  return (
-                    <div key={feature}>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium">{feature}</span>
-                        <span className="text-sm text-gray-400">
-                          {totalCredits} credits
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${Math.max(percentage, 2)}%` }}
-                        />
-                      </div>
+      {/* Recent Activity Stream */}
+      {recentActivity.length > 0 && (
+        <div>
+          <h2 className="text-heading mb-4">Recent Activity</h2>
+          <div className="surface-card p-4">
+            <div className="space-y-3">
+              {recentActivity.map((activity, idx) => (
+                <div key={idx} className="flex items-start gap-3 pb-3 border-b border-gray-700 last:border-0 last:pb-0">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mt-1">
+                    <CheckCircle2 className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[hsl(var(--text-primary))] truncate">
+                      {activity.details}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <p className="text-xs text-gray-500">
+                        {new Date(activity.created_date).toLocaleDateString()}
+                      </p>
+                      <Badge variant="outline" className="text-xs">
+                        {activity.credits_used} credits
+                      </Badge>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </TabsContent>
+        </div>
+      )}
 
-        <TabsContent value="features" className="space-y-8">
-          <div>
-            <h2 className="text-xl font-semibold mb-4">All Features</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <FeatureCard
-                title="Workflows"
-                description="Advanced workflow automation and management"
-                icon={Workflow}
-                href={createPageUrl("AdvancedWorkflows")}
-                creditCost="Variable"
-                category="Automation"
-                isPopular={true}
-              />
-              <FeatureCard
-                title="Collaboration Hub"
-                description="Real-time team collaboration on projects and content"
-                icon={Users}
-                href={createPageUrl("Collaboration")}
-                creditCost="Free"
-                category="Teamwork"
-              />
-              <FeatureCard
-                title="Content Scheduling"
-                description="Schedule and auto-publish content across platforms"
-                icon={Clock}
-                href={createPageUrl("ContentScheduling")}
-                creditCost="Free"
-                category="Management"
-              />
-              <FeatureCard
-                title="Integrations"
-                description="Connect your tools and automate workflows"
-                icon={Plug}
-                href={createPageUrl("Integrations")}
-                creditCost="Free"
-                category="Connectivity"
-              />
-              <FeatureCard
-                title="Feature Generator"
-                description="Convert ideas into production-ready code"
-                icon={Atom}
-                href={createPageUrl("FeatureGenerator")}
-                creditCost={50}
-                category="Development"
-              />
-              <FeatureCard
-                title="Brand Kit Generator"
-                description="AI-powered brand identity creation"
-                icon={Palette}
-                href={createPageUrl("BrandKitGenerator")}
-                creditCost={150}
-                category="Design"
-              />
+      {/* Quick Access */}
+      <div>
+        <h2 className="text-heading mb-4">Quick Access</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link to={createPageUrl("UniversalGenerator")}>
+            <div className="surface-card-interactive p-5 text-center group">
+              <Rocket className="w-10 h-10 mx-auto mb-3 text-purple-400 group-hover:scale-110 transition-transform" />
+              <h3 className="font-semibold text-[hsl(var(--text-primary))] mb-1">Universal Generator</h3>
+              <p className="text-xs text-gray-500">Build complete apps</p>
             </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+          </Link>
+          <Link to={createPageUrl("ContentCreator")}>
+            <div className="surface-card-interactive p-5 text-center group">
+              <FileText className="w-10 h-10 mx-auto mb-3 text-blue-400 group-hover:scale-110 transition-transform" />
+              <h3 className="font-semibold text-[hsl(var(--text-primary))] mb-1">Content Studio</h3>
+              <p className="text-xs text-gray-500">AI-powered content</p>
+            </div>
+          </Link>
+          <Link to={createPageUrl("DealSourcer")}>
+            <div className="surface-card-interactive p-5 text-center group">
+              <Zap className="w-10 h-10 mx-auto mb-3 text-teal-400 group-hover:scale-110 transition-transform" />
+              <h3 className="font-semibold text-[hsl(var(--text-primary))] mb-1">Deal Sourcer</h3>
+              <p className="text-xs text-gray-500">Find opportunities</p>
+            </div>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

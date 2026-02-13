@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import APIWebhooks from './pages/APIWebhooks';
 import ActivationDashboard from './pages/ActivationDashboard';
 import AdvancedWorkflows from './pages/AdvancedWorkflows';
 import Analytics from './pages/Analytics';
@@ -81,11 +82,11 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import APIWebhooks from './pages/APIWebhooks';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "APIWebhooks": APIWebhooks,
     "ActivationDashboard": ActivationDashboard,
     "AdvancedWorkflows": AdvancedWorkflows,
     "Analytics": Analytics,
@@ -120,7 +121,6 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "APIWebhooks": APIWebhooks,
 }
 
 export const pagesConfig = {

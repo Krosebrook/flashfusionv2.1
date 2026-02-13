@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Semantic Action Colors */
+    --action-primary: 260 85% 60%; /* Purple for creation */
+    --action-secondary: 220 75% 55%; /* Blue for management */
+    --action-tertiary: 160 70% 50%; /* Teal for analysis */
+    --action-danger: 0 85% 60%; /* Red for destructive */
+    
+    /* Surface Colors */
+    --surface-primary: 220 15% 10%; /* Main background */
+    --surface-secondary: 220 12% 14%; /* Card background */
+    --surface-tertiary: 220 10% 18%; /* Hover/elevated */
+    --surface-interactive: 220 15% 22%; /* Active state */
+    
+    /* Border Colors */
+    --border-default: 220 10% 25%; /* Subtle separation */
+    --border-interactive: 220 30% 35%; /* Hover/focus */
+    --border-accent: 260 85% 60%; /* Primary accent */
+    
+    /* Text Colors */
+    --text-primary: 0 0% 98%;
+    --text-secondary: 220 10% 65%;
+    --text-tertiary: 220 8% 45%;
+    --text-inverse: 220 15% 10%;
+    
+    /* Status Colors */
+    --status-success: 142 76% 36%;
+    --status-warning: 38 92% 50%;
+    --status-error: 0 85% 60%;
+    --status-info: 217 91% 60%;
+    
+    /* Semantic Spacing */
+    --space-tight: 0.25rem; /* 4px - inline badges */
+    --space-compact: 0.5rem; /* 8px - card padding */
+    --space-default: 1rem; /* 16px - component spacing */
+    --space-comfortable: 1.5rem; /* 24px - section spacing */
+    --space-spacious: 2.5rem; /* 40px - page sections */
+    --space-generous: 4rem; /* 64px - hero zones */
+    
+    /* Elevation Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-default: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+}
+
+@layer components {
+  /* Primary Action Button */
+  .btn-action-primary {
+    @apply bg-[hsl(var(--action-primary))] text-white font-medium px-6 py-3 rounded-lg;
+    @apply hover:bg-[hsl(var(--action-primary)/0.9)] transition-colors;
+    @apply shadow-lg shadow-[hsl(var(--action-primary)/0.3)];
+  }
+  
+  /* Surface Cards */
+  .surface-card {
+    @apply bg-[hsl(var(--surface-secondary))] border border-[hsl(var(--border-default))];
+    @apply rounded-xl transition-all;
+  }
+  
+  .surface-card-interactive {
+    @apply surface-card hover:border-[hsl(var(--border-interactive))];
+    @apply hover:shadow-md cursor-pointer;
+  }
+  
+  /* Elevated Card */
+  .surface-elevated {
+    @apply bg-[hsl(var(--surface-tertiary))] border border-[hsl(var(--border-interactive))];
+    @apply rounded-xl shadow-lg;
+  }
+  
+  /* Text Hierarchy */
+  .text-hero {
+    @apply text-4xl font-bold tracking-tight text-[hsl(var(--text-primary))];
+  }
+  
+  .text-heading {
+    @apply text-2xl font-semibold text-[hsl(var(--text-primary))];
+  }
+  
+  .text-subheading {
+    @apply text-lg font-medium text-[hsl(var(--text-primary))];
+  }
+  
+  .text-body {
+    @apply text-base text-[hsl(var(--text-secondary))];
+  }
+  
+  .text-caption {
+    @apply text-sm text-[hsl(var(--text-tertiary))];
+  }
+}
+
+@layer utilities {
+  .spacing-section {
+    @apply space-y-[var(--space-spacious)];
+  }
+  
+  .spacing-comfortable {
+    @apply space-y-[var(--space-comfortable)];
+  }
+  
+  .spacing-default {
+    @apply space-y-[var(--space-default)];
+  }
+}
