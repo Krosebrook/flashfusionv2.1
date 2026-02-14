@@ -525,6 +525,7 @@ export default function UniversalGenerator() {
           </CardContent>
         </Card>
       )}
-    </div>
+      </div>
+    </CreateSuiteLayout>
   );
 }
