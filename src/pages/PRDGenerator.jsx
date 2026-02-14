@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { InvokeLLM } from "@/api/integrations";
 import { base44 } from "@/api/base44Client";
+import CreateSuiteLayout from "../components/layouts/CreateSuiteLayout";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -235,7 +236,8 @@ Generate a production-grade, comprehensive PRD that adheres to current best prac
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <CreateSuiteLayout>
+      <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center">
         <h1 className="text-3xl font-bold flex items-center justify-center gap-3 mb-2">
@@ -452,6 +454,7 @@ Generate a production-grade, comprehensive PRD that adheres to current best prac
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </CreateSuiteLayout>
   );
 }

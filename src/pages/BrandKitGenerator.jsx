@@ -1,10 +1,12 @@
 "use client";
 import SmartBrandKit from "../components/generators/SmartBrandKit";
 import { Palette, Sparkles } from "lucide-react";
+import CreateSuiteLayout from "../components/layouts/CreateSuiteLayout";
 
 export default function BrandKitGenerator() {
   return (
-    <div className="space-y-8">
+    <CreateSuiteLayout>
+      <div className="space-y-8">
       <div className="text-center">
         <h1 className="text-3xl font-bold flex items-center justify-center gap-3 mb-2">
           <Palette className="w-8 h-8 text-purple-400" />
@@ -18,7 +20,8 @@ export default function BrandKitGenerator() {
         </p>
       </div>
 
-      <SmartBrandKit />
-    </div>
+        <SmartBrandKit />
+      </div>
+    </CreateSuiteLayout>
   );
 }
