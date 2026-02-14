@@ -30,6 +30,7 @@ import {
   Play,
   Eye,
 } from "lucide-react";
+import CreateSuiteLayout from "../components/layouts/CreateSuiteLayout";
 
 const projectTypes = {
   web: {
@@ -255,7 +256,8 @@ export default function UniversalGenerator() {
   const selectedType = projectTypes[projectData.type];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <CreateSuiteLayout>
+      <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center">
         <h1 className="text-3xl font-bold flex items-center justify-center gap-3 mb-2">
