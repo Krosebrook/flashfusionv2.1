@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Sparkles, Wand2, TrendingUp, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function AIWorkflowAssistant({ onWorkflowGenerated, currentWorkflow, onOptimizationApplied }) {
+export default function AIWorkflowAssistant({ onWorkflowGenerated, currentWorkflow }) {
   const [description, setDescription] = useState('');
   const [generating, setGenerating] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);

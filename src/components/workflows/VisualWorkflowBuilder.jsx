@@ -15,6 +15,8 @@ import {
 import { Plus, Trash2, Play, Pause, ChevronRight, Settings, Sparkles, Activity } from 'lucide-react';
 import AIWorkflowAssistant from './AIWorkflowAssistant';
 import WorkflowPerformanceInsights from './WorkflowPerformanceInsights';
+import OptimizationBadge from './OptimizationBadge';
+import { toast } from 'sonner';
 
 export default function VisualWorkflowBuilder() {
   const [workflows, setWorkflows] = useState([]);
@@ -24,6 +26,7 @@ export default function VisualWorkflowBuilder() {
   const [newWorkflowName, setNewWorkflowName] = useState('');
   const [agents, setAgents] = useState([]);
   const [activeTab, setActiveTab] = useState('builder');
+  const [showOptimizations, setShowOptimizations] = useState(false);
 
   useEffect(() => {
     fetchWorkflows();
@@ -78,7 +81,7 @@ export default function VisualWorkflowBuilder() {
     }
   };
 
-  const addStep = async () => {
+  const addStep = async (isParallel = false) => {
     if (!selectedWorkflow) return;
 
     const newStep = {
@@ -87,7 +90,9 @@ export default function VisualWorkflowBuilder() {
       agent_name: '',
       order: steps.length,
       config: {},
-      condition: { type: 'none' }
+      condition: { type: 'none' },
+      parallel_group: isParallel ? `group_${Date.now()}` : null,
+      execution_mode: isParallel ? 'parallel' : 'sequential'
     };
 
     const updatedSteps = [...steps, newStep];
@@ -140,16 +145,24 @@ export default function VisualWorkflowBuilder() {
         integrations: [],
         status: 'draft',
         config: generatedWorkflow,
-        execution_history: []
+        execution_history: [],
+        optimization_suggestions: []
       });
 
       setWorkflows([...workflows, workflow]);
       setSelectedWorkflow(workflow);
       setSteps(workflow.steps || []);
       setActiveTab('builder');
+      toast.success('Workflow generated successfully!');
     } catch (err) {
       console.error('Failed to create generated workflow:', err);
+      toast.error('Failed to create workflow');
     }
+  };
+
+  const handleViewOptimizations = () => {
+    setActiveTab('ai-assistant');
+    setShowOptimizations(true);
   };
 
   if (loading) {
@@ -227,8 +240,14 @@ export default function VisualWorkflowBuilder() {
               {/* Workflow Controls */}
               <Card className="bg-gray-800 border-gray-700">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <div>
-                <CardTitle>{selectedWorkflow.name}</CardTitle>
+              <div className="flex-1">
+                <div className="flex items-center gap-3">
+                  <CardTitle>{selectedWorkflow.name}</CardTitle>
+                  <OptimizationBadge 
+                    suggestions={selectedWorkflow.optimization_suggestions}
+                    onClick={handleViewOptimizations}
+                  />
+                </div>
                 <p className="text-sm text-gray-400 mt-1">{selectedWorkflow.description}</p>
               </div>
               <Button
@@ -255,10 +274,16 @@ export default function VisualWorkflowBuilder() {
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle>Workflow Steps</CardTitle>
-              <Button size="sm" onClick={addStep} className="gap-2 bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4" />
-                Add Step
-              </Button>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => addStep(false)} className="gap-2 bg-blue-600 hover:bg-blue-700">
+                  <Plus className="w-4 h-4" />
+                  Add Step
+                </Button>
+                <Button size="sm" onClick={() => addStep(true)} variant="outline" className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add Parallel Step
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {steps.length === 0 ? (
@@ -266,11 +291,20 @@ export default function VisualWorkflowBuilder() {
               ) : (
                 <div className="space-y-3">
                   {steps.map((step, idx) => (
-                    <div key={step.id} className="border border-gray-600 rounded-lg p-4 space-y-3 bg-gray-700">
+                    <div key={step.id} className={`border rounded-lg p-4 space-y-3 ${
+                      step.execution_mode === 'parallel' 
+                        ? 'border-purple-500 bg-purple-900/20' 
+                        : 'border-gray-600 bg-gray-700'
+                    }`}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline">Step {step.order + 1}</Badge>
-                          {idx < steps.length - 1 && <ChevronRight className="w-4 h-4 text-gray-400" />}
+                          {step.execution_mode === 'parallel' && (
+                            <Badge className="bg-purple-600">Parallel</Badge>
+                          )}
+                          {idx < steps.length - 1 && step.execution_mode !== 'parallel' && (
+                            <ChevronRight className="w-4 h-4 text-gray-400" />
+                          )}
                         </div>
                         <Button
                           size="icon"
@@ -282,7 +316,7 @@ export default function VisualWorkflowBuilder() {
                         </Button>
                       </div>
 
-                      <div className="grid gap-3 md:grid-cols-2">
+                      <div className="grid gap-3 md:grid-cols-3">
                         <div>
                           <label className="text-sm font-medium">Select Agent</label>
                           <Select
@@ -309,6 +343,27 @@ export default function VisualWorkflowBuilder() {
                         </div>
 
                         <div>
+                          <label className="text-sm font-medium">Execution Mode</label>
+                          <Select
+                           value={step.execution_mode || 'sequential'}
+                           onValueChange={mode => {
+                             updateStep(step.id, {
+                               execution_mode: mode,
+                               parallel_group: mode === 'parallel' ? step.parallel_group || `group_${Date.now()}` : null
+                             });
+                           }}
+                          >
+                           <SelectTrigger className="mt-1 bg-gray-600 border-gray-500">
+                             <SelectValue />
+                           </SelectTrigger>
+                           <SelectContent>
+                             <SelectItem value="sequential">Sequential</SelectItem>
+                             <SelectItem value="parallel">Parallel</SelectItem>
+                           </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
                           <label className="text-sm font-medium">Condition Type</label>
                           <Select
                            value={step.condition?.type || 'none'}
@@ -330,10 +385,11 @@ export default function VisualWorkflowBuilder() {
                         </div>
                       </div>
 
-                      {step.condition?.type !== 'none' && (
-                        <div className="p-3 bg-blue-900/30 rounded border border-blue-700">
+                      {step.condition?.type === 'if' && (
+                        <div className="p-3 bg-blue-900/30 rounded border border-blue-700 space-y-2">
+                          <label className="text-xs font-medium text-blue-300">If Condition</label>
                           <Input
-                            placeholder="Enter condition (e.g., status === 'success')"
+                            placeholder="e.g., response.status === 'success'"
                             value={step.condition?.condition || ''}
                             onChange={e => {
                               updateStep(step.id, {
@@ -341,6 +397,66 @@ export default function VisualWorkflowBuilder() {
                               });
                             }}
                             className="text-sm bg-gray-600 border-gray-500"
+                          />
+                          <div className="grid grid-cols-2 gap-2 mt-2">
+                            <div>
+                              <label className="text-xs font-medium text-green-300">Then: Next Step</label>
+                              <Input
+                                placeholder="Step ID"
+                                value={step.condition?.then_step || ''}
+                                onChange={e => {
+                                  updateStep(step.id, {
+                                    condition: { ...step.condition, then_step: e.target.value }
+                                  });
+                                }}
+                                className="text-sm bg-gray-600 border-gray-500 mt-1"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-red-300">Else: Next Step</label>
+                              <Input
+                                placeholder="Step ID"
+                                value={step.condition?.else_step || ''}
+                                onChange={e => {
+                                  updateStep(step.id, {
+                                    condition: { ...step.condition, else_step: e.target.value }
+                                  });
+                                }}
+                                className="text-sm bg-gray-600 border-gray-500 mt-1"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {step.condition?.type === 'switch' && (
+                        <div className="p-3 bg-purple-900/30 rounded border border-purple-700 space-y-2">
+                          <label className="text-xs font-medium text-purple-300">Switch Variable</label>
+                          <Input
+                            placeholder="e.g., response.type"
+                            value={step.condition?.switch_variable || ''}
+                            onChange={e => {
+                              updateStep(step.id, {
+                                condition: { ...step.condition, switch_variable: e.target.value }
+                              });
+                            }}
+                            className="text-sm bg-gray-600 border-gray-500"
+                          />
+                          <label className="text-xs font-medium text-purple-300 block mt-2">Cases (JSON)</label>
+                          <textarea
+                            placeholder='{"success": "step_2", "error": "step_3", "default": "step_4"}'
+                            value={step.condition?.cases ? JSON.stringify(step.condition.cases) : ''}
+                            onChange={e => {
+                              try {
+                                const cases = JSON.parse(e.target.value);
+                                updateStep(step.id, {
+                                  condition: { ...step.condition, cases }
+                                });
+                              } catch (err) {
+                                // Invalid JSON, ignore
+                              }
+                            }}
+                            className="w-full text-sm bg-gray-600 border-gray-500 rounded p-2 min-h-[60px] font-mono"
                           />
                         </div>
                       )}
