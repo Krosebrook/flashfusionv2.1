@@ -25,9 +25,11 @@ import {
   Globe,
   ShoppingCart,
   FileText,
+  Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import AIProjectAssistant from "../components/projects/AIProjectAssistant";
 
 const projectTypeIcons = {
   web: Globe,
@@ -108,6 +110,7 @@ export default function ProjectsPage() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [viewMode, setViewMode] = useState("grid");
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -174,12 +177,21 @@ export default function ProjectsPage() {
             Manage your AI-generated applications and content
           </p>
         </div>
-        <Link to={createPageUrl("UniversalGenerator")}>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            New Project
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setShowAIAssistant(true)}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI Assistant
           </Button>
-        </Link>
+          <Link to={createPageUrl("UniversalGenerator")}>
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              New Project
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}
@@ -292,6 +304,15 @@ export default function ProjectsPage() {
           ))}
         </div>
       )}
+
+      <AIProjectAssistant
+        open={showAIAssistant}
+        onClose={() => setShowAIAssistant(false)}
+        onProjectCreated={(project) => {
+          setProjects([project, ...projects]);
+          setShowAIAssistant(false);
+        }}
+      />
     </div>
   );
 }
