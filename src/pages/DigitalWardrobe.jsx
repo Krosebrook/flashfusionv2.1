@@ -10,7 +10,7 @@ export default function DigitalWardrobe() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [activeTab, setActiveTab] = useState("Tops");
-  const [seasonFilter, setSeason<bFilter] = useState(null);
+  const [seasonFilter, setSeasonFilter] = useState(null);
   const [occasionFilter, setOccasionFilter] = useState(null);
 
   const fetchItems = async () => {
@@ -88,7 +88,7 @@ export default function DigitalWardrobe() {
             <span className="text-xs font-semibold uppercase tracking-wider">All</span>
           </button>
           <button
-            onClick={() => setSe seasonFilter(seasonFilter === "Summer" ? null : "Summer")}
+            onClick={() => setSeasonFilter(seasonFilter === "Summer" ? null : "Summer")}
             className={`flex h-8 shrink-0 items-center justify-center gap-2 rounded-full px-4 transition-all ${
               seasonFilter === "Summer" ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
             }`}
