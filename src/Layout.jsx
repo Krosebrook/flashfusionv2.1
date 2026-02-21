@@ -32,6 +32,7 @@ import {
   Smartphone,
   Home,
   ChevronLeft,
+  Package,
 } from "lucide-react";
 
 const navigationGroups = [
