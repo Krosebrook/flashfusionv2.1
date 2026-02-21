@@ -29,6 +29,7 @@ import {
   Book,
   Shield,
   Sparkles,
+  Smartphone,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -150,6 +151,10 @@ export default function Layout({ children, currentPageName }) {
         {/* Utility Nav */}
         <div className="mt-6 pt-6 border-t border-gray-700">
           <div className="space-y-1">
+            <Link to={createPageUrl("MobileDeploymentGuide")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
+              <Smartphone className="mr-3 h-4 w-4" />
+              Mobile Deploy
+            </Link>
             <Link to={createPageUrl("TeamManagement")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
               <Users className="mr-3 h-4 w-4" />
               Team

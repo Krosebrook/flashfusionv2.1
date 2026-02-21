@@ -83,6 +83,7 @@ import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
 import AIAssistant from './pages/AIAssistant';
+import MobileDeploymentGuide from './pages/MobileDeploymentGuide';
 import __Layout from './Layout.jsx';
 
 
@@ -123,6 +124,7 @@ export const PAGES = {
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
     "AIAssistant": AIAssistant,
+    "MobileDeploymentGuide": MobileDeploymentGuide,
 }
 
 export const pagesConfig = {
