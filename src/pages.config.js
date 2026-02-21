@@ -62,6 +62,7 @@ import DealSourcer from './pages/DealSourcer';
 import Documentation from './pages/Documentation';
 import EcommerceSuite from './pages/EcommerceSuite';
 import FeatureGenerator from './pages/FeatureGenerator';
+import FlashFusionDemo from './pages/FlashFusionDemo';
 import Home from './pages/Home';
 import IntegrationHub from './pages/IntegrationHub';
 import Integrations from './pages/Integrations';
@@ -84,7 +85,7 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import FlashFusionDemo from './pages/FlashFusionDemo';
+import StyleQuiz from './pages/StyleQuiz';
 import __Layout from './Layout.jsx';
 
 
@@ -104,6 +105,7 @@ export const PAGES = {
     "Documentation": Documentation,
     "EcommerceSuite": EcommerceSuite,
     "FeatureGenerator": FeatureGenerator,
+    "FlashFusionDemo": FlashFusionDemo,
     "Home": Home,
     "IntegrationHub": IntegrationHub,
     "Integrations": Integrations,
@@ -126,7 +128,7 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "FlashFusionDemo": FlashFusionDemo,
+    "StyleQuiz": StyleQuiz,
 }
 
 export const pagesConfig = {
