@@ -27,6 +27,9 @@ import EcommerceAnalytics from "../components/ecommerce/EcommerceAnalytics";
 import CampaignManager from "../components/ecommerce/marketing/CampaignManager";
 import AbandonedCartManager from "../components/ecommerce/marketing/AbandonedCartManager";
 import CustomerList from "../components/ecommerce/customers/CustomerList";
+import ProductVariantsManager from "../components/ecommerce/ProductVariantsManager";
+import BulkProductEditor from "../components/ecommerce/BulkProductEditor";
+import ProductReviewsManager from "../components/ecommerce/ProductReviewsManager";
 
 const platforms = {
   Shopify: { icon: ShoppingCart, color: "text-green-400" },
@@ -44,6 +47,8 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
   const [showInventory, setShowInventory] = useState(false);
   const [showDescGenerator, setShowDescGenerator] = useState(false);
   const [showImageGenerator, setShowImageGenerator] = useState(false);
+  const [showVariants, setShowVariants] = useState(false);
+  const [showReviews, setShowReviews] = useState(false);
 
   const isLowStock =
     product.inventory !== undefined &&
@@ -128,16 +133,18 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
         )}
 
         <div className="flex flex-col gap-2 pt-2">
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 text-gray-200"
+              className="text-gray-200"
               onClick={() => {
                 setShowImageGenerator(!showImageGenerator);
                 setShowDescGenerator(false);
                 setShowPublisher(false);
                 setShowInventory(false);
+                setShowVariants(false);
+                setShowReviews(false);
               }}
             >
               <ImageIcon className="w-3 h-3 mr-2" />
@@ -146,28 +153,30 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 text-gray-200"
+              className="text-gray-200"
               onClick={() => {
                 setShowDescGenerator(!showDescGenerator);
                 setShowImageGenerator(false);
                 setShowPublisher(false);
                 setShowInventory(false);
+                setShowVariants(false);
+                setShowReviews(false);
               }}
             >
               <Sparkles className="w-3 h-3 mr-2" />
               {showDescGenerator ? "Hide" : "Desc"}
             </Button>
-          </div>
-          <div className="flex gap-2">
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 text-gray-200"
+              className="text-gray-200"
               onClick={() => {
                 setShowPublisher(!showPublisher);
                 setShowInventory(false);
                 setShowDescGenerator(false);
                 setShowImageGenerator(false);
+                setShowVariants(false);
+                setShowReviews(false);
               }}
             >
               <Share2 className="w-3 h-3 mr-2" />
@@ -176,16 +185,50 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 text-gray-200"
+              className="text-gray-200"
               onClick={() => {
                 setShowInventory(!showInventory);
                 setShowPublisher(false);
                 setShowDescGenerator(false);
                 setShowImageGenerator(false);
+                setShowVariants(false);
+                setShowReviews(false);
               }}
             >
               <Package className="w-3 h-3 mr-2" />
-              {showInventory ? "Hide" : "Inventory"}
+              {showInventory ? "Hide" : "Stock"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-gray-200"
+              onClick={() => {
+                setShowVariants(!showVariants);
+                setShowPublisher(false);
+                setShowDescGenerator(false);
+                setShowImageGenerator(false);
+                setShowInventory(false);
+                setShowReviews(false);
+              }}
+            >
+              <Package className="w-3 h-3 mr-2" />
+              {showVariants ? "Hide" : "Variants"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-gray-200"
+              onClick={() => {
+                setShowReviews(!showReviews);
+                setShowPublisher(false);
+                setShowDescGenerator(false);
+                setShowImageGenerator(false);
+                setShowInventory(false);
+                setShowVariants(false);
+              }}
+            >
+              <Sparkles className="w-3 h-3 mr-2" />
+              {showReviews ? "Hide" : "Reviews"}
             </Button>
           </div>
         </div>
@@ -251,6 +294,23 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
                 onRefresh?.();
               }}
             />
+          </div>
+        )}
+
+        {showVariants && (
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <ProductVariantsManager
+              product={product}
+              onUpdate={async () => {
+                onRefresh?.();
+              }}
+            />
+          </div>
+        )}
+
+        {showReviews && (
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <ProductReviewsManager product={product} />
           </div>
         )}
       </div>
@@ -347,6 +407,7 @@ export default function EcommerceSuite() {
           <TabsTrigger value="products">
             Products ({products.length})
           </TabsTrigger>
+          <TabsTrigger value="bulk-edit">Bulk Edit</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
           <TabsTrigger value="customers">Customers</TabsTrigger>
           <TabsTrigger value="marketing">Marketing</TabsTrigger>
@@ -399,6 +460,10 @@ export default function EcommerceSuite() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="bulk-edit" className="space-y-6">
+          <BulkProductEditor products={products} onUpdate={fetchData} />
         </TabsContent>
 
         <TabsContent value="generate" className="space-y-6">
