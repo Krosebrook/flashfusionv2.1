@@ -26,6 +26,7 @@ import SalesForecast from "../components/ecommerce/SalesForecast";
 import EcommerceAnalytics from "../components/ecommerce/EcommerceAnalytics";
 import CampaignManager from "../components/ecommerce/marketing/CampaignManager";
 import AbandonedCartManager from "../components/ecommerce/marketing/AbandonedCartManager";
+import CustomerList from "../components/ecommerce/customers/CustomerList";
 
 const platforms = {
   Shopify: { icon: ShoppingCart, color: "text-green-400" },
@@ -347,6 +348,7 @@ export default function EcommerceSuite() {
             Products ({products.length})
           </TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="customers">Customers</TabsTrigger>
           <TabsTrigger value="marketing">Marketing</TabsTrigger>
           <TabsTrigger value="abandoned">Abandoned Carts</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -421,6 +423,10 @@ export default function EcommerceSuite() {
 
         <TabsContent value="orders" className="space-y-6">
           <OrderManager />
+        </TabsContent>
+
+        <TabsContent value="customers" className="space-y-6">
+          <CustomerList />
         </TabsContent>
 
         <TabsContent value="marketing" className="space-y-6">
