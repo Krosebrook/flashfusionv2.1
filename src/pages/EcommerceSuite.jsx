@@ -23,6 +23,7 @@ import AIDescriptionGenerator from "../components/ecommerce/AIDescriptionGenerat
 import AIImageGenerator from "../components/ecommerce/AIImageGenerator";
 import OrderManager from "../components/ecommerce/OrderManager";
 import SalesForecast from "../components/ecommerce/SalesForecast";
+import EcommerceAnalytics from "../components/ecommerce/EcommerceAnalytics";
 
 const platforms = {
   Shopify: { icon: ShoppingCart, color: "text-green-400" },
@@ -344,6 +345,7 @@ export default function EcommerceSuite() {
             Products ({products.length})
           </TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="forecast">Sales Forecast</TabsTrigger>
           <TabsTrigger value="generate">AI Generator</TabsTrigger>
           <TabsTrigger value="bulk">Bulk Import</TabsTrigger>
@@ -415,6 +417,10 @@ export default function EcommerceSuite() {
 
         <TabsContent value="orders" className="space-y-6">
           <OrderManager />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <EcommerceAnalytics />
         </TabsContent>
 
         <TabsContent value="forecast" className="space-y-6">
