@@ -1,7 +1,7 @@
 const UserNotRegisteredError = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-white to-slate-50">
-      <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg border border-slate-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[hsl(var(--surface-primary))]">
+      <div className="max-w-md w-full p-8 bg-[hsl(var(--surface-secondary))] rounded-lg shadow-lg border border-[hsl(var(--border-default))]">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 mb-6 rounded-full bg-orange-100">
             <svg
@@ -18,14 +18,14 @@ const UserNotRegisteredError = () => {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">
+          <h1 className="text-3xl font-bold text-[hsl(var(--text-primary))] mb-4">
             Access Restricted
           </h1>
-          <p className="text-slate-600 mb-8">
+          <p className="text-[hsl(var(--text-secondary))] mb-8">
             You are not registered to use this application. Please contact the
             app administrator to request access.
           </p>
-          <div className="p-4 bg-slate-50 rounded-md text-sm text-slate-600">
+          <div className="p-4 bg-[hsl(var(--surface-tertiary))] rounded-md text-sm text-[hsl(var(--text-secondary))]">
             <p>If you believe this is an error, you can:</p>
             <ul className="list-disc list-inside mt-2 space-y-1">
               <li>Verify you are logged in with the correct account</li>

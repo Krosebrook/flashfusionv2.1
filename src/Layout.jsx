@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-// Fixed: Import base44 client instead of non-existent @/entities/User
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Atom,
@@ -30,6 +30,8 @@ import {
   Shield,
   Sparkles,
   Smartphone,
+  Home,
+  ChevronLeft,
 } from "lucide-react";
 
 const navigationGroups = [
@@ -81,8 +83,11 @@ const navigationGroups = [
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const isRootDashboard = location.pathname === '/' || location.pathname === '/Dashboard';
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -222,7 +227,15 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-gray-900 text-white font-sans">
       {/* Mobile header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800 safe-top">
+        {!isRootDashboard && (
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-lg hover:bg-gray-700 transition-colors no-select"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+        )}
         <Link
           to={createPageUrl("Dashboard")}
           className="flex items-center gap-2"
@@ -236,7 +249,7 @@ export default function Layout({ children, currentPageName }) {
         </Link>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+          className="p-2 rounded-lg hover:bg-gray-700 transition-colors no-select"
         >
           <Menu className="h-6 w-6" />
         </button>
@@ -264,11 +277,71 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </div>
 
-      <main className="md:pl-64 flex flex-col flex-1">
+      <main className="md:pl-64 flex flex-col flex-1 pb-20 md:pb-0">
         <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
-          {children}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
-    </div>
-  );
-}
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 safe-bottom z-50">
+        <div className="flex items-center justify-around h-16 px-2">
+          <Link
+            to={createPageUrl("Dashboard")}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
+              location.pathname === '/' || location.pathname === '/Dashboard'
+                ? 'text-purple-400'
+                : 'text-gray-400'
+            }`}
+          >
+            <Home className="h-5 w-5 mb-1" />
+            <span className="text-xs">Home</span>
+          </Link>
+          <Link
+            to={createPageUrl("UniversalGenerator")}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
+              location.pathname === '/UniversalGenerator'
+                ? 'text-purple-400'
+                : 'text-gray-400'
+            }`}
+          >
+            <Rocket className="h-5 w-5 mb-1" />
+            <span className="text-xs">Create</span>
+          </Link>
+          <Link
+            to={createPageUrl("Projects")}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
+              location.pathname === '/Projects'
+                ? 'text-purple-400'
+                : 'text-gray-400'
+            }`}
+          >
+            <FolderOpen className="h-5 w-5 mb-1" />
+            <span className="text-xs">Manage</span>
+          </Link>
+          <Link
+            to={createPageUrl("Analytics")}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
+              location.pathname === '/Analytics'
+                ? 'text-purple-400'
+                : 'text-gray-400'
+            }`}
+          >
+            <BarChart3 className="h-5 w-5 mb-1" />
+            <span className="text-xs">Analytics</span>
+          </Link>
+        </div>
+      </nav>
+      </div>
+      );
+      }

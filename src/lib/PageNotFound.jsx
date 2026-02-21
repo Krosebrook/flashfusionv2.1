@@ -19,23 +19,23 @@ export default function PageNotFound({}) {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-[hsl(var(--surface-primary))]">
       <div className="max-w-md w-full">
         <div className="text-center space-y-6">
           {/* 404 Error Code */}
           <div className="space-y-2">
-            <h1 className="text-7xl font-light text-slate-300">404</h1>
-            <div className="h-0.5 w-16 bg-slate-200 mx-auto"></div>
+            <h1 className="text-7xl font-light text-[hsl(var(--text-tertiary))]">404</h1>
+            <div className="h-0.5 w-16 bg-[hsl(var(--border-default))] mx-auto"></div>
           </div>
 
           {/* Main Message */}
           <div className="space-y-3">
-            <h2 className="text-2xl font-medium text-slate-800">
+            <h2 className="text-2xl font-medium text-[hsl(var(--text-primary))]">
               Page Not Found
             </h2>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
               The page{" "}
-              <span className="font-medium text-slate-700">"{pageName}"</span>{" "}
+              <span className="font-medium text-[hsl(var(--text-primary))]">"{pageName}"</span>{" "}
               could not be found in this application.
             </p>
           </div>
@@ -44,16 +44,16 @@ export default function PageNotFound({}) {
           {isFetched &&
             authData.isAuthenticated &&
             authData.user?.role === "admin" && (
-              <div className="mt-8 p-4 bg-slate-100 rounded-lg border border-slate-200">
+              <div className="mt-8 p-4 bg-[hsl(var(--surface-secondary))] rounded-lg border border-[hsl(var(--border-default))]">
                 <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0 w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center mt-0.5">
                     <div className="w-2 h-2 rounded-full bg-orange-400"></div>
                   </div>
                   <div className="text-left space-y-1">
-                    <p className="text-sm font-medium text-slate-700">
+                    <p className="text-sm font-medium text-[hsl(var(--text-primary))]">
                       Admin Note
                     </p>
-                    <p className="text-sm text-slate-600 leading-relaxed">
+                    <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
                       This could mean that the AI hasn't implemented this page
                       yet. Ask it to implement it in the chat.
                     </p>
@@ -66,7 +66,7 @@ export default function PageNotFound({}) {
           <div className="pt-6">
             <button
               onClick={() => (window.location.href = "/")}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-[hsl(var(--text-primary))] bg-[hsl(var(--surface-secondary))] border border-[hsl(var(--border-default))] rounded-lg hover:bg-[hsl(var(--surface-tertiary))] hover:border-[hsl(var(--border-interactive))] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--action-primary))]"
             >
               <svg
                 className="w-4 h-4 mr-2"
