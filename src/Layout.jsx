@@ -28,9 +28,16 @@ import {
   Zap,
   Book,
   Shield,
+  Sparkles,
 } from "lucide-react";
 
 const navigationGroups = [
+  {
+    name: "AI ASSISTANT",
+    items: [
+      { name: "AI Assistant", href: createPageUrl("AIAssistant"), icon: Sparkles, dataTour: "ai-assistant", featured: true },
+    ]
+  },
   {
     name: "CREATE",
     items: [
