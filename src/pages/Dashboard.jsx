@@ -151,6 +151,9 @@ export default function Dashboard() {
         />
       )}
 
+      {/* Setup Checklist */}
+      {user && <SetupChecklist user={user} />}
+
       {/* Hero Action Zone */}
       <div className="surface-elevated p-8 text-center">
         <h1 className="text-hero mb-3">
