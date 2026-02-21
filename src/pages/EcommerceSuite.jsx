@@ -24,6 +24,8 @@ import AIImageGenerator from "../components/ecommerce/AIImageGenerator";
 import OrderManager from "../components/ecommerce/OrderManager";
 import SalesForecast from "../components/ecommerce/SalesForecast";
 import EcommerceAnalytics from "../components/ecommerce/EcommerceAnalytics";
+import CampaignManager from "../components/ecommerce/marketing/CampaignManager";
+import AbandonedCartManager from "../components/ecommerce/marketing/AbandonedCartManager";
 
 const platforms = {
   Shopify: { icon: ShoppingCart, color: "text-green-400" },
@@ -345,6 +347,8 @@ export default function EcommerceSuite() {
             Products ({products.length})
           </TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="marketing">Marketing</TabsTrigger>
+          <TabsTrigger value="abandoned">Abandoned Carts</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="forecast">Sales Forecast</TabsTrigger>
           <TabsTrigger value="generate">AI Generator</TabsTrigger>
@@ -417,6 +421,14 @@ export default function EcommerceSuite() {
 
         <TabsContent value="orders" className="space-y-6">
           <OrderManager />
+        </TabsContent>
+
+        <TabsContent value="marketing" className="space-y-6">
+          <CampaignManager />
+        </TabsContent>
+
+        <TabsContent value="abandoned" className="space-y-6">
+          <AbandonedCartManager />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
