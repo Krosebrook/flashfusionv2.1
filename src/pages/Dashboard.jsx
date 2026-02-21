@@ -4,33 +4,32 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  Sparkles,
-  Zap,
+  ShoppingCart,
+  Package,
+  Users,
+  DollarSign,
   TrendingUp,
   ArrowRight,
-  Clock,
-  CheckCircle2,
-  Rocket,
-  FileText,
-  Workflow,
+  Sparkles,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import WelcomeScreen from "../components/onboarding/WelcomeScreen";
-import InteractiveTour from "../components/onboarding/InteractiveTour";
-import SetupChecklist from "../components/onboarding/SetupChecklist";
+import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [intent, setIntent] = useState("");
-  const [recentActivity, setRecentActivity] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
-  const [showWelcome, setShowWelcome] = useState(false);
-  const [showTour, setShowTour] = useState(false);
-  const [userGoal, setUserGoal] = useState(null);
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    totalOrders: 0,
+    totalCustomers: 0,
+    revenue: 0,
+    lowStock: 0,
+    pendingOrders: 0,
+  });
+  const [recentOrders, setRecentOrders] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -38,293 +37,259 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const [currentUser, usageLogs, workflows, schedules] = await Promise.all([
+      const [currentUser, products, orders, customers] = await Promise.all([
         base44.auth.me(),
-        base44.entities.UsageLog.list("-created_date", 5),
-        base44.entities.Workflow.list(),
-        base44.entities.ContentSchedule.filter({ status: "scheduled" }),
+        base44.entities.EcommerceProduct.list(),
+        base44.entities.Order.list("-created_date", 5),
+        base44.entities.CustomerProfile.list(),
       ]);
 
       setUser(currentUser);
-      setRecentActivity(usageLogs);
+      setRecentOrders(orders);
 
-      // Check onboarding
-      const profiles = await base44.entities.UserProfile.filter({
-        created_by: currentUser.email,
+      const revenue = orders
+        .filter((o) => o.payment_status === "paid")
+        .reduce((sum, o) => sum + (o.total || 0), 0);
+
+      const lowStock = products.filter(
+        (p) => p.inventory < (p.reorder_point || 10)
+      ).length;
+
+      const pendingOrders = orders.filter((o) => o.status === "pending").length;
+
+      setStats({
+        totalProducts: products.length,
+        totalOrders: orders.length,
+        totalCustomers: customers.length,
+        revenue,
+        lowStock,
+        pendingOrders,
       });
-      if (profiles.length > 0) {
-        const profile = profiles[0];
-        if (!profile.tour_completed) {
-          if (profile.onboarding_goal) {
-            setUserGoal(profile.onboarding_goal);
-            setShowTour(true);
-          } else {
-            setShowWelcome(true);
-          }
-        }
-      } else {
-        setShowWelcome(true);
-      }
-
-      // Generate contextual suggestions
-      const suggestionsData = [];
-      if (usageLogs.length === 0) {
-        suggestionsData.push({
-          action: "Try Universal Generator",
-          description: "Generate your first AI-powered application",
-          href: createPageUrl("UniversalGenerator"),
-          icon: Rocket,
-          color: "purple",
-        });
-      }
-      if (workflows.length === 0) {
-        suggestionsData.push({
-          action: "Create a workflow",
-          description: "Automate repetitive tasks",
-          href: createPageUrl("AdvancedWorkflows"),
-          icon: Workflow,
-          color: "blue",
-        });
-      }
-      if (schedules.length > 0) {
-        suggestionsData.push({
-          action: "Review scheduled content",
-          description: `${schedules.length} posts scheduled`,
-          href: createPageUrl("ContentScheduling"),
-          icon: Clock,
-          color: "green",
-        });
-      }
-      setSuggestions(suggestionsData);
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     }
     setLoading(false);
   };
 
-  const handleIntentSubmit = (e) => {
-    e.preventDefault();
-    if (!intent.trim()) return;
-    
-    // Route to appropriate tool based on intent
-    if (intent.toLowerCase().includes("content") || intent.toLowerCase().includes("post")) {
-      window.location.href = createPageUrl("ContentCreator");
-    } else if (intent.toLowerCase().includes("workflow") || intent.toLowerCase().includes("automat")) {
-      window.location.href = createPageUrl("AdvancedWorkflows");
-    } else if (intent.toLowerCase().includes("deal") || intent.toLowerCase().includes("invest")) {
-      window.location.href = createPageUrl("DealSourcer");
-    } else {
-      window.location.href = createPageUrl("UniversalGenerator");
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading workspace...</p>
+          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading store...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="spacing-section max-w-5xl mx-auto" data-tour="dashboard">
-      {showWelcome && user && (
-        <WelcomeScreen
-          user={user}
-          onComplete={(goal) => {
-            setUserGoal(goal);
-            setShowWelcome(false);
-            setShowTour(true);
-          }}
-          onStartTour={() => setShowTour(true)}
-        />
-      )}
-
-      {showTour && userGoal && user && (
-        <InteractiveTour
-          goal={userGoal}
-          userEmail={user.email}
-          onComplete={() => setShowTour(false)}
-        />
-      )}
-
-      {/* Setup Checklist */}
-      {user && <SetupChecklist user={user} />}
-
-      {/* Hero Action Zone */}
-      <div className="surface-elevated p-8 text-center">
-        <h1 className="text-hero mb-3">
-          What do you want to create today?
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Welcome */}
+      <div>
+        <h1 className="text-3xl font-bold mb-2">
+          Welcome back, {user?.full_name?.split(" ")[0] || "there"}!
         </h1>
-        <p className="text-body mb-6">
-          Describe your idea and we'll orchestrate the right AI agents
-        </p>
-        <form onSubmit={handleIntentSubmit} className="max-w-2xl mx-auto">
-          <div className="relative">
-            <Input
-              value={intent}
-              onChange={(e) => setIntent(e.target.value)}
-              placeholder="e.g., Build a CRM for real estate agents with lead tracking..."
-              className="h-14 pl-5 pr-32 text-base bg-[hsl(var(--surface-primary))] border-[hsl(var(--border-interactive))] focus:border-[hsl(var(--action-primary))]"
-            />
-            <Button
-              type="submit"
-              disabled={!intent.trim()}
-              className="absolute right-2 top-2 btn-action-primary h-10"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Generate
-            </Button>
-          </div>
-        </form>
-        <div className="flex justify-center gap-3 mt-4 text-sm text-gray-400">
-          <span>Try:</span>
-          <button onClick={() => setIntent("Create a landing page")} className="text-purple-400 hover:text-purple-300">
-            Landing page
-          </button>
-          <span>•</span>
-          <button onClick={() => setIntent("Write social media content")} className="text-purple-400 hover:text-purple-300">
-            Social content
-          </button>
-          <span>•</span>
-          <button onClick={() => setIntent("Automate workflow")} className="text-purple-400 hover:text-purple-300">
-            Workflow
-          </button>
-        </div>
+        <p className="text-gray-400">Here's what's happening with your store today</p>
       </div>
 
-      {/* Context Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="surface-card p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-caption">Available Credits</p>
-              <p className="text-2xl font-bold text-[hsl(var(--text-primary))]">
-                {user?.credits_remaining?.toLocaleString() || 0}
-              </p>
-            </div>
-            <Zap className="w-8 h-8 text-yellow-400" />
+      {/* Key Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="bg-gray-800 border-gray-700 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <DollarSign className="w-5 h-5 text-green-400" />
+            <span className="text-sm text-gray-400">Revenue</span>
           </div>
-          {user?.credits_remaining < 100 && (
-            <Link to={createPageUrl("Billing")} className="text-xs text-yellow-400 hover:text-yellow-300 mt-2 inline-block">
-              Add more →
-            </Link>
+          <div className="text-2xl font-bold text-green-400">
+            ${stats.revenue.toFixed(2)}
+          </div>
+        </Card>
+
+        <Card className="bg-gray-800 border-gray-700 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Package className="w-5 h-5 text-blue-400" />
+            <span className="text-sm text-gray-400">Orders</span>
+          </div>
+          <div className="text-2xl font-bold text-blue-400">
+            {stats.totalOrders}
+          </div>
+        </Card>
+
+        <Card className="bg-gray-800 border-gray-700 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <ShoppingCart className="w-5 h-5 text-purple-400" />
+            <span className="text-sm text-gray-400">Products</span>
+          </div>
+          <div className="text-2xl font-bold text-purple-400">
+            {stats.totalProducts}
+          </div>
+        </Card>
+
+        <Card className="bg-gray-800 border-gray-700 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-5 h-5 text-orange-400" />
+            <span className="text-sm text-gray-400">Customers</span>
+          </div>
+          <div className="text-2xl font-bold text-orange-400">
+            {stats.totalCustomers}
+          </div>
+        </Card>
+      </div>
+
+      {/* Alerts */}
+      {(stats.lowStock > 0 || stats.pendingOrders > 0) && (
+        <div className="space-y-3">
+          {stats.pendingOrders > 0 && (
+            <Card className="bg-yellow-900/20 border-yellow-500/30 p-4">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-yellow-400" />
+                <div className="flex-1">
+                  <p className="font-medium text-yellow-400">
+                    {stats.pendingOrders} pending orders
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Review and process new orders
+                  </p>
+                </div>
+                <Link to={createPageUrl("EcommerceSuite")}>
+                  <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
+                    View Orders
+                  </Button>
+                </Link>
+              </div>
+            </Card>
+          )}
+          {stats.lowStock > 0 && (
+            <Card className="bg-red-900/20 border-red-500/30 p-4">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
+                <div className="flex-1">
+                  <p className="font-medium text-red-400">
+                    {stats.lowStock} products low on stock
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Restock items to avoid running out
+                  </p>
+                </div>
+                <Link to={createPageUrl("EcommerceSuite")}>
+                  <Button size="sm" className="bg-red-600 hover:bg-red-700">
+                    Manage Inventory
+                  </Button>
+                </Link>
+              </div>
+            </Card>
           )}
         </div>
+      )}
 
-        <div className="surface-card p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-caption">Active Workflows</p>
-              <p className="text-2xl font-bold text-[hsl(var(--text-primary))]">
-                {suggestions.find(s => s.icon === Workflow) ? "0" : "3"}
+      {/* Quick Actions */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link to={createPageUrl("EcommerceSuite")}>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-br from-green-900/40 to-blue-900/40 border border-green-500/30 p-6 rounded-lg group cursor-pointer"
+            >
+              <ShoppingCart className="w-10 h-10 text-green-400 mb-3" />
+              <h3 className="font-semibold text-lg mb-1">Add Product</h3>
+              <p className="text-sm text-gray-400">
+                Add new products to your store
               </p>
-            </div>
-            <Workflow className="w-8 h-8 text-blue-400" />
-          </div>
-        </div>
+              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all mt-3" />
+            </motion.div>
+          </Link>
 
-        <div className="surface-card p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-caption">This Week</p>
-              <p className="text-2xl font-bold text-[hsl(var(--text-primary))]">
-                {recentActivity.length}
+          <Link to={createPageUrl("EcommerceSuite")}>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-purple-500/30 p-6 rounded-lg group cursor-pointer"
+            >
+              <Sparkles className="w-10 h-10 text-purple-400 mb-3" />
+              <h3 className="font-semibold text-lg mb-1">Marketing Campaign</h3>
+              <p className="text-sm text-gray-400">
+                Create email or social campaigns
               </p>
-              <p className="text-xs text-gray-500">generations</p>
-            </div>
-            <TrendingUp className="w-8 h-8 text-green-400" />
-          </div>
+              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all mt-3" />
+            </motion.div>
+          </Link>
+
+          <Link to={createPageUrl("EcommerceSuite")}>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="bg-gradient-to-br from-blue-900/40 to-teal-900/40 border border-blue-500/30 p-6 rounded-lg group cursor-pointer"
+            >
+              <TrendingUp className="w-10 h-10 text-blue-400 mb-3" />
+              <h3 className="font-semibold text-lg mb-1">View Analytics</h3>
+              <p className="text-sm text-gray-400">
+                Track sales and performance
+              </p>
+              <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all mt-3" />
+            </motion.div>
+          </Link>
         </div>
       </div>
 
-      {/* Smart Suggestions */}
-      {suggestions.length > 0 && (
-        <div>
-          <h2 className="text-heading mb-4">Suggested Next Actions</h2>
-          <div className="grid gap-3">
-            {suggestions.map((suggestion, idx) => (
-              <Link key={idx} to={suggestion.href}>
-                <div className="surface-card-interactive p-4 group">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-lg bg-${suggestion.color}-500/20 flex items-center justify-center`}>
-                        <suggestion.icon className={`w-5 h-5 text-${suggestion.color}-400`} />
-                      </div>
-                      <div>
-                        <p className="font-medium text-[hsl(var(--text-primary))]">{suggestion.action}</p>
-                        <p className="text-caption">{suggestion.description}</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-gray-300 group-hover:translate-x-1 transition-all" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+      {/* Recent Orders */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Recent Orders</h2>
+          <Link to={createPageUrl("EcommerceSuite")}>
+            <Button variant="outline" size="sm">
+              View All
+            </Button>
+          </Link>
         </div>
-      )}
-
-      {/* Recent Activity Stream */}
-      {recentActivity.length > 0 && (
-        <div>
-          <h2 className="text-heading mb-4">Recent Activity</h2>
-          <div className="surface-card p-4">
-            <div className="space-y-3">
-              {recentActivity.map((activity, idx) => (
-                <div key={idx} className="flex items-start gap-3 pb-3 border-b border-gray-700 last:border-0 last:pb-0">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mt-1">
-                    <CheckCircle2 className="w-4 h-4 text-purple-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[hsl(var(--text-primary))] truncate">
-                      {activity.details}
-                    </p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <p className="text-xs text-gray-500">
-                        {new Date(activity.created_date).toLocaleDateString()}
-                      </p>
-                      <Badge variant="outline" className="text-xs">
-                        {activity.credits_used} credits
+        <Card className="bg-gray-800 border-gray-700 p-6">
+          {recentOrders.length === 0 ? (
+            <div className="text-center py-8">
+              <Package className="w-12 h-12 mx-auto text-gray-600 mb-3" />
+              <p className="text-gray-400">No orders yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between pb-4 border-b border-gray-700 last:border-0 last:pb-0"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">#{order.order_number}</span>
+                      <Badge
+                        className={
+                          order.status === "delivered"
+                            ? "bg-green-500/20 text-green-400"
+                            : order.status === "pending"
+                              ? "bg-yellow-500/20 text-yellow-400"
+                              : "bg-blue-500/20 text-blue-400"
+                        }
+                      >
+                        {order.status}
                       </Badge>
                     </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {order.customer_name} • {new Date(order.created_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-green-400">
+                      ${order.total?.toFixed(2)}
+                    </div>
+                    <Badge
+                      className={
+                        order.payment_status === "paid"
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                      }
+                    >
+                      {order.payment_status}
+                    </Badge>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Quick Access */}
-      <div>
-        <h2 className="text-heading mb-4">Quick Access</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link to={createPageUrl("UniversalGenerator")}>
-            <div className="surface-card-interactive p-5 text-center group">
-              <Rocket className="w-10 h-10 mx-auto mb-3 text-purple-400 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold text-[hsl(var(--text-primary))] mb-1">Universal Generator</h3>
-              <p className="text-xs text-gray-500">Build complete apps</p>
-            </div>
-          </Link>
-          <Link to={createPageUrl("ContentCreator")}>
-            <div className="surface-card-interactive p-5 text-center group">
-              <FileText className="w-10 h-10 mx-auto mb-3 text-blue-400 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold text-[hsl(var(--text-primary))] mb-1">Content Studio</h3>
-              <p className="text-xs text-gray-500">AI-powered content</p>
-            </div>
-          </Link>
-          <Link to={createPageUrl("DealSourcer")}>
-            <div className="surface-card-interactive p-5 text-center group">
-              <Zap className="w-10 h-10 mx-auto mb-3 text-teal-400 group-hover:scale-110 transition-transform" />
-              <h3 className="font-semibold text-[hsl(var(--text-primary))] mb-1">Deal Sourcer</h3>
-              <p className="text-xs text-gray-500">Find opportunities</p>
-            </div>
-          </Link>
-        </div>
+          )}
+        </Card>
       </div>
     </div>
   );

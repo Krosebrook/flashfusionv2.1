@@ -36,47 +36,27 @@ import {
 
 const navigationGroups = [
   {
-    name: "AI ASSISTANT",
+    name: "STORE",
     items: [
-      { name: "AI Assistant", href: createPageUrl("AIAssistant"), icon: Sparkles, dataTour: "ai-assistant", featured: true },
+      { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
+      { name: "Products", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
+      { name: "Orders", href: createPageUrl("EcommerceSuite"), icon: Package },
+      { name: "Customers", href: createPageUrl("EcommerceSuite"), icon: Users },
     ]
   },
   {
-    name: "CREATE",
+    name: "MARKETING",
     items: [
-      { name: "Universal Generator", href: createPageUrl("UniversalGenerator"), icon: Rocket, dataTour: "universal-generator", featured: true },
-      { name: "Content Studio", href: createPageUrl("ContentCreator"), icon: FileText, dataTour: "content-creator" },
-      { name: "Feature Generator", href: createPageUrl("FeatureGenerator"), icon: Atom, dataTour: "feature-generator" },
-      { name: "Brand Kit", href: createPageUrl("BrandKitGenerator"), icon: Palette, dataTour: "brand-kit" },
-      { name: "PRD Generator", href: createPageUrl("PRDGenerator"), icon: ClipboardList },
+      { name: "Campaigns", href: createPageUrl("EcommerceSuite"), icon: Sparkles },
+      { name: "Brand Kit", href: createPageUrl("BrandKitGenerator"), icon: Palette },
     ]
   },
   {
-    name: "MANAGE",
+    name: "SETTINGS",
     items: [
-      { name: "Projects", href: createPageUrl("Projects"), icon: FolderOpen },
-      { name: "Workflows", href: createPageUrl("AdvancedWorkflows"), icon: Workflow },
-      { name: "Scheduling", href: createPageUrl("ContentScheduling"), icon: Clock },
-      { name: "Collaboration", href: createPageUrl("Collaboration"), icon: Users },
-      { name: "E-commerce", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
-      { name: "WSJF", href: createPageUrl("WSJFPrioritization"), icon: ArrowUpDown },
-    ]
-  },
-  {
-    name: "ANALYZE",
-    items: [
-      { name: "Analytics", href: createPageUrl("Analytics"), icon: BarChart3, dataTour: "analytics" },
-      { name: "Deal Sourcer", href: createPageUrl("DealSourcer"), icon: Zap, dataTour: "deal-sourcer" },
-      { name: "Insights", href: createPageUrl("PersonalizedAnalytics"), icon: BarChart3 },
-    ]
-  },
-  {
-    name: "CONNECT",
-    items: [
-      { name: "API & Webhooks", href: createPageUrl("APIWebhooks"), icon: Zap },
-      { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug, dataTour: "integrations" },
+      { name: "Analytics", href: createPageUrl("EcommerceSuite"), icon: BarChart3 },
       { name: "Sync Config", href: createPageUrl("SyncConfiguration"), icon: Settings },
-      { name: "Plugins", href: createPageUrl("Plugins"), icon: Plug },
+      { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug },
     ]
   },
 ];
@@ -148,12 +128,12 @@ export default function Layout({ children, currentPageName }) {
     <>
       <div className="flex items-center justify-center h-16 border-b border-gray-700 px-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <Bot className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+            <ShoppingCart className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">FlashFusion</h1>
-            <p className="text-xs text-gray-400">Universal AI Platform</p>
+            <h1 className="text-xl font-bold text-white">ShopFlow</h1>
+            <p className="text-xs text-gray-400">Mobile E-commerce Hub</p>
           </div>
         </div>
       </div>
@@ -199,26 +179,6 @@ export default function Layout({ children, currentPageName }) {
         {/* Utility Nav */}
         <div className="mt-6 pt-6 border-t border-gray-700">
           <div className="space-y-1">
-            <Link to={createPageUrl("MobileDeploymentGuide")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
-              <Smartphone className="mr-3 h-4 w-4" />
-              Mobile Deploy
-            </Link>
-            <Link to={createPageUrl("TeamManagement")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
-              <Users className="mr-3 h-4 w-4" />
-              Team
-            </Link>
-            <Link to={createPageUrl("RolesAndPermissions")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
-              <Shield className="mr-3 h-4 w-4" />
-              Roles
-            </Link>
-            <Link to={createPageUrl("Documentation")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
-              <Book className="mr-3 h-4 w-4" />
-              Docs
-            </Link>
-            <Link to={createPageUrl("Billing")} data-tour="billing" className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
-              <CreditCard className="mr-3 h-4 w-4" />
-              Billing
-            </Link>
             <Link to={createPageUrl("UserSettings")} className="flex items-center px-3 py-2 text-sm text-gray-400 hover:text-gray-200 rounded-lg hover:bg-gray-700/50">
               <Settings className="mr-3 h-4 w-4" />
               Settings
@@ -283,11 +243,11 @@ export default function Layout({ children, currentPageName }) {
           to={createPageUrl("Dashboard")}
           className="flex items-center gap-2"
         >
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <Bot className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
+            <ShoppingCart className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">FlashFusion</h1>
+            <h1 className="text-lg font-bold text-white">ShopFlow</h1>
           </div>
         </Link>
         <button
@@ -364,7 +324,7 @@ export default function Layout({ children, currentPageName }) {
             }}
             className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
               location.pathname === '/' || location.pathname === '/Dashboard'
-                ? 'text-purple-400'
+                ? 'text-green-400'
                 : 'text-gray-400'
             }`}
           >
@@ -374,56 +334,40 @@ export default function Layout({ children, currentPageName }) {
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (location.pathname === '/UniversalGenerator') {
+              if (location.pathname === '/EcommerceSuite') {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               } else {
-                navigate(createPageUrl("UniversalGenerator"));
+                navigate(createPageUrl("EcommerceSuite"));
               }
             }}
             className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
-              location.pathname === '/UniversalGenerator'
-                ? 'text-purple-400'
+              location.pathname === '/EcommerceSuite'
+                ? 'text-green-400'
                 : 'text-gray-400'
             }`}
           >
-            <Rocket className="h-5 w-5 mb-1" />
-            <span className="text-xs">Create</span>
+            <Store className="h-5 w-5 mb-1" />
+            <span className="text-xs">Products</span>
           </button>
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (location.pathname === '/Projects') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              } else {
-                navigate(createPageUrl("Projects"));
-              }
+              navigate(createPageUrl("EcommerceSuite"));
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
-              location.pathname === '/Projects'
-                ? 'text-purple-400'
-                : 'text-gray-400'
-            }`}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select text-gray-400`}
           >
-            <FolderOpen className="h-5 w-5 mb-1" />
-            <span className="text-xs">Manage</span>
+            <Package className="h-5 w-5 mb-1" />
+            <span className="text-xs">Orders</span>
           </button>
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (location.pathname === '/Analytics') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              } else {
-                navigate(createPageUrl("Analytics"));
-              }
+              navigate(createPageUrl("EcommerceSuite"));
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
-              location.pathname === '/Analytics'
-                ? 'text-purple-400'
-                : 'text-gray-400'
-            }`}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select text-gray-400`}
           >
-            <BarChart3 className="h-5 w-5 mb-1" />
-            <span className="text-xs">Analytics</span>
+            <Users className="h-5 w-5 mb-1" />
+            <span className="text-xs">Customers</span>
           </button>
         </div>
       </nav>

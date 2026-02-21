@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AIAssistant from './pages/AIAssistant';
 import APIWebhooks from './pages/APIWebhooks';
 import ActivationDashboard from './pages/ActivationDashboard';
 import AdvancedWorkflows from './pages/AdvancedWorkflows';
@@ -66,6 +67,7 @@ import IntegrationHub from './pages/IntegrationHub';
 import Integrations from './pages/Integrations';
 import IntegrationsAdmin from './pages/IntegrationsAdmin';
 import LifecycleIntelligence from './pages/LifecycleIntelligence';
+import MobileDeploymentGuide from './pages/MobileDeploymentGuide';
 import MyDeals from './pages/MyDeals';
 import Onboarding from './pages/Onboarding';
 import OnboardingComplete from './pages/OnboardingComplete';
@@ -82,12 +84,11 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import AIAssistant from './pages/AIAssistant';
-import MobileDeploymentGuide from './pages/MobileDeploymentGuide';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AIAssistant": AIAssistant,
     "APIWebhooks": APIWebhooks,
     "ActivationDashboard": ActivationDashboard,
     "AdvancedWorkflows": AdvancedWorkflows,
@@ -107,6 +108,7 @@ export const PAGES = {
     "Integrations": Integrations,
     "IntegrationsAdmin": IntegrationsAdmin,
     "LifecycleIntelligence": LifecycleIntelligence,
+    "MobileDeploymentGuide": MobileDeploymentGuide,
     "MyDeals": MyDeals,
     "Onboarding": Onboarding,
     "OnboardingComplete": OnboardingComplete,
@@ -123,8 +125,6 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "AIAssistant": AIAssistant,
-    "MobileDeploymentGuide": MobileDeploymentGuide,
 }
 
 export const pagesConfig = {
