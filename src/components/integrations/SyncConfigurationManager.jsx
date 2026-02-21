@@ -72,7 +72,7 @@ export default function SyncConfigurationManager() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold mb-2">Sync Configuration</h1>
-        <p className="text-gray-600">Manage bidirectional sync settings with conflict resolution and webhooks</p>
+        <p className="text-gray-400">Manage bidirectional sync settings with conflict resolution and webhooks</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

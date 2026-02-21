@@ -1,7 +1,4 @@
 import { useState } from "react";
-// Fixed: Import from integrations.js instead of non-existent @/integrations/Core
-import { InvokeLLM } from "@/api/integrations";
-// Fixed: Import base44 client instead of non-existent @/entities/all
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -126,7 +123,7 @@ export default function AdvancedFeatureGenerator() {
         Generate ONLY the code without any explanation or markdown formatting.
       `;
 
-      const response = await InvokeLLM({ prompt: enhancedPrompt });
+      const response = await base44.integrations.Core.InvokeLLM({ prompt: enhancedPrompt });
       setGeneratedCode({
         code: response,
         type: featureType,
@@ -135,7 +132,7 @@ export default function AdvancedFeatureGenerator() {
         timestamp: new Date().toISOString(),
       });
 
-      await base44.auth.updateMyUserData({
+      await base44.auth.updateMe({
         credits_remaining: user.credits_remaining - creditsToUse,
       });
 

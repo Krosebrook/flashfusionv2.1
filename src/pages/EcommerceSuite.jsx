@@ -131,7 +131,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1"
+              className="flex-1 text-gray-200"
               onClick={() => {
                 setShowImageGenerator(!showImageGenerator);
                 setShowDescGenerator(false);
@@ -145,7 +145,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1"
+              className="flex-1 text-gray-200"
               onClick={() => {
                 setShowDescGenerator(!showDescGenerator);
                 setShowImageGenerator(false);
@@ -161,7 +161,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1"
+              className="flex-1 text-gray-200"
               onClick={() => {
                 setShowPublisher(!showPublisher);
                 setShowInventory(false);
@@ -175,7 +175,7 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
             <Button
               size="sm"
               variant="outline"
-              className="flex-1"
+              className="flex-1 text-gray-200"
               onClick={() => {
                 setShowInventory(!showInventory);
                 setShowPublisher(false);

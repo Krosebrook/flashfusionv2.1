@@ -54,8 +54,8 @@ class ErrorBoundary extends Component {
   };
 
   handleGoHome = () => {
-    // Navigate to home page and reset error state
-    window.location.href = "/";
+    // Navigate to dashboard and reset error state
+    window.location.href = "/Dashboard";
   };
 
   render() {
@@ -97,7 +97,7 @@ class ErrorBoundary extends Component {
             <div className="flex gap-3">
               <Button
                 onClick={this.handleReset}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <RefreshCcw className="w-4 h-4" />
                 Try Again
@@ -105,7 +105,7 @@ class ErrorBoundary extends Component {
               <Button
                 onClick={this.handleGoHome}
                 variant="outline"
-                className="flex items-center gap-2 border-gray-600 hover:bg-gray-700"
+                className="flex items-center gap-2 border-gray-600 hover:bg-gray-700 text-white"
               >
                 <Home className="w-4 h-4" />
                 Go to Dashboard
