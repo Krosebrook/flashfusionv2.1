@@ -21,6 +21,8 @@ import PlatformPublisher from "../components/ecommerce/PlatformPublisher";
 import InventoryManager from "../components/ecommerce/InventoryManager";
 import AIDescriptionGenerator from "../components/ecommerce/AIDescriptionGenerator";
 import AIImageGenerator from "../components/ecommerce/AIImageGenerator";
+import OrderManager from "../components/ecommerce/OrderManager";
+import SalesForecast from "../components/ecommerce/SalesForecast";
 
 const platforms = {
   Shopify: { icon: ShoppingCart, color: "text-green-400" },
@@ -329,10 +331,12 @@ export default function EcommerceSuite() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-gray-800">
+        <TabsList className="bg-gray-800 flex-wrap">
           <TabsTrigger value="products">
             Products ({products.length})
           </TabsTrigger>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="forecast">Sales Forecast</TabsTrigger>
           <TabsTrigger value="generate">AI Generator</TabsTrigger>
           <TabsTrigger value="bulk">Bulk Import</TabsTrigger>
         </TabsList>
@@ -399,6 +403,14 @@ export default function EcommerceSuite() {
               setActiveTab("products");
             }}
           />
+        </TabsContent>
+
+        <TabsContent value="orders" className="space-y-6">
+          <OrderManager />
+        </TabsContent>
+
+        <TabsContent value="forecast" className="space-y-6">
+          <SalesForecast />
         </TabsContent>
       </Tabs>
     </div>
