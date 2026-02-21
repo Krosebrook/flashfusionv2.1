@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 export default function StyleProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [addingToCart, setAddingToCart] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {

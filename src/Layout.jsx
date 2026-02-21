@@ -15,7 +15,7 @@ import {
   Bot,
   Rocket,
   FolderOpen,
-  ShoppingCart,
+  ShoppingCart as ShoppingCartIcon,
   FileText,
   Users,
   BarChart3,
@@ -40,7 +40,8 @@ const navigationGroups = [
     name: "STORE",
     items: [
       { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
-      { name: "Products", href: createPageUrl("EcommerceSuite"), icon: ShoppingCart },
+      { name: "Products", href: createPageUrl("EcommerceSuite"), icon: ShoppingCartIcon },
+      { name: "Cart", href: createPageUrl("ShoppingCart"), icon: ShoppingCartIcon },
       { name: "Orders", href: createPageUrl("EcommerceSuite"), icon: Package },
       { name: "Customers", href: createPageUrl("EcommerceSuite"), icon: Users },
     ]
@@ -353,12 +354,18 @@ export default function Layout({ children, currentPageName }) {
           <button
             onClick={(e) => {
               e.preventDefault();
-              navigate(createPageUrl("EcommerceSuite"));
+              if (location.pathname === '/ShoppingCart') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigate(createPageUrl("ShoppingCart"));
+              }
             }}
-            className={`flex flex-col items-center justify-center flex-1 h-full no-select text-gray-400`}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
+              location.pathname === '/ShoppingCart' ? 'text-green-400' : 'text-gray-400'
+            }`}
           >
-            <Package className="h-5 w-5 mb-1" />
-            <span className="text-xs">Orders</span>
+            <ShoppingCartIcon className="h-5 w-5 mb-1" />
+            <span className="text-xs">Cart</span>
           </button>
           <button
             onClick={(e) => {

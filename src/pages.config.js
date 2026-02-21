@@ -88,6 +88,8 @@ import WSJFPrioritization from './pages/WSJFPrioritization';
 import StyleQuiz from './pages/StyleQuiz';
 import StyleProfile from './pages/StyleProfile';
 import DigitalWardrobe from './pages/DigitalWardrobe';
+import ShoppingCart from './pages/ShoppingCart';
+import Checkout from './pages/Checkout';
 import __Layout from './Layout.jsx';
 
 
@@ -133,6 +135,8 @@ export const PAGES = {
     "StyleQuiz": StyleQuiz,
     "StyleProfile": StyleProfile,
     "DigitalWardrobe": DigitalWardrobe,
+    "ShoppingCart": ShoppingCart,
+    "Checkout": Checkout,
 }
 
 export const pagesConfig = {
