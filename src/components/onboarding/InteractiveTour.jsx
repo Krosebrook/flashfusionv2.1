@@ -5,40 +5,49 @@ import { base44 } from '@/api/base44Client';
 const goalBasedSteps = {
   entrepreneur: [
     {
-      target: '[data-tour="integrations"]',
-      content: 'Connect your tools here - Google Workspace, Slack, and more to supercharge your workflow.',
+      target: '[data-tour="ai-assistant"]',
+      content: '🎯 Start here! Your AI Assistant helps you navigate all features and get instant help.',
       disableBeacon: true,
     },
     {
       target: '[data-tour="universal-generator"]',
-      content: 'Generate complete applications from simple descriptions. Your MVP starts here.',
+      content: '🚀 Generate complete applications from simple descriptions. Your MVP starts here with AI-powered code generation.',
     },
     {
       target: '[data-tour="feature-generator"]',
-      content: 'Convert feature ideas into production-ready code instantly.',
+      content: '⚡ Convert feature ideas into production-ready code instantly. Choose complexity level and get full-stack features.',
+    },
+    {
+      target: '[data-tour="integrations"]',
+      content: '🔌 Connect your tools here - Google Workspace, Slack, and more to supercharge your workflow.',
     },
     {
       target: '[data-tour="analytics"]',
-      content: 'Track usage, monitor AI-generated insights, and make data-driven decisions.',
+      content: '📊 Track usage, monitor AI-generated insights, and make data-driven decisions.',
     },
   ],
   marketer: [
     {
-      target: '[data-tour="content-creator"]',
-      content: 'Create blog posts, social media content, and marketing copy with AI - all in one place.',
+      target: '[data-tour="ai-assistant"]',
+      content: '🎯 Your AI Marketing Assistant - get campaign ideas, content suggestions, and strategy advice.',
       disableBeacon: true,
     },
     {
-      target: '[data-tour="brand-kit"]',
-      content: 'Generate a complete brand identity including logos, colors, and voice guidelines.',
+      target: '[data-tour="content-creator"]',
+      content: '✍️ Create blog posts, social media content, and marketing copy with AI - all in one place.',
     },
     {
-      target: '[data-tour="content-scheduling"]',
-      content: 'Schedule your AI-generated content across multiple platforms automatically.',
+      target: '[data-tour="brand-kit"]',
+      content: '🎨 Generate a complete brand identity including logos, colors, and voice guidelines.',
+    },
+    {
+      target: 'body',
+      content: '📧 E-commerce Suite: Access Marketing Automation from the E-commerce tab. Set up email campaigns, abandoned cart recovery, and customer segmentation.',
+      placement: 'center',
     },
     {
       target: '[data-tour="analytics"]',
-      content: 'Measure content performance and get AI-powered recommendations for improvement.',
+      content: '📊 Measure content performance, track campaign ROI, and get AI-powered recommendations for improvement.',
     },
   ],
   investor: [
@@ -73,21 +82,25 @@ const goalBasedSteps = {
   ],
   developer: [
     {
-      target: '[data-tour="feature-generator"]',
-      content: 'Convert feature ideas into production-ready code instantly.',
+      target: '[data-tour="ai-assistant"]',
+      content: '💻 Your AI Dev Assistant - get code suggestions, debugging help, and architecture advice.',
       disableBeacon: true,
     },
     {
-      target: '[data-tour="prd-generator"]',
-      content: 'Generate comprehensive PRDs and technical specifications.',
+      target: '[data-tour="feature-generator"]',
+      content: '⚡ Advanced Feature Generator: Convert ideas into production-ready React components, API routes, or full-stack features. Choose your complexity level and framework!',
     },
     {
       target: '[data-tour="universal-generator"]',
-      content: 'Build complete applications from natural language descriptions.',
+      content: '🚀 Build complete applications from natural language descriptions. Perfect for MVPs and prototypes.',
     },
     {
       target: '[data-tour="integrations"]',
-      content: 'Connect to your dev tools - GitHub, Notion, Slack, and more.',
+      content: '🔗 Connect to your dev tools - GitHub, Notion, Slack, and more. Set up webhooks and API integrations.',
+    },
+    {
+      target: '[data-tour="analytics"]',
+      content: '📈 Track feature generation, monitor usage, and analyze what works best for your workflow.',
     },
   ],
   other: [

@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import WelcomeScreen from "../components/onboarding/WelcomeScreen";
 import InteractiveTour from "../components/onboarding/InteractiveTour";
+import SetupChecklist from "../components/onboarding/SetupChecklist";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
