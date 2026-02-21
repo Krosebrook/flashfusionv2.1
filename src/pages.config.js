@@ -86,6 +86,8 @@ import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
 import StyleQuiz from './pages/StyleQuiz';
+import StyleProfile from './pages/StyleProfile';
+import DigitalWardrobe from './pages/DigitalWardrobe';
 import __Layout from './Layout.jsx';
 
 
@@ -129,6 +131,8 @@ export const PAGES = {
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
     "StyleQuiz": StyleQuiz,
+    "StyleProfile": StyleProfile,
+    "DigitalWardrobe": DigitalWardrobe,
 }
 
 export const pagesConfig = {
