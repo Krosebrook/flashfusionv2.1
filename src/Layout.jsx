@@ -246,7 +246,7 @@ export default function Layout({ children, currentPageName }) {
           className="flex items-center gap-2"
         >
           <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
-            <ShoppingCart className="w-5 h-5 text-white" />
+            <ShoppingCartIcon className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="text-lg font-bold text-white">ShopFlow</h1>

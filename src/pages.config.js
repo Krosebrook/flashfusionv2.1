@@ -54,11 +54,13 @@ import AdvancedWorkflows from './pages/AdvancedWorkflows';
 import Analytics from './pages/Analytics';
 import Billing from './pages/Billing';
 import BrandKitGenerator from './pages/BrandKitGenerator';
+import Checkout from './pages/Checkout';
 import Collaboration from './pages/Collaboration';
 import ContentCreator from './pages/ContentCreator';
 import ContentScheduling from './pages/ContentScheduling';
 import Dashboard from './pages/Dashboard';
 import DealSourcer from './pages/DealSourcer';
+import DigitalWardrobe from './pages/DigitalWardrobe';
 import Documentation from './pages/Documentation';
 import EcommerceSuite from './pages/EcommerceSuite';
 import FeatureGenerator from './pages/FeatureGenerator';
@@ -80,16 +82,14 @@ import Projects from './pages/Projects';
 import PromptGenerator from './pages/PromptGenerator';
 import RetentionDashboard from './pages/RetentionDashboard';
 import RolesAndPermissions from './pages/RolesAndPermissions';
+import ShoppingCart from './pages/ShoppingCart';
+import StyleProfile from './pages/StyleProfile';
+import StyleQuiz from './pages/StyleQuiz';
 import SyncConfiguration from './pages/SyncConfiguration';
 import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
-import StyleQuiz from './pages/StyleQuiz';
-import StyleProfile from './pages/StyleProfile';
-import DigitalWardrobe from './pages/DigitalWardrobe';
-import ShoppingCart from './pages/ShoppingCart';
-import Checkout from './pages/Checkout';
 import __Layout from './Layout.jsx';
 
 
@@ -101,11 +101,13 @@ export const PAGES = {
     "Analytics": Analytics,
     "Billing": Billing,
     "BrandKitGenerator": BrandKitGenerator,
+    "Checkout": Checkout,
     "Collaboration": Collaboration,
     "ContentCreator": ContentCreator,
     "ContentScheduling": ContentScheduling,
     "Dashboard": Dashboard,
     "DealSourcer": DealSourcer,
+    "DigitalWardrobe": DigitalWardrobe,
     "Documentation": Documentation,
     "EcommerceSuite": EcommerceSuite,
     "FeatureGenerator": FeatureGenerator,
@@ -127,16 +129,14 @@ export const PAGES = {
     "PromptGenerator": PromptGenerator,
     "RetentionDashboard": RetentionDashboard,
     "RolesAndPermissions": RolesAndPermissions,
+    "ShoppingCart": ShoppingCart,
+    "StyleProfile": StyleProfile,
+    "StyleQuiz": StyleQuiz,
     "SyncConfiguration": SyncConfiguration,
     "TeamManagement": TeamManagement,
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
-    "StyleQuiz": StyleQuiz,
-    "StyleProfile": StyleProfile,
-    "DigitalWardrobe": DigitalWardrobe,
-    "ShoppingCart": ShoppingCart,
-    "Checkout": Checkout,
 }
 
 export const pagesConfig = {
