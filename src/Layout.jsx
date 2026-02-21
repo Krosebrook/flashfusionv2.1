@@ -86,6 +86,9 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const touchStartY = useState(0);
 
   const isRootDashboard = location.pathname === '/' || location.pathname === '/Dashboard';
 
@@ -100,6 +103,46 @@ export default function Layout({ children, currentPageName }) {
     };
     fetchUser();
   }, [location.pathname]);
+
+  // Pull-to-refresh
+  useEffect(() => {
+    let startY = 0;
+
+    const handleTouchStart = (e) => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (window.scrollY === 0 && startY > 0) {
+        const currentY = e.touches[0].clientY;
+        const distance = Math.min(currentY - startY, 100);
+        if (distance > 0) {
+          setPullDistance(distance);
+        }
+      }
+    };
+
+    const handleTouchEnd = async () => {
+      if (pullDistance > 60 && !isRefreshing) {
+        setIsRefreshing(true);
+        window.location.reload();
+      }
+      setPullDistance(0);
+      startY = 0;
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [pullDistance, isRefreshing]);
 
   const SidebarContent = () => (
     <>
@@ -278,6 +321,20 @@ export default function Layout({ children, currentPageName }) {
       </div>
 
       <main className="md:pl-64 flex flex-col flex-1 pb-20 md:pb-0">
+        {/* Pull-to-refresh indicator */}
+        {pullDistance > 0 && (
+          <div 
+            className="md:hidden fixed top-16 left-0 right-0 flex justify-center z-40 pointer-events-none"
+            style={{ transform: `translateY(${Math.min(pullDistance - 20, 40)}px)` }}
+          >
+            <div className={`bg-gray-700 rounded-full p-2 transition-transform ${pullDistance > 60 ? 'scale-110' : ''}`}>
+              <motion.div
+                animate={{ rotate: pullDistance * 3.6 }}
+                className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full"
+              />
+            </div>
+          </div>
+        )}
         <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
           <AnimatePresence mode="wait">
             <motion.div
@@ -296,8 +353,15 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 safe-bottom z-50">
         <div className="flex items-center justify-around h-16 px-2">
-          <Link
-            to={createPageUrl("Dashboard")}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (location.pathname === '/' || location.pathname === '/Dashboard') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigate(createPageUrl("Dashboard"));
+              }
+            }}
             className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
               location.pathname === '/' || location.pathname === '/Dashboard'
                 ? 'text-purple-400'
@@ -306,9 +370,16 @@ export default function Layout({ children, currentPageName }) {
           >
             <Home className="h-5 w-5 mb-1" />
             <span className="text-xs">Home</span>
-          </Link>
-          <Link
-            to={createPageUrl("UniversalGenerator")}
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (location.pathname === '/UniversalGenerator') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigate(createPageUrl("UniversalGenerator"));
+              }
+            }}
             className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
               location.pathname === '/UniversalGenerator'
                 ? 'text-purple-400'
@@ -317,9 +388,16 @@ export default function Layout({ children, currentPageName }) {
           >
             <Rocket className="h-5 w-5 mb-1" />
             <span className="text-xs">Create</span>
-          </Link>
-          <Link
-            to={createPageUrl("Projects")}
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (location.pathname === '/Projects') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigate(createPageUrl("Projects"));
+              }
+            }}
             className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
               location.pathname === '/Projects'
                 ? 'text-purple-400'
@@ -328,9 +406,16 @@ export default function Layout({ children, currentPageName }) {
           >
             <FolderOpen className="h-5 w-5 mb-1" />
             <span className="text-xs">Manage</span>
-          </Link>
-          <Link
-            to={createPageUrl("Analytics")}
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (location.pathname === '/Analytics') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigate(createPageUrl("Analytics"));
+              }
+            }}
             className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
               location.pathname === '/Analytics'
                 ? 'text-purple-400'
@@ -339,7 +424,7 @@ export default function Layout({ children, currentPageName }) {
           >
             <BarChart3 className="h-5 w-5 mb-1" />
             <span className="text-xs">Analytics</span>
-          </Link>
+          </button>
         </div>
       </nav>
       </div>

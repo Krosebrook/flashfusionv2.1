@@ -36,6 +36,11 @@ export default function InventoryManager({ product, onUpdate }) {
         ? inventoryData.inventory + qty
         : Math.max(0, inventoryData.inventory - qty);
 
+    // Optimistic update
+    const previousInventory = inventoryData.inventory;
+    setInventoryData({ ...inventoryData, inventory: newInventory });
+    setAdjustmentQty("");
+    
     setIsUpdating(true);
     try {
       const updated = {
@@ -47,11 +52,11 @@ export default function InventoryManager({ product, onUpdate }) {
       };
 
       await base44.entities.EcommerceProduct.update(product.id, updated);
-      setInventoryData({ ...inventoryData, inventory: newInventory });
-      setAdjustmentQty("");
       onUpdate?.(updated);
     } catch (error) {
       console.error("Inventory update failed:", error);
+      // Revert on error
+      setInventoryData({ ...inventoryData, inventory: previousInventory });
       alert("Failed to update inventory. Please try again.");
     }
     setIsUpdating(false);

@@ -116,8 +116,17 @@ export default function WSJFPrioritization() {
   };
 
   const handleSave = async (formData) => {
+    const tempId = `temp-${Date.now()}`;
+    
     try {
       if (editingItem) {
+        // Optimistic update
+        setItems(prev => prev.map(i => 
+          i.id === editingItem.id ? { ...i, ...formData } : i
+        ));
+        setShowDialog(false);
+        setEditingItem(null);
+        
         const updatedItem = await base44.entities.WSJFItem.update(
           editingItem.id,
           formData
@@ -127,26 +136,39 @@ export default function WSJFPrioritization() {
           { ...updatedItem, ...formData },
           editingItem
         );
+        fetchData();
       } else {
+        // Optimistic insert
+        const optimisticItem = { id: tempId, ...formData, wsjf_score: 0 };
+        setItems(prev => [optimisticItem, ...prev]);
+        setShowDialog(false);
+        setEditingItem(null);
+        
         const newItem = await base44.entities.WSJFItem.create(formData);
         await trackHistory("insert", newItem);
+        fetchData();
       }
-      fetchData();
-      setShowDialog(false);
-      setEditingItem(null);
     } catch (error) {
       console.error("Failed to save:", error);
+      // Revert on error
+      fetchData();
+      setShowDialog(true);
     }
   };
 
   const handleDelete = async (item) => {
     if (!confirm(`Delete "${item.title}"?`)) return;
+    
+    // Optimistic update
+    setItems(prev => prev.filter(i => i.id !== item.id));
+    
     try {
       await trackHistory("delete", item);
       await base44.entities.WSJFItem.delete(item.id);
-      fetchData();
     } catch (error) {
       console.error("Failed to delete:", error);
+      // Revert on error
+      fetchData();
     }
   };
 

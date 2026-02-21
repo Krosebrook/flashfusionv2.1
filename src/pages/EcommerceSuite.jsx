@@ -205,11 +205,19 @@ const ProductCard = ({ product, onPublish, onRefresh, brandKits }) => {
               product={product}
               brandKit={brandKit}
               onSelect={async (description) => {
-                await base44.entities.EcommerceProduct.update(product.id, {
-                  description: description,
-                });
+                // Optimistic update
+                product.description = description;
                 setShowDescGenerator(false);
-                onRefresh?.();
+                
+                try {
+                  await base44.entities.EcommerceProduct.update(product.id, {
+                    description: description,
+                  });
+                  onRefresh?.();
+                } catch (error) {
+                  console.error("Failed to update description:", error);
+                  onRefresh?.();
+                }
               }}
             />
           </div>
