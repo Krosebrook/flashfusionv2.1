@@ -40,7 +40,7 @@ const navigationGroups = [
     name: "STORE",
     items: [
       { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
-      { name: "Products", href: createPageUrl("EcommerceSuite"), icon: ShoppingCartIcon },
+      { name: "Products", href: createPageUrl("EcommerceSuite"), icon: Store },
       { name: "Cart", href: createPageUrl("ShoppingCart"), icon: ShoppingCartIcon },
       { name: "Orders", href: createPageUrl("EcommerceSuite"), icon: Package },
       { name: "Customers", href: createPageUrl("EcommerceSuite"), icon: Users },
