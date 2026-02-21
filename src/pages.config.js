@@ -84,6 +84,7 @@ import TeamManagement from './pages/TeamManagement';
 import UniversalGenerator from './pages/UniversalGenerator';
 import UserSettings from './pages/UserSettings';
 import WSJFPrioritization from './pages/WSJFPrioritization';
+import FlashFusionDemo from './pages/FlashFusionDemo';
 import __Layout from './Layout.jsx';
 
 
@@ -125,6 +126,7 @@ export const PAGES = {
     "UniversalGenerator": UniversalGenerator,
     "UserSettings": UserSettings,
     "WSJFPrioritization": WSJFPrioritization,
+    "FlashFusionDemo": FlashFusionDemo,
 }
 
 export const pagesConfig = {
