@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Share2, Download, Copy, Instagram } from "lucide-react";
+import { Share2, Download, Copy, Instagram, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function StyleProfile() {
@@ -16,6 +16,14 @@ export default function StyleProfile() {
         const profiles = await base44.entities.StyleProfile.filter({ user_email: user.email });
         if (profiles.length > 0) {
           setProfile(profiles[0]);
+          
+          // Fetch recommended products
+          const allProducts = await base44.entities.EcommerceProduct.list();
+          const filtered = allProducts.filter(p => 
+            p.tags?.some(tag => profiles[0]?.aesthetic?.toLowerCase().includes(tag.toLowerCase())) ||
+            p.category === "Clothing"
+          ).slice(0, 6);
+          setProducts(filtered);
         }
       } catch (error) {
         console.error("Failed to fetch profile:", error);
@@ -24,6 +32,27 @@ export default function StyleProfile() {
     };
     fetchProfile();
   }, []);
+
+  const addToCart = async (product) => {
+    try {
+      setAddingToCart(product.id);
+      const user = await base44.auth.me();
+      await base44.entities.ShoppingCart.create({
+        user_email: user.email,
+        product_id: product.id,
+        product_name: product.title,
+        product_image: product.images?.[0],
+        price: product.price,
+        quantity: 1,
+        source: "style_profile"
+      });
+      alert("✓ Added to cart!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setAddingToCart(null);
+    }
+  };
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -147,6 +176,41 @@ export default function StyleProfile() {
           This card is optimized for Instagram stories and Pinterest pins.
         </p>
       </main>
+
+      {/* Shop the Look Section */}
+      {products.length > 0 && (
+        <div className="bg-gray-900/40 backdrop-blur-md border-t border-white/10 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-purple-400" />
+              <h3 className="text-lg font-bold text-white">Shop Your Style</h3>
+            </div>
+            <span className="text-xs text-gray-400">Curated for you</span>
+          </div>
+          <div className="grid grid-cols-3 gap-3 overflow-x-auto">
+            {products.map((product) => (
+              <div key={product.id} className="bg-white/5 backdrop-blur-sm rounded-xl p-2 border border-white/10">
+                <div className="aspect-square bg-white/10 rounded-lg overflow-hidden mb-2">
+                  {product.images?.[0] ? (
+                    <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-2xl">👗</div>
+                  )}
+                </div>
+                <h4 className="text-white font-semibold text-xs truncate mb-1">{product.title}</h4>
+                <p className="text-purple-400 font-bold text-sm mb-2">${product.price}</p>
+                <button
+                  onClick={() => addToCart(product)}
+                  disabled={addingToCart === product.id}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {addingToCart === product.id ? "Adding..." : "Add to Cart"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Bottom Actions */}
       <footer className="bg-gray-900/80 backdrop-blur-xl border-t border-white/5 p-6 pb-8 z-50">
