@@ -37,28 +37,26 @@ import {
 
 const navigationGroups = [
   {
-    name: "STORE",
+    name: "MY STYLE",
     items: [
-      { name: "Dashboard", href: createPageUrl("Dashboard"), icon: LayoutDashboard },
-      { name: "Products", href: createPageUrl("EcommerceSuite"), icon: Store },
-      { name: "Cart", href: createPageUrl("ShoppingCart"), icon: ShoppingCartIcon },
-      { name: "Orders", href: createPageUrl("EcommerceSuite"), icon: Package },
-      { name: "Customers", href: createPageUrl("EcommerceSuite"), icon: Users },
+      { name: "Dashboard", href: createPageUrl("Dashboard"), icon: Home },
+      { name: "My Wardrobe", href: createPageUrl("DigitalWardrobe"), icon: Package },
+      { name: "Style Profile", href: createPageUrl("StyleProfile"), icon: Sparkles },
+      { name: "Style Quiz", href: createPageUrl("StyleQuiz"), icon: Palette },
     ]
   },
   {
-    name: "MARKETING",
+    name: "SHOPPING",
     items: [
-      { name: "Campaigns", href: createPageUrl("EcommerceSuite"), icon: Sparkles },
-      { name: "Brand Kit", href: createPageUrl("BrandKitGenerator"), icon: Palette },
+      { name: "Discover Products", href: createPageUrl("EcommerceSuite"), icon: Store },
+      { name: "Shopping Cart", href: createPageUrl("ShoppingCart"), icon: ShoppingCartIcon },
     ]
   },
   {
     name: "SETTINGS",
     items: [
-      { name: "Analytics", href: createPageUrl("EcommerceSuite"), icon: BarChart3 },
-      { name: "Sync Config", href: createPageUrl("SyncConfiguration"), icon: Settings },
       { name: "Integrations", href: createPageUrl("Integrations"), icon: Plug },
+      { name: "Preferences", href: createPageUrl("UserSettings"), icon: Settings },
     ]
   },
 ];
@@ -130,12 +128,12 @@ export default function Layout({ children, currentPageName }) {
     <>
       <div className="flex items-center justify-center h-16 border-b border-gray-700 px-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
-            <ShoppingCartIcon className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">ShopFlow</h1>
-            <p className="text-xs text-gray-400">Mobile E-commerce Hub</p>
+            <h1 className="text-xl font-bold text-white">StyleSync</h1>
+            <p className="text-xs text-gray-400">Your Personal Style Assistant</p>
           </div>
         </div>
       </div>
@@ -245,11 +243,11 @@ export default function Layout({ children, currentPageName }) {
           to={createPageUrl("Dashboard")}
           className="flex items-center gap-2"
         >
-          <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center">
-            <ShoppingCartIcon className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-white">ShopFlow</h1>
+            <h1 className="text-lg font-bold text-white">StyleSync</h1>
           </div>
         </Link>
         <button
@@ -348,8 +346,24 @@ export default function Layout({ children, currentPageName }) {
                 : 'text-gray-400'
             }`}
           >
-            <Store className="h-5 w-5 mb-1" />
-            <span className="text-xs">Products</span>
+            <Package className="h-5 w-5 mb-1" />
+            <span className="text-xs">Wardrobe</span>
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (location.pathname === '/StyleProfile') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigate(createPageUrl("StyleProfile"));
+              }
+            }}
+            className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
+              location.pathname === '/StyleProfile' ? 'text-green-400' : 'text-gray-400'
+            }`}
+          >
+            <Sparkles className="h-5 w-5 mb-1" />
+            <span className="text-xs">Style</span>
           </button>
           <button
             onClick={(e) => {
@@ -366,16 +380,6 @@ export default function Layout({ children, currentPageName }) {
           >
             <ShoppingCartIcon className="h-5 w-5 mb-1" />
             <span className="text-xs">Cart</span>
-          </button>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              navigate(createPageUrl("EcommerceSuite"));
-            }}
-            className={`flex flex-col items-center justify-center flex-1 h-full no-select text-gray-400`}
-          >
-            <Users className="h-5 w-5 mb-1" />
-            <span className="text-xs">Customers</span>
           </button>
         </div>
       </nav>
