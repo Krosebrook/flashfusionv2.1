@@ -334,14 +334,14 @@ export default function Layout({ children, currentPageName }) {
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (location.pathname === '/EcommerceSuite') {
+              if (location.pathname === '/DigitalWardrobe') {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               } else {
-                navigate(createPageUrl("EcommerceSuite"));
+                navigate(createPageUrl("DigitalWardrobe"));
               }
             }}
             className={`flex flex-col items-center justify-center flex-1 h-full no-select ${
-              location.pathname === '/EcommerceSuite'
+              location.pathname === '/DigitalWardrobe'
                 ? 'text-green-400'
                 : 'text-gray-400'
             }`}
